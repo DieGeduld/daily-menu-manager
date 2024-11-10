@@ -9,8 +9,99 @@
 // Sicherheitscheck
 defined('ABSPATH') or die('Direkter Zugriff nicht erlaubt!');
 
+
+function activate_daily_menu_manager() {
+    global $wpdb;
+    
+    $charset_collate = $wpdb->get_charset_collate();
+
+    $sql = array();
+
+    // Haupttabelle für Tagesmenüs
+    $table_name = $wpdb->prefix . 'daily_menus';
+    $sql[] = "CREATE TABLE IF NOT EXISTS $table_name (
+        id mediumint(9) NOT NULL AUTO_INCREMENT,
+        menu_date date NOT NULL,
+        PRIMARY KEY  (id)
+    ) $charset_collate;";
+
+    // Tabelle für Menüeinträge
+    $menu_items_table = $wpdb->prefix . 'menu_items';
+    $sql[] = "CREATE TABLE IF NOT EXISTS $menu_items_table (
+        id mediumint(9) NOT NULL AUTO_INCREMENT,
+        menu_id mediumint(9) NOT NULL,
+        item_type varchar(50) NOT NULL,
+        title varchar(255) NOT NULL,
+        description text,
+        price decimal(10,2) NOT NULL,
+        sort_order int NOT NULL,
+        PRIMARY KEY  (id),
+        KEY menu_id (menu_id)
+    ) $charset_collate;";
+
+    // AKTUALISIERTE Tabelle für Bestellungen
+    $orders_table = $wpdb->prefix . 'menu_orders';
+    $sql[] = "CREATE TABLE IF NOT EXISTS $orders_table (
+        id mediumint(9) NOT NULL AUTO_INCREMENT,
+        menu_id mediumint(9) NOT NULL,
+        menu_item_id mediumint(9) NOT NULL,
+        order_number varchar(50) NOT NULL,
+        customer_name varchar(100) NOT NULL,
+        quantity int NOT NULL DEFAULT 1,
+        notes text,
+        general_notes text,
+        order_date datetime NOT NULL,
+        PRIMARY KEY  (id),
+        KEY order_number (order_number)
+    ) $charset_collate;";
+
+    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+    
+    // Jede Tabelle einzeln erstellen
+    foreach($sql as $query) {
+        dbDelta($query);
+    }
+
+    // Option setzen um zu prüfen, ob Tabellen erstellt wurden
+    update_option('daily_menu_manager_db_version', '1.1');
+}
+
+// Deaktivierungsfunktion
+function deactivate_daily_menu_manager() {
+    // drop
+    global $wpdb;
+    $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}daily_menus");
+    $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}menu_items");
+    $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}menu_orders");
+}
+
+
+
 class DailyMenuManager {
     private static $instance = null;
+    
+    public function enqueueFrontendAssets() {
+        wp_enqueue_style(
+            'daily-menu-frontend',
+            plugins_url('css/frontend.css', __FILE__),
+            array(),
+            '1.0.0'
+        );
+    
+        wp_enqueue_script(
+            'daily-menu-frontend',
+            plugins_url('js/frontend.js', __FILE__),
+            array('jquery'),
+            '1.0.0',
+            true
+        );
+    
+        // AJAX URL für JavaScript verfügbar machen
+        wp_localize_script('daily-menu-frontend', 'dailyMenuAjax', array(
+            'ajaxurl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('daily_menu_nonce')
+        ));
+    }
     private $menu_types = array(
         'appetizer' => 'Vorspeise',
         'main_course' => 'Hauptgang',
@@ -27,12 +118,20 @@ class DailyMenuManager {
     private function __construct() {
         add_action('admin_menu', array($this, 'addAdminMenu'));
         add_action('admin_enqueue_scripts', array($this, 'enqueueAdminScripts'));
-        register_activation_hook(__FILE__, array($this, 'activate'));
         add_action('wp_ajax_submit_order', array($this, 'handleOrder'));
         add_action('wp_ajax_nopriv_submit_order', array($this, 'handleOrder'));
+
+        // Check und erstelle Tabellen falls sie nicht existieren        
+        $this->check_tables();
+        
+        // Shortcode registrieren
+        add_shortcode('daily_menu', array($this, 'displayDailyMenu'));
+        
+        // Frontend Assets registrieren
+        add_action('wp_enqueue_scripts', array($this, 'enqueueFrontendAssets'));
     }
 
-    public function activate() {
+    public static function activate() {
         global $wpdb;
         
         $charset_collate = $wpdb->get_charset_collate();
@@ -73,6 +172,19 @@ class DailyMenuManager {
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql);
+    }
+
+    private function check_tables() {
+        global $wpdb;
+        
+        // Prüfe ob die Haupttabelle existiert
+        $table_name = $wpdb->prefix . 'daily_menus';
+        $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") === $table_name;
+        
+        if (!$table_exists) {
+            // Wenn die Tabelle nicht existiert, führe die Aktivierung erneut aus
+            activate_daily_menu_manager();
+        }
     }
 
     public function enqueueAdminScripts($hook) {
@@ -300,212 +412,491 @@ class DailyMenuManager {
             $menu_id
         ));
     }
-
     public function displayOrdersPage() {
         global $wpdb;
         
-        $orders = $wpdb->get_results("
-            SELECT o.*, mi.title as menu_item_title, mi.price 
+        // Filter-Logik
+        $where_clauses = array();
+        $where_values = array();
+        
+        // Datum Filter
+        if (!empty($_GET['filter_date'])) {
+            $where_clauses[] = "DATE(o.order_date) = %s";
+            $where_values[] = sanitize_text_field($_GET['filter_date']);
+        }
+        
+        // Bestellnummer Filter
+        if (!empty($_GET['filter_order'])) {
+            $where_clauses[] = "o.order_number LIKE %s";
+            $where_values[] = '%' . $wpdb->esc_like(sanitize_text_field($_GET['filter_order'])) . '%';
+        }
+    
+        // Name Filter
+        if (!empty($_GET['filter_name'])) {
+            $where_clauses[] = "o.customer_name LIKE %s";
+            $where_values[] = '%' . $wpdb->esc_like(sanitize_text_field($_GET['filter_name'])) . '%';
+        }
+        
+        // Base query without WHERE clause
+        $base_query = "
+            SELECT 
+                o.*,
+                mi.title as menu_item_title,
+                mi.price,
+                mi.item_type,
+                COUNT(*) OVER (PARTITION BY o.order_number) as items_in_order,
+                MIN(o.id) OVER (PARTITION BY o.order_number) as first_item_in_order
             FROM {$wpdb->prefix}menu_orders o
             JOIN {$wpdb->prefix}menu_items mi ON o.menu_item_id = mi.id
-            ORDER BY o.order_date DESC
-        ");
-
+        ";
+    
+        // Füge WHERE-Klausel hinzu, wenn Filter aktiv sind
+        if (!empty($where_clauses)) {
+            $base_query .= " WHERE " . implode(' AND ', $where_clauses);
+            $base_query .= " ORDER BY o.order_date DESC, o.order_number, mi.item_type, mi.title";
+            $orders = $wpdb->get_results($wpdb->prepare($base_query, $where_values));
+        } else {
+            // Wenn keine Filter aktiv sind, füge nur ORDER BY hinzu
+            $base_query .= " ORDER BY o.order_date DESC, o.order_number, mi.item_type, mi.title";
+            $orders = $wpdb->get_results($base_query);
+        }
+    
+        // Gruppiere Bestellungen nach Datum für die Zusammenfassung
+        $date_groups = array();
+        $counted_orders = array(); // Hilfsarray um Bestellungen nur einmal zu zählen
+        
+        foreach ($orders as $order) {
+            $date = date('Y-m-d', strtotime($order->order_date));
+            
+            // Initialisiere das Datum, falls noch nicht vorhanden
+            if (!isset($date_groups[$date])) {
+                $date_groups[$date] = 0;
+            }
+            
+            // Zähle jede Bestellnummer nur einmal
+            if (!isset($counted_orders[$date . $order->order_number])) {
+                $date_groups[$date]++;
+                $counted_orders[$date . $order->order_number] = true;
+            }
+        }
+        
+    
         ?>
         <div class="wrap">
             <h1>Bestellungen</h1>
+
+            <!-- Tages-Zusammenfassung -->
+            <div class="order-summary-boxes">
+                <?php foreach ($date_groups as $date => $count): ?>
+                    <div class="summary-box">
+                        <h3><?php echo date_i18n('d.m.Y', strtotime($date)); ?></h3>
+                        <p><?php echo $count; ?> <?php echo $count === 1 ? 'Bestellung' : 'Bestellungen'; ?></p>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+    
+            <!-- Verbesserte Filter-Optionen -->
+            <div class="tablenav top">
+                <div class="alignleft actions">
+                    <form method="get" class="filter-form">
+                        <input type="hidden" name="page" value="<?php echo esc_attr($_REQUEST['page']); ?>">
+                        
+                        <label for="filter_date">Datum:</label>
+                        <input type="date" 
+                               id="filter_date"
+                               name="filter_date" 
+                               value="<?php echo isset($_GET['filter_date']) ? esc_attr($_GET['filter_date']) : ''; ?>">
+                        
+                        <label for="filter_order">Bestellnummer:</label>
+                        <input type="text" 
+                               id="filter_order"
+                               name="filter_order" 
+                               placeholder="z.B. 20241110" 
+                               value="<?php echo isset($_GET['filter_order']) ? esc_attr($_GET['filter_order']) : ''; ?>">
+                        
+                        <label for="filter_name">Name:</label>
+                        <input type="text" 
+                               id="filter_name"
+                               name="filter_name" 
+                               placeholder="Kundenname" 
+                               value="<?php echo isset($_GET['filter_name']) ? esc_attr($_GET['filter_name']) : ''; ?>">
+                        
+                        <input type="submit" class="button" value="Filtern">
+                        <a href="?page=<?php echo esc_attr($_REQUEST['page']); ?>" class="button">Filter zurücksetzen</a>
+                    </form>
+                </div>
+            </div>
+    
+            <?php if (empty($orders)): ?>
+                <div class="notice notice-info">
+                    <p>Keine Bestellungen gefunden.</p>
+                </div>
+            <?php else: ?>
+    
             <table class="wp-list-table widefat fixed striped">
                 <thead>
                     <tr>
-                        <th>Datum</th>
+                        <th>Bestellnummer</th>
+                        <th>Datum/Uhrzeit</th>
                         <th>Name</th>
-                        <th>Bestelltes Gericht</th>
-                        <th>Preis</th>
-                        <th>Notizen</th>
+                        <th>Bestellte Gerichte</th>
+                        <th>Gesamtbetrag</th>
+                        <th>Aktionen</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($orders as $order): ?>
-                    <tr>
-                        <td><?php echo esc_html(date('d.m.Y H:i', strtotime($order->order_date))); ?></td>
-                        <td><?php echo esc_html($order->customer_name); ?></td>
-                        <td><?php echo esc_html($order->menu_item_title); ?></td>
-                        <td><?php echo number_format($order->price, 2); ?> €</td>
-                        <td><?php echo esc_html($order->notes); ?></td>
-                    </tr>
-                    <?php endforeach; ?>
+                    <?php 
+                    $current_order = '';
+                    $order_total = 0;
+                    $row_class = 'order-row-even';
+                    
+                    foreach ($orders as $order):
+                        // Wenn eine neue Bestellung beginnt
+                        if ($current_order !== $order->order_number):
+                            if ($current_order !== ''): // Schließe die vorherige Bestellung ab
+                                ?>
+                                <tr class="order-total <?php echo $row_class; ?>">
+                                    <td colspan="3"></td>
+                                    <td><strong>Gesamtbetrag:</strong></td>
+                                    <td colspan="2"><strong><?php echo number_format($order_total, 2); ?> €</strong></td>
+                                </tr>
+                                <?php
+                            endif;
+                            
+                            $row_class = ($row_class === 'order-row-even') ? 'order-row-odd' : 'order-row-even';
+                            $current_order = $order->order_number;
+                            $order_total = 0;
+                            ?>
+                            <tr class="order-header <?php echo $row_class; ?>">
+                                <td><strong><?php echo esc_html($order->order_number); ?></strong></td>
+                                <td><?php echo esc_html(date('d.m.Y H:i', strtotime($order->order_date))); ?></td>
+                                <td><?php echo esc_html($order->customer_name); ?></td>
+                                <td colspan="3">
+                                    <?php if ($order->general_notes): ?>
+                                        <div class="general-notes">
+                                            <strong>Allgemeine Anmerkungen:</strong> <?php echo esc_html($order->general_notes); ?>
+                                        </div>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endif; 
+                        
+                        $item_total = $order->quantity * $order->price;
+                        $order_total += $item_total;
+                        ?>
+                        
+                        <tr class="order-item <?php echo $row_class; ?>">
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                <strong><?php echo esc_html($order->quantity); ?>x</strong> 
+                                <?php echo esc_html($order->menu_item_title); ?>
+                                <?php if ($order->notes): ?>
+                                    <br><small>Anmerkung: <?php echo esc_html($order->notes); ?></small>
+                                <?php endif; ?>
+                            </td>
+                            <td><?php echo number_format($item_total, 2); ?> €</td>
+                            <td>
+                                <?php if ($order->id === $order->first_item_in_order): ?>
+                                    <button class="button print-order" data-order="<?php echo esc_attr($order->order_number); ?>">
+                                        Drucken
+                                    </button>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; 
+                    
+                    // Schließe die letzte Bestellung ab
+                    if ($current_order !== ''): ?>
+                        <tr class="order-total <?php echo $row_class; ?>">
+                            <td colspan="3"></td>
+                            <td><strong>Gesamtbetrag:</strong></td>
+                            <td colspan="2"><strong><?php echo number_format($order_total, 2); ?> €</strong></td>
+                        </tr>
+                    <?php endif; ?>
                 </tbody>
             </table>
+            <?php endif; ?>
         </div>
+    
+        <style>
+            .order-summary-boxes {
+                display: flex;
+                gap: 20px;
+                margin-bottom: 20px;
+            }
+            .summary-box {
+                background: #fff;
+                padding: 15px;
+                border-radius: 4px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                flex: 1;
+                max-width: 200px;
+            }
+            .summary-box h3 {
+                margin: 0 0 10px 0;
+            }
+            .summary-box p {
+                margin: 0;
+                font-size: 1.2em;
+                font-weight: bold;
+                color: #2c5282;
+            }
+            .order-row-even {
+                background-color: #f8f9fa;
+            }
+            .order-row-odd {
+                background-color: #e9ecef;
+            }
+            .order-header {
+                background-color: inherit;
+                border-top: 2px solid #dee2e6;
+            }
+            .order-item td {
+                padding-left: 20px;
+            }
+            .order-total {
+                border-bottom: 2px solid #dee2e6;
+            }
+            .general-notes {
+                font-size: 0.9em;
+                color: #666;
+                margin-top: 5px;
+            }
+            .filter-form {
+                display: flex;
+                gap: 15px;
+                align-items: center;
+                background: #fff;
+                padding: 15px;
+                border-radius: 4px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            }
+            .filter-form label {
+                font-weight: 500;
+            }
+            .filter-form input[type="date"],
+            .filter-form input[type="text"] {
+                padding: 5px 10px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                height: 35px;
+            }
+            .filter-form .button {
+                height: 35px;
+                line-height: 33px;
+            }
+        </style>
+    
+        <script>
+        jQuery(document).ready(function($) {
+            $('.print-order').on('click', function() {
+                const orderNumber = $(this).data('order');
+                // Hole alle Elemente dieser Bestellung
+                const orderElements = $(this).closest('tr').prevAll('.order-header').first()
+                    .add($(this).closest('tr').prevAll('.order-item').addBack())
+                    .add($(this).closest('tr').nextAll('.order-item, .order-total').addBack());
+    
+                // Erstelle ein neues Fenster für den Druck
+                const printWindow = window.open('', '', 'height=600,width=800');
+                printWindow.document.write('<html><head><title>Bestellung ' + orderNumber + '</title>');
+                printWindow.document.write('<style>');
+                printWindow.document.write(`
+                    body { font-family: Arial, sans-serif; padding: 20px; }
+                    table { width: 100%; border-collapse: collapse; }
+                    td, th { padding: 8px; border: 1px solid #ddd; }
+                    .order-total { font-weight: bold; }
+                `);
+                printWindow.document.write('</style></head><body>');
+                printWindow.document.write('<h2>Bestellung: ' + orderNumber + '</h2>');
+                printWindow.document.write('<table>' + orderElements.html() + '</table>');
+                printWindow.document.write('</body></html>');
+                printWindow.document.close();
+                printWindow.print();
+            });
+        });
+        </script>
         <?php
     }
-
     public function displayDailyMenu() {
         $menu = $this->getCurrentMenu();
         if (!$menu) {
             return '<p>Heute ist kein Menü verfügbar.</p>';
         }
-
+    
         $menu_items = $this->getMenuItems($menu->id);
         if (empty($menu_items)) {
             return '<p>Heute sind keine Menüeinträge verfügbar.</p>';
         }
-
+    
         ob_start();
         ?>
         <div class="daily-menu">
             <h2>Heutiges Menü</h2>
             
-            <?php foreach ($this->menu_types as $type => $label): 
-                $type_items = array_filter($menu_items, function($item) use ($type) {
-                    return $item->item_type === $type;
-                });
+            <form id="menu-order-form" class="menu-order-form">
+                <input type="hidden" name="menu_id" value="<?php echo esc_attr($menu->id); ?>">
+                <?php wp_nonce_field('menu_order_nonce'); ?>
                 
-                if (!empty($type_items)):
-            ?>
-                <div class="menu-section">
-                    <h3><?php echo esc_html($label); ?></h3>
-                    <?php foreach ($type_items as $item): ?>
-                        <div class="menu-item">
-                            <h4><?php echo esc_html($item->title); ?> - <?php echo number_format($item->price, 2); ?> €</h4>
-                            <?php if ($item->description): ?>
-                                <p><?php echo nl2br(esc_html($item->description)); ?></p>
-                            <?php endif; ?>
-                            <button class="order-button" data-item-id="<?php echo esc_attr($item->id); ?>">
-                                Bestellen</button>
-                        </div>
-                    <?php endforeach; ?>
+                <?php foreach ($this->menu_types as $type => $label): 
+                    $type_items = array_filter($menu_items, function($item) use ($type) {
+                        return $item->item_type === $type;
+                    });
+                    
+                    if (!empty($type_items)):
+                ?>
+                    <div class="menu-section">
+                        <h3><?php echo esc_html($label); ?></h3>
+                        <?php foreach ($type_items as $item): ?>
+                            <div class="menu-item">
+                                <div class="menu-item-header">
+                                    <span class="menu-item-title"><?php echo esc_html($item->title); ?></span>
+                                    <span class="menu-item-price"><?php echo number_format($item->price, 2); ?> €</span>
+                                </div>
+                                
+                                <?php if ($item->description): ?>
+                                    <p class="menu-item-description">
+                                        <?php echo nl2br(esc_html($item->description)); ?>
+                                    </p>
+                                <?php endif; ?>
+                                
+                                <div class="menu-item-order">
+                                    <label for="quantity_<?php echo esc_attr($item->id); ?>">Anzahl:</label>
+                                    <input type="number" 
+                                           class="quantity-input"
+                                           name="items[<?php echo esc_attr($item->id); ?>][quantity]" 
+                                           id="quantity_<?php echo esc_attr($item->id); ?>"
+                                           min="0" 
+                                           value="0"
+                                           data-price="<?php echo esc_attr($item->price); ?>">
+                                           
+                                    <div class="item-notes">
+                                        <label for="notes_<?php echo esc_attr($item->id); ?>">Anmerkungen:</label>
+                                        <input type="text" 
+                                               name="items[<?php echo esc_attr($item->id); ?>][notes]" 
+                                               id="notes_<?php echo esc_attr($item->id); ?>"
+                                               placeholder="z.B. ohne Zwiebeln">
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; 
+                endforeach; ?>
+    
+                <div class="order-summary">
+                    <h3>Bestellübersicht</h3>
+                    <div class="order-total">Gesamtbetrag: <span id="total-amount">0,00 €</span></div>
                 </div>
-            <?php endif; 
-            endforeach; ?>
-
-            <div id="order-form" class="order-form" style="display: none;">
-                <h3>Ihre Bestellung</h3>
-                <form id="menu-order-form">
-                    <input type="hidden" name="menu_id" value="<?php echo esc_attr($menu->id); ?>">
-                    <input type="hidden" name="menu_item_id" id="selected-item-id" value="">
+    
+                <div class="customer-info">
+                    <h3>Ihre Informationen</h3>
                     <div class="form-field">
-                        <label for="customer_name">Ihr Name</label>
+                        <label for="customer_name">Name*</label>
                         <input type="text" name="customer_name" id="customer_name" required>
                     </div>
                     <div class="form-field">
-                        <label for="notes">Anmerkungen zur Bestellung</label>
-                        <textarea name="notes" id="notes"></textarea>
+                        <label for="general_notes">Allgemeine Anmerkungen zur Bestellung</label>
+                        <textarea name="general_notes" id="general_notes"></textarea>
                     </div>
-                    <?php wp_nonce_field('menu_order_nonce'); ?>
-                    <button type="submit">Bestellung absenden</button>
-                </form>
+                </div>
+    
+                <button type="submit" class="submit-order">Bestellung aufgeben</button>
+            </form>
+    
+            <div id="order-confirmation" class="order-confirmation" style="display: none;">
+                <h3>Bestellung erfolgreich aufgegeben!</h3>
+                <p>Ihre Bestellnummer: <strong id="order-number"></strong></p>
+                <p>Bitte nennen Sie diese Nummer bei der Abholung.</p>
+                <div class="confirmation-details"></div>
             </div>
         </div>
-
-        <style>
-            .daily-menu {
-                max-width: 800px;
-                margin: 0 auto;
-                padding: 20px;
-            }
-            .menu-section {
-                margin-bottom: 30px;
-            }
-            .menu-item {
-                margin-bottom: 20px;
-                padding: 15px;
-                background: #f9f9f9;
-                border-radius: 5px;
-            }
-            .menu-item h4 {
-                margin: 0 0 10px 0;
-            }
-            .menu-item p {
-                margin: 0 0 10px 0;
-            }
-            .order-button {
-                background: #0073aa;
-                color: white;
-                border: none;
-                padding: 8px 15px;
-                border-radius: 3px;
-                cursor: pointer;
-            }
-            .order-form {
-                margin-top: 20px;
-                padding: 20px;
-                background: #f1f1f1;
-                border-radius: 5px;
-            }
-            .form-field {
-                margin-bottom: 15px;
-            }
-            .form-field label {
-                display: block;
-                margin-bottom: 5px;
-            }
-            .form-field input,
-            .form-field textarea {
-                width: 100%;
-                padding: 8px;
-            }
-        </style>
-
-        <script>
-        jQuery(document).ready(function($) {
-            $('.order-button').on('click', function() {
-                var itemId = $(this).data('item-id');
-                $('#selected-item-id').val(itemId);
-                $('#order-form').slideDown();
-            });
-
-            $('#menu-order-form').on('submit', function(e) {
-                e.preventDefault();
-                
-                $.ajax({
-                    url: '<?php echo admin_url('admin-ajax.php'); ?>',
-                    type: 'POST',
-                    data: $(this).serialize() + '&action=submit_order',
-                    success: function(response) {
-                        if (response.success) {
-                            alert('Ihre Bestellung wurde erfolgreich aufgenommen!');
-                            $('#order-form').slideUp();
-                            $('#menu-order-form')[0].reset();
-                        } else {
-                            alert('Es gab einen Fehler bei der Bestellung. Bitte versuchen Sie es erneut.');
-                        }
-                    }
-                });
-            });
-        });
-        </script>
         <?php
         return ob_get_clean();
     }
-
+    
+    // Angepasste handleOrder Methode
     public function handleOrder() {
         if (!wp_verify_nonce($_POST['_wpnonce'], 'menu_order_nonce')) {
             wp_send_json_error('Ungültiger Sicherheitstoken');
         }
-
+    
         global $wpdb;
         
+        // Generiere eine Bestellnummer (Datum + fortlaufende Nummer)
+        $order_date = current_time('Ymd');
+        $next_number = $wpdb->get_var($wpdb->prepare(
+            "SELECT MAX(CAST(SUBSTRING_INDEX(order_number, '-', -1) AS UNSIGNED)) + 1 
+             FROM {$wpdb->prefix}menu_orders 
+             WHERE order_number LIKE %s",
+            $order_date . '-%'
+        ));
+        
+        if (!$next_number) $next_number = 1;
+        
+        $order_number = $order_date . '-' . str_pad($next_number, 3, '0', STR_PAD_LEFT);
+        
+        // Sammle die Bestelldaten
         $menu_id = intval($_POST['menu_id']);
-        $menu_item_id = intval($_POST['menu_item_id']);
         $customer_name = sanitize_text_field($_POST['customer_name']);
-        $notes = sanitize_textarea_field($_POST['notes']);
-
-        $wpdb->insert(
-            $wpdb->prefix . 'menu_orders',
-            array(
-                'menu_id' => $menu_id,
-                'menu_item_id' => $menu_item_id,
-                'customer_name' => $customer_name,
-                'order_date' => current_time('mysql'),
-                'notes' => $notes
-            ),
-            array('%d', '%d', '%s', '%s', '%s')
-        );
-
-        wp_send_json_success('Bestellung erfolgreich aufgenommen');
+        $general_notes = sanitize_textarea_field($_POST['general_notes']);
+        $items = isset($_POST['items']) ? $_POST['items'] : array();
+        
+        $order_items = array();
+        $total_amount = 0;
+        
+        // Speichere jedes bestellte Item
+        foreach ($items as $item_id => $item_data) {
+            $quantity = intval($item_data['quantity']);
+            if ($quantity > 0) {
+                $item_notes = sanitize_text_field($item_data['notes']);
+                
+                $wpdb->insert(
+                    $wpdb->prefix . 'menu_orders',
+                    array(
+                        'menu_id' => $menu_id,
+                        'menu_item_id' => $item_id,
+                        'customer_name' => $customer_name,
+                        'order_number' => $order_number,
+                        'quantity' => $quantity,
+                        'notes' => $item_notes,
+                        'general_notes' => $general_notes,
+                        'order_date' => current_time('mysql')
+                    ),
+                    array('%d', '%d', '%s', '%s', '%d', '%s', '%s', '%s')
+                );
+                
+                // Hole Item-Details für die Bestätigung
+                $item_details = $wpdb->get_row($wpdb->prepare(
+                    "SELECT title, price FROM {$wpdb->prefix}menu_items WHERE id = %d",
+                    $item_id
+                ));
+                
+                if ($item_details) {
+                    $order_items[] = array(
+                        'title' => $item_details->title,
+                        'quantity' => $quantity,
+                        'price' => $item_details->price,
+                        'notes' => $item_notes
+                    );
+                    $total_amount += $quantity * $item_details->price;
+                }
+            }
+        }
+    
+        wp_send_json_success(array(
+            'order_number' => $order_number,
+            'items' => $order_items,
+            'total_amount' => $total_amount,
+            'customer_name' => $customer_name
+        ));
     }
 }
 
+// Hooks registrieren
+register_activation_hook(__FILE__, 'activate_daily_menu_manager');
+register_deactivation_hook(__FILE__, 'deactivate_daily_menu_manager');
+
 // Plugin initialisieren
-DailyMenuManager::getInstance();
+$dailyMenuManager = DailyMenuManager::getInstance();
