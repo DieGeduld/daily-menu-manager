@@ -419,10 +419,15 @@ class DailyMenuManager {
         $where_clauses = array();
         $where_values = array();
         
-        // Datum Filter
-        if (!empty($_GET['filter_date'])) {
+        // Datum Filter - Standardmäßig heutiges Datum, wenn kein Filter gesetzt
+        $current_date = current_time('Y-m-d');
+        $filter_date = isset($_GET['filter_date']) ? $_GET['filter_date'] : $current_date;
+    
+        if ($filter_date == 'all') {
+            // Wenn 'all' ausgewählt wurde, keinen Datumsfilter anwenden
+        } else {
             $where_clauses[] = "DATE(o.order_date) = %s";
-            $where_values[] = sanitize_text_field($_GET['filter_date']);
+            $where_values[] = $filter_date;
         }
         
         // Bestellnummer Filter
@@ -436,8 +441,8 @@ class DailyMenuManager {
             $where_clauses[] = "o.customer_name LIKE %s";
             $where_values[] = '%' . $wpdb->esc_like(sanitize_text_field($_GET['filter_name'])) . '%';
         }
-        
-        // Base query without WHERE clause
+    
+        // Base query
         $base_query = "
             SELECT 
                 o.*,
@@ -450,41 +455,39 @@ class DailyMenuManager {
             JOIN {$wpdb->prefix}menu_items mi ON o.menu_item_id = mi.id
         ";
     
-        // Füge WHERE-Klausel hinzu, wenn Filter aktiv sind
         if (!empty($where_clauses)) {
             $base_query .= " WHERE " . implode(' AND ', $where_clauses);
-            $base_query .= " ORDER BY o.order_date DESC, o.order_number, mi.item_type, mi.title";
+        }
+        
+        $base_query .= " ORDER BY o.order_date DESC, o.order_number, mi.item_type, mi.title";
+        
+        if (!empty($where_values)) {
             $orders = $wpdb->get_results($wpdb->prepare($base_query, $where_values));
         } else {
-            // Wenn keine Filter aktiv sind, füge nur ORDER BY hinzu
-            $base_query .= " ORDER BY o.order_date DESC, o.order_number, mi.item_type, mi.title";
             $orders = $wpdb->get_results($base_query);
         }
     
         // Gruppiere Bestellungen nach Datum für die Zusammenfassung
         $date_groups = array();
-        $counted_orders = array(); // Hilfsarray um Bestellungen nur einmal zu zählen
-        
+        $counted_orders = array();
+    
         foreach ($orders as $order) {
             $date = date('Y-m-d', strtotime($order->order_date));
             
-            // Initialisiere das Datum, falls noch nicht vorhanden
             if (!isset($date_groups[$date])) {
                 $date_groups[$date] = 0;
             }
             
-            // Zähle jede Bestellnummer nur einmal
             if (!isset($counted_orders[$date . $order->order_number])) {
                 $date_groups[$date]++;
                 $counted_orders[$date . $order->order_number] = true;
             }
         }
-        
     
         ?>
         <div class="wrap">
             <h1>Bestellungen</h1>
-
+    
             <!-- Tages-Zusammenfassung -->
             <div class="order-summary-boxes">
                 <?php foreach ($date_groups as $date => $count): ?>
@@ -495,7 +498,7 @@ class DailyMenuManager {
                 <?php endforeach; ?>
             </div>
     
-            <!-- Verbesserte Filter-Optionen -->
+            <!-- Filter-Optionen -->
             <div class="tablenav top">
                 <div class="alignleft actions">
                     <form method="get" class="filter-form">
@@ -505,7 +508,8 @@ class DailyMenuManager {
                         <input type="date" 
                                id="filter_date"
                                name="filter_date" 
-                               value="<?php echo isset($_GET['filter_date']) ? esc_attr($_GET['filter_date']) : ''; ?>">
+                               value="<?php echo esc_attr($filter_date); ?>">
+                        <a href="?page=<?php echo esc_attr($_REQUEST['page']); ?>&filter_date=all" class="button">Alle Bestellungen</a>
                         
                         <label for="filter_order">Bestellnummer:</label>
                         <input type="text" 
@@ -522,7 +526,7 @@ class DailyMenuManager {
                                value="<?php echo isset($_GET['filter_name']) ? esc_attr($_GET['filter_name']) : ''; ?>">
                         
                         <input type="submit" class="button" value="Filtern">
-                        <a href="?page=<?php echo esc_attr($_REQUEST['page']); ?>" class="button">Filter zurücksetzen</a>
+                        <a href="?page=<?php echo esc_attr($_REQUEST['page']); ?>" class="button">Heute anzeigen</a>
                     </form>
                 </div>
             </div>
@@ -672,6 +676,7 @@ class DailyMenuManager {
                 padding: 15px;
                 border-radius: 4px;
                 box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                flex-wrap: wrap;
             }
             .filter-form label {
                 font-weight: 500;
@@ -693,12 +698,10 @@ class DailyMenuManager {
         jQuery(document).ready(function($) {
             $('.print-order').on('click', function() {
                 const orderNumber = $(this).data('order');
-                // Hole alle Elemente dieser Bestellung
                 const orderElements = $(this).closest('tr').prevAll('.order-header').first()
                     .add($(this).closest('tr').prevAll('.order-item').addBack())
                     .add($(this).closest('tr').nextAll('.order-item, .order-total').addBack());
     
-                // Erstelle ein neues Fenster für den Druck
                 const printWindow = window.open('', '', 'height=600,width=800');
                 printWindow.document.write('<html><head><title>Bestellung ' + orderNumber + '</title>');
                 printWindow.document.write('<style>');
