@@ -423,7 +423,7 @@ class DailyMenuManager {
         $current_date = current_time('Y-m-d');
         $filter_date = isset($_GET['filter_date']) ? $_GET['filter_date'] : $current_date;
     
-        if ($filter_date == 'all') {
+        if ($filter_date == 'all' || $filter_date == '') {
             // Wenn 'all' ausgewählt wurde, keinen Datumsfilter anwenden
         } else {
             $where_clauses[] = "DATE(o.order_date) = %s";
@@ -510,6 +510,7 @@ class DailyMenuManager {
                                name="filter_date" 
                                value="<?php echo esc_attr($filter_date); ?>">
                         <a href="?page=<?php echo esc_attr($_REQUEST['page']); ?>&filter_date=all" class="button">Alle Bestellungen</a>
+                        <a href="?page=<?php echo esc_attr($_REQUEST['page']); ?>" class="button">Heute anzeigen</a>
                         
                         <label for="filter_order">Bestellnummer:</label>
                         <input type="text" 
@@ -518,15 +519,15 @@ class DailyMenuManager {
                                placeholder="z.B. 20241110" 
                                value="<?php echo isset($_GET['filter_order']) ? esc_attr($_GET['filter_order']) : ''; ?>">
                         
-                        <label for="filter_name">Name:</label>
+                        <!-- <label for="filter_name">Name:</label>
                         <input type="text" 
                                id="filter_name"
                                name="filter_name" 
                                placeholder="Kundenname" 
-                               value="<?php echo isset($_GET['filter_name']) ? esc_attr($_GET['filter_name']) : ''; ?>">
+                               value="<?php echo isset($_GET['filter_name']) ? esc_attr($_GET['filter_name']) : ''; ?>"> -->
                         
-                        <input type="submit" class="button" value="Filtern">
-                        <a href="?page=<?php echo esc_attr($_REQUEST['page']); ?>" class="button">Heute anzeigen</a>
+                        <input type="submit" class="button button-primary" value="Filtern">
+                        
                     </form>
                 </div>
             </div>
@@ -903,3 +904,84 @@ register_deactivation_hook(__FILE__, 'deactivate_daily_menu_manager');
 
 // Plugin initialisieren
 $dailyMenuManager = DailyMenuManager::getInstance();
+
+
+class QueryDebug {
+    private static $instance = null;
+    private $queries = array();
+
+    public static function getInstance() {
+        if (self::$instance == null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    private function __construct() {
+        add_filter('query', array($this, 'logQuery'));
+        add_action('admin_footer', array($this, 'displayQueries'));
+        add_action('wp_footer', array($this, 'displayQueries'));
+    }
+
+    public function logQuery($query) {
+        $bt = debug_backtrace();
+        $caller = '';
+        foreach ($bt as $trace) {
+            if (isset($trace['file']) && !strpos($trace['file'], 'wp-includes') && !strpos($trace['file'], 'wp-admin')) {
+                $caller = $trace['file'] . ':' . $trace['line'];
+                break;
+            }
+        }
+
+        $this->queries[] = array(
+            'query' => $query,
+            'time' => microtime(true),
+            'caller' => $caller
+        );
+
+        return $query;
+    }
+
+    public function displayQueries() {
+        if (!current_user_can('administrator')) {
+            return;
+        }
+
+        echo '<div style="background: #fff; padding: 20px; margin: 20px; border: 1px solid #ccc; position: relative; z-index: 9999;">';
+        echo '<h2>SQL Queries (' . count($this->queries) . ')</h2>';
+        echo '<table style="width: 100%; border-collapse: collapse;">';
+        echo '<tr><th style="text-align: left; padding: 5px; border: 1px solid #ddd;">Query</th>';
+        echo '<th style="text-align: left; padding: 5px; border: 1px solid #ddd;">Time (ms)</th>';
+        echo '<th style="text-align: left; padding: 5px; border: 1px solid #ddd;">Caller</th></tr>';
+
+        $total_time = 0;
+        $prev_time = 0;
+
+        foreach ($this->queries as $q) {
+            $current_time = $q['time'];
+            if ($prev_time > 0) {
+                $execution_time = ($current_time - $prev_time) * 1000; // Convert to milliseconds
+                $total_time += $execution_time;
+            }
+            $prev_time = $current_time;
+
+            echo '<tr>';
+            echo '<td style="padding: 5px; border: 1px solid #ddd;">' . esc_html($q['query']) . '</td>';
+            echo '<td style="padding: 5px; border: 1px solid #ddd;">' . number_format($execution_time, 2) . '</td>';
+            echo '<td style="padding: 5px; border: 1px solid #ddd;">' . esc_html($q['caller']) . '</td>';
+            echo '</tr>';
+        }
+
+        echo '<tr>';
+        echo '<td style="padding: 5px; border: 1px solid #ddd;"><strong>Total</strong></td>';
+        echo '<td style="padding: 5px; border: 1px solid #ddd;"><strong>' . number_format($total_time, 2) . '</strong></td>';
+        echo '<td style="padding: 5px; border: 1px solid #ddd;"></td>';
+        echo '</tr>';
+
+        echo '</table>';
+        echo '</div>';
+    }
+}
+
+// Initialisierung
+QueryDebug::getInstance();
