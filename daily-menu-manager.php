@@ -1,9 +1,17 @@
 <?php
 /**
- * Plugin Name: Tages-Menü Manager
- * Description: Ermöglicht das Verwalten von Tagesmenüs und deren Bestellungen
+ * Plugin Name: Daily Menu Manager
+ * Plugin URI: https://yourwebsite.com/daily-menu-manager
+ * Description: Manage daily menus and their orders efficiently. Perfect for restaurants and cafes offering daily changing menus.
  * Version: 1.1
- * Author: Your Name
+ * Author: Fabian Wolf
+ * Author URI: https://yourwebsite.com
+ * Text Domain: daily-menu-manager
+ * Domain Path: /languages
+ * Requires at least: 5.0
+ * Requires PHP: 7.2
+ * License: GPL v2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  */
 
 // Sicherheitscheck
@@ -102,10 +110,20 @@ class DailyMenuManager {
             'nonce' => wp_create_nonce('daily_menu_nonce')
         ));
     }
+    
     private $menu_types = array(
-        'appetizer' => 'Vorspeise',
-        'main_course' => 'Hauptgang',
-        'dessert' => 'Nachspeise'
+        'appetizer' => array(
+            'label' => 'Appetizer',
+            'label_de' => 'Vorspeise'
+        ),
+        'main_course' => array(
+            'label' => 'Main Course',
+            'label_de' => 'Hauptgang'
+        ),
+        'dessert' => array(
+            'label' => 'Dessert',
+            'label_de' => 'Nachspeise'
+        )
     );
 
     public static function getInstance() {
@@ -120,16 +138,12 @@ class DailyMenuManager {
         add_action('admin_enqueue_scripts', array($this, 'enqueueAdminScripts'));
         add_action('wp_ajax_submit_order', array($this, 'handleOrder'));
         add_action('wp_ajax_nopriv_submit_order', array($this, 'handleOrder'));
-
-        // Check und erstelle Tabellen falls sie nicht existieren        
+        
         $this->check_tables();
-        
-        // Shortcode registrieren
         add_shortcode('daily_menu', array($this, 'displayDailyMenu'));
-        
-        // Frontend Assets registrieren
         add_action('wp_enqueue_scripts', array($this, 'enqueueFrontendAssets'));
     }
+
 
     public static function activate() {
         global $wpdb;
@@ -237,10 +251,11 @@ class DailyMenuManager {
         ");
     }
 
+
     public function addAdminMenu() {
         add_menu_page(
-            'Tages-Menü Manager',
-            'Tages-Menü',
+            __('Daily Menu Manager', 'daily-menu-manager'),
+            __('Daily Menu', 'daily-menu-manager'),
             'manage_options',
             'daily-menu-manager',
             array($this, 'displayMenuPage'),
@@ -250,8 +265,8 @@ class DailyMenuManager {
 
         add_submenu_page(
             'daily-menu-manager',
-            'Bestellungen',
-            'Bestellungen',
+            __('Orders', 'daily-menu-manager'),
+            __('Orders', 'daily-menu-manager'),
             'manage_options',
             'daily-menu-orders',
             array($this, 'displayOrdersPage')
@@ -268,12 +283,12 @@ class DailyMenuManager {
         
         ?>
         <div class="wrap">
-            <h1>Tages-Menü eingeben</h1>
+            <h1><?php _e('Enter Daily Menu', 'daily-menu-manager'); ?></h1>
             <form method="post" action="" class="menu-form">
                 <div class="menu-controls">
-                    <?php foreach ($this->menu_types as $type => $label): ?>
+                    <?php foreach ($this->menu_types as $type => $labels): ?>
                         <button type="button" class="button add-menu-item" data-type="<?php echo esc_attr($type); ?>">
-                            + <?php echo esc_html($label); ?> hinzufügen
+                            + <?php echo esc_html__('Add', 'daily-menu-manager') . ' ' . esc_html($labels['label']); ?>
                         </button>
                     <?php endforeach; ?>
                 </div>
@@ -288,23 +303,7 @@ class DailyMenuManager {
                     ?>
                 </div>
 
-                <?php foreach ($this->menu_types as $type => $label): ?>
-                    <script type="text/template" id="menu-item-template-<?php echo esc_attr($type); ?>">
-                        <?php
-                        $template_item = (object)array(
-                            'id' => '{id}',
-                            'item_type' => $type,
-                            'title' => '',
-                            'description' => '',
-                            'price' => '',
-                            'sort_order' => '{id}'
-                        );
-                        $this->renderMenuItem($template_item);
-                        ?>
-                    </script>
-                <?php endforeach; ?>
-
-                <?php submit_button('Menü speichern', 'primary', 'save_menu'); ?>
+                <?php submit_button(__('Save Menu', 'daily-menu-manager'), 'primary', 'save_menu'); ?>
             </form>
         </div>
         <?php
@@ -315,7 +314,7 @@ class DailyMenuManager {
         <div class="menu-item" data-type="<?php echo esc_attr($item->item_type); ?>">
             <div class="menu-item-header">
                 <span class="move-handle dashicons dashicons-move"></span>
-                <span class="menu-item-title"><?php echo esc_html($this->menu_types[$item->item_type]); ?></span>
+                <span class="menu-item-title"><?php echo esc_html($this->menu_types[$item->item_type]['label']); ?></span>
                 <button type="button" class="remove-menu-item button-link">
                     <span class="dashicons dashicons-trash"></span>
                 </button>
@@ -327,20 +326,20 @@ class DailyMenuManager {
                        value="<?php echo esc_attr($item->sort_order); ?>" class="sort-order">
                 
                 <div class="menu-item-field">
-                    <label>Titel</label>
+                    <label><?php _e('Title', 'daily-menu-manager'); ?></label>
                     <input type="text" name="menu_items[<?php echo esc_attr($item->id); ?>][title]" 
                            value="<?php echo esc_attr($item->title); ?>" required>
                 </div>
                 
                 <div class="menu-item-field">
-                    <label>Beschreibung</label>
+                    <label><?php _e('Description', 'daily-menu-manager'); ?></label>
                     <textarea name="menu_items[<?php echo esc_attr($item->id); ?>][description]"><?php 
                         echo esc_textarea($item->description); 
                     ?></textarea>
                 </div>
                 
                 <div class="menu-item-field">
-                    <label>Preis (€)</label>
+                    <label><?php _e('Price', 'daily-menu-manager'); ?> (€)</label>
                     <input type="number" step="0.01" name="menu_items[<?php echo esc_attr($item->id); ?>][price]" 
                            value="<?php echo esc_attr($item->price); ?>" required>
                 </div>
@@ -348,6 +347,7 @@ class DailyMenuManager {
         </div>
         <?php
     }
+
 
     private function saveMenu($post_data) {
         global $wpdb;
