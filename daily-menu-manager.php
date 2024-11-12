@@ -277,14 +277,67 @@ class DailyMenuManager {
         if (isset($_POST['save_menu'])) {
             $this->saveMenu($_POST);
         }
-
-        $current_menu = $this->getCurrentMenu();
+    
+        // Hole das ausgewählte Datum oder setze das aktuelle Datum als Standard
+        $selected_date = isset($_GET['menu_date']) ? sanitize_text_field($_GET['menu_date']) : current_time('Y-m-d');
+        $current_menu = $this->getMenuForDate($selected_date);
         $menu_items = $this->getMenuItems($current_menu ? $current_menu->id : 0);
         
         ?>
         <div class="wrap">
             <h1><?php _e('Enter Daily Menu', 'daily-menu-manager'); ?></h1>
+            
+            <!-- Datum-Auswahl Form -->
+            <div class="date-selection">
+                <form method="get" class="date-selector-form">
+                    <input type="hidden" name="page" value="daily-menu-manager">
+                    <label for="menu_date">Datum auswählen:</label>
+                    <input type="date" 
+                           id="menu_date" 
+                           name="menu_date" 
+                           value="<?php echo esc_attr($selected_date); ?>"
+                           onchange="this.form.submit()"
+                           min="<?php echo date('Y-m-d'); ?>">
+                </form>
+            </div>
+    
+            <!-- Templates für neue Menü-Items -->
+            <?php foreach ($this->menu_types as $type => $labels): ?>
+                <script type="text/template" id="menu-item-template-<?php echo esc_attr($type); ?>">
+                    <div class="menu-item" data-type="<?php echo esc_attr($type); ?>">
+                        <div class="menu-item-header">
+                            <span class="move-handle dashicons dashicons-move"></span>
+                            <span class="menu-item-title"><?php echo esc_html($labels['label']); ?></span>
+                            <button type="button" class="remove-menu-item button-link">
+                                <span class="dashicons dashicons-trash"></span>
+                            </button>
+                        </div>
+                        <div class="menu-item-content">
+                            <input type="hidden" name="menu_items[new-{id}][type]" value="<?php echo esc_attr($type); ?>">
+                            <input type="hidden" name="menu_items[new-{id}][sort_order]" value="0" class="sort-order">
+                            
+                            <div class="menu-item-field">
+                                <label><?php _e('Title', 'daily-menu-manager'); ?></label>
+                                <input type="text" name="menu_items[new-{id}][title]" required>
+                            </div>
+                            
+                            <div class="menu-item-field">
+                                <label><?php _e('Description', 'daily-menu-manager'); ?></label>
+                                <textarea name="menu_items[new-{id}][description]"></textarea>
+                            </div>
+                            
+                            <div class="menu-item-field">
+                                <label><?php _e('Price', 'daily-menu-manager'); ?> (€)</label>
+                                <input type="number" step="0.01" name="menu_items[new-{id}][price]" required>
+                            </div>
+                        </div>
+                    </div>
+                </script>
+            <?php endforeach; ?>
+    
             <form method="post" action="" class="menu-form">
+                <input type="hidden" name="menu_date" value="<?php echo esc_attr($selected_date); ?>">
+                
                 <div class="menu-controls">
                     <?php foreach ($this->menu_types as $type => $labels): ?>
                         <button type="button" class="button add-menu-item" data-type="<?php echo esc_attr($type); ?>">
@@ -292,7 +345,7 @@ class DailyMenuManager {
                         </button>
                     <?php endforeach; ?>
                 </div>
-
+    
                 <div class="menu-items">
                     <?php
                     if ($menu_items) {
@@ -302,11 +355,121 @@ class DailyMenuManager {
                     }
                     ?>
                 </div>
-
+    
                 <?php submit_button(__('Save Menu', 'daily-menu-manager'), 'primary', 'save_menu'); ?>
             </form>
         </div>
+    
+        <style>
+            .date-selection {
+                margin: 20px 0;
+                padding: 15px;
+                background: #fff;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
+            .date-selector-form {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .date-selector-form label {
+                font-weight: 500;
+            }
+            .date-selector-form input[type="date"] {
+                padding: 5px 10px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+            }
+            .menu-item {
+                background: #fff;
+                border: 1px solid #ddd;
+                margin-bottom: 10px;
+                padding: 10px;
+                border-radius: 4px;
+            }
+            .menu-item-header {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 10px;
+            }
+            .menu-item-field {
+                margin-bottom: 10px;
+            }
+            .menu-item-field label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: 500;
+            }
+            .menu-item-field input[type="text"],
+            .menu-item-field input[type="number"],
+            .menu-item-field textarea {
+                width: 100%;
+                padding: 8px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+            }
+            .menu-controls {
+                margin-bottom: 20px;
+                display: flex;
+                gap: 10px;
+            }
+        </style>
         <?php
+    }
+    
+    // Angepasste saveMenu Methode um mit neuen Items umzugehen
+    private function saveMenu($post_data) {
+        global $wpdb;
+        
+        $menu_date = sanitize_text_field($post_data['menu_date']);
+        
+        $menu_id = $wpdb->get_var($wpdb->prepare(
+            "SELECT id FROM {$wpdb->prefix}daily_menus WHERE menu_date = %s",
+            $menu_date
+        ));
+    
+        if (!$menu_id) {
+            $wpdb->insert(
+                $wpdb->prefix . 'daily_menus',
+                array('menu_date' => $menu_date),
+                array('%s')
+            );
+            $menu_id = $wpdb->insert_id;
+        }
+    
+        $wpdb->delete(
+            $wpdb->prefix . 'menu_items',
+            array('menu_id' => $menu_id),
+            array('%d')
+        );
+    
+        if (isset($post_data['menu_items'])) {
+            $sort_order = 1;
+            foreach ($post_data['menu_items'] as $item_data) {
+                $wpdb->insert(
+                    $wpdb->prefix . 'menu_items',
+                    array(
+                        'menu_id' => $menu_id,
+                        'item_type' => sanitize_text_field($item_data['type']),
+                        'title' => sanitize_text_field($item_data['title']),
+                        'description' => sanitize_textarea_field($item_data['description']),
+                        'price' => floatval($item_data['price']),
+                        'sort_order' => $sort_order++
+                    ),
+                    array('%d', '%s', '%s', '%s', '%f', '%d')
+                );
+            }
+        }
+    }
+
+    private function getMenuForDate($date) {
+        global $wpdb;
+        return $wpdb->get_row($wpdb->prepare(
+            "SELECT * FROM {$wpdb->prefix}daily_menus WHERE menu_date = %s",
+            $date
+        ));
     }
 
     private function renderMenuItem($item) {
@@ -346,51 +509,6 @@ class DailyMenuManager {
             </div>
         </div>
         <?php
-    }
-
-
-    private function saveMenu($post_data) {
-        global $wpdb;
-        
-        // Speichern oder Aktualisieren des Hauptmenü-Eintrags
-        $menu_id = $wpdb->get_var($wpdb->prepare(
-            "SELECT id FROM {$wpdb->prefix}daily_menus WHERE menu_date = %s",
-            current_time('Y-m-d')
-        ));
-
-        if (!$menu_id) {
-            $wpdb->insert(
-                $wpdb->prefix . 'daily_menus',
-                array('menu_date' => current_time('Y-m-d')),
-                array('%s')
-            );
-            $menu_id = $wpdb->insert_id;
-        }
-
-        // Bestehende Menüeinträge löschen
-        $wpdb->delete(
-            $wpdb->prefix . 'menu_items',
-            array('menu_id' => $menu_id),
-            array('%d')
-        );
-
-        // Neue Menüeinträge speichern
-        if (isset($post_data['menu_items'])) {
-            foreach ($post_data['menu_items'] as $item_data) {
-                $wpdb->insert(
-                    $wpdb->prefix . 'menu_items',
-                    array(
-                        'menu_id' => $menu_id,
-                        'item_type' => sanitize_text_field($item_data['type']),
-                        'title' => sanitize_text_field($item_data['title']),
-                        'description' => sanitize_textarea_field($item_data['description']),
-                        'price' => floatval($item_data['price']),
-                        'sort_order' => intval($item_data['sort_order'])
-                    ),
-                    array('%d', '%s', '%s', '%s', '%f', '%d')
-                );
-            }
-        }
     }
 
     private function getCurrentMenu() {
