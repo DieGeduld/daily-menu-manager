@@ -295,9 +295,9 @@ class DailyMenuManager {
                     <input type="date" 
                            id="menu_date" 
                            name="menu_date" 
-                           value="<?php echo esc_attr($selected_date); ?>"
+                           value="<?php  echo esc_attr($selected_date); ?>"
                            onchange="this.form.submit()"
-                           min="<?php echo date('Y-m-d'); ?>">
+                           min="">
                 </form>
             </div>
     
@@ -1102,4 +1102,4 @@ class QueryDebug {
 }
 
 // Initialisierung
-QueryDebug::getInstance();
+//QueryDebug::getInstance();
