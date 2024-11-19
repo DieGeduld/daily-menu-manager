@@ -159,15 +159,15 @@
 .menu-item {
     background: #fff;
     border: 1px solid #ddd;
-    margin-bottom: 10px;
-    padding: 10px;
+    /* margin-bottom: 10px; */
+    /* padding: 10px; */
     border-radius: 4px;
 }
 .menu-item-header {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 10px;
+    /* margin-bottom: 10px; */
 }
 .menu-item-field {
     margin-bottom: 10px;
@@ -185,6 +185,12 @@
     border: 1px solid #ddd;
     border-radius: 4px;
 }
+.menu-item-field input[type="number"] {
+    padding-left: 10px;
+    border-radius: 0 4px 4px 0;
+    border-left: none;
+    margin-left: 0;
+}
 .menu-controls {
     margin-bottom: 20px;
     display: flex;
@@ -195,16 +201,6 @@
 /* extra */
 
 /* Füge diese CSS-Styles zu deiner bestehenden admin.css Datei hinzu */
-
-.menu-item-header {
-    background: #f8f8f8;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px 4px 0 0;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-}
 
 .menu-item-controls {
     display: flex;
@@ -254,4 +250,95 @@
     height: 60px;
     border-radius: 4px;
     background: #f9f9f9;
+}
+
+/* Füge diese Styles zu deiner admin.css hinzu */
+
+.menu-item-header {
+    background: #f8f8f8;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px 4px 0 0;
+    display: flex;
+    align-items: center;
+    cursor: move; /* Zeigt an, dass das Element beweglich ist */
+    user-select: none; /* Verhindert Textauswahl beim Ziehen */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+/* Hover-Effekt für besseres visuelles Feedback */
+.menu-item-header:hover {
+    background: #f0f0f0;
+}
+
+/* Aktiver Zustand während des Ziehens */
+.menu-item-header.ui-sortable-helper {
+    background: #e8e8e8;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Platzhalter beim Ziehen */
+.menu-item-placeholder {
+    border: 2px dashed #bbb;
+    margin: 10px 0;
+    height: 50px;
+    background: #f9f9f9;
+    border-radius: 4px;
+}
+
+/* Da wir den move-handle nicht mehr benötigen, können wir ihn ausblenden */
+.menu-item-controls .move-handle {
+    display: none;
+}
+
+.menu-item-title-area {
+    flex-grow: 1;
+    margin-right: 10px;
+}
+
+.menu-item-actions {
+    display: flex;
+    gap: 8px;
+    padding: 0px 5px;
+}
+
+/* Buttons im Header sollten klickbar bleiben */
+.menu-item-header button {
+    cursor: pointer;
+}
+
+/* Spezifische Hover-States für die Buttons */
+.menu-item-header .toggle-menu-item:hover,
+.menu-item-header .duplicate-menu-item:hover,
+.menu-item-header .remove-menu-item:hover {
+    color: #135e96;
+}
+
+.dashicons {
+    width: 40px;
+    height: 34px;
+}
+
+.price-input-wrapper {
+    position: relative;
+    display: flex;
+}
+
+.currency-symbol {
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    color: #212529;
+    background-color: #e9ecef;
+    border: 1px solid #ced4da;
+    border-radius: 4px 0 0 4px;
+    display: flex;
+    align-items: center;
+    border-right: 0;
+}
+
+.price-input-wrapper input {
+    border-radius: 0 4px 4px 0;
+    flex: 1;
 }

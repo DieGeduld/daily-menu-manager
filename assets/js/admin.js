@@ -19,11 +19,58 @@ jQuery(document).ready(function($) {
 
     // Menü-Items sortierbar machen
     $('.menu-items').sortable({
-        handle: '.move-handle',
+        handle: '.menu-item-header',
+        placeholder: 'menu-item-placeholder',
+        tolerance: 'pointer',
+        distance: 5, // Minimale Pixelanzahl bevor Drag startet
+        cursor: 'move',
+        axis: 'y', // Nur vertikales Sortieren erlauben
+        opacity: 0.8, // Transparenz während des Ziehens
+        
+        // Beim Start des Ziehens
+        start: function(e, ui) {
+            ui.placeholder.height(ui.item.height());
+            ui.helper.addClass('is-dragging')
+                     .css('box-shadow', '0 2px 8px rgba(0,0,0,0.1)');
+        },
+        
+        // Während des Ziehens
+        sort: function(e, ui) {
+            // Optional: Scroll-Verhalten anpassen
+            var top = e.pageY - $(window).scrollTop();
+            if (top < 50) {
+                window.scrollBy(0, -5);
+            } else if (top > $(window).height() - 50) {
+                window.scrollBy(0, 5);
+            }
+        },
+        
+        // Nach dem Loslassen
+        stop: function(e, ui) {
+            ui.item.removeClass('is-dragging')
+                  .css('box-shadow', '');
+            updateSortOrder();
+        },
+        
         update: function() {
             updateSortOrder();
         }
     });
+
+    $(document).on('click', '.menu-item-header button', function(e) {
+        e.stopPropagation(); // Verhindert Bubble-Up zum Header
+    });
+
+    // Hover-Effekt für den Header
+    $('.menu-item-header').hover(
+        function() {
+            $(this).addClass('header-hover');
+        },
+        function() {
+            $(this).removeClass('header-hover');
+        }
+    );
+
 
     // Zähler für neue Menü-Items
     let newItemCounter = 0;
@@ -152,8 +199,8 @@ jQuery(document).ready(function($) {
         $('.menu-item').each(function(index) {
             $(this).find('.sort-order').val(index + 1);
         });
-
-        // Optional: AJAX-Update der Sortierung
+    
+        // Ajax-Update der Sortierung
         const itemOrder = {};
         $('.menu-item').each(function(index) {
             const itemId = $(this).data('id');
@@ -161,7 +208,7 @@ jQuery(document).ready(function($) {
                 itemOrder[itemId] = index + 1;
             }
         });
-
+    
         if (Object.keys(itemOrder).length > 0) {
             $.ajax({
                 url: ajaxurl,
@@ -172,7 +219,13 @@ jQuery(document).ready(function($) {
                     _ajax_nonce: dailyMenuAdmin.nonce
                 },
                 success: function(response) {
-                    if (!response.success) {
+                    if (response.success) {
+                        // Eigene Highlight-Animation
+                        $('.menu-items').addClass('highlight-success');
+                        setTimeout(function() {
+                            $('.menu-items').removeClass('highlight-success');
+                        }, 1000);
+                    } else {
                         console.error('Fehler beim Speichern der Sortierung');
                     }
                 }

@@ -308,20 +308,19 @@ class MenuController {
                 <!-- Price Field -->
                 <div class="menu-item-field">
                     <label for="price_<?php echo esc_attr($item->id); ?>">
-                        <?php _e('Price', 'daily-menu-manager'); ?> (€)
+                        <?php _e('Price', 'daily-menu-manager'); ?>
                         <span class="required">*</span>
                     </label>
                     <div class="price-input-wrapper">
-                        <input type="number" 
-                               id="price_<?php echo esc_attr($item->id); ?>"
-                               name="menu_items[<?php echo esc_attr($item->id); ?>][price]"
-                               value="<?php echo esc_attr(number_format($item->price, 2, '.', '')); ?>"
-                               step="0.01"
-                               min="0"
-                               required
-                               class="menu-item-price"
-                               data-original-value="<?php echo esc_attr($item->price); ?>">
                         <span class="currency-symbol">€</span>
+                        <input type="number" 
+                            id="price_<?php echo esc_attr($item->id); ?>"
+                            name="menu_items[<?php echo esc_attr($item->id); ?>][price]"
+                            value="<?php echo esc_attr(number_format($item->price, 2, '.', '')); ?>"
+                            step="0.01"
+                            min="0"
+                            required
+                            class="menu-item-price">
                     </div>
                     <span class="field-description">
                         <?php _e('Enter the price in euros (e.g., 12.50)', 'daily-menu-manager'); ?>
