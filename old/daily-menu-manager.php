@@ -360,62 +360,6 @@ class DailyMenuManager {
             </form>
         </div>
     
-        <style>
-            .date-selection {
-                margin: 20px 0;
-                padding: 15px;
-                background: #fff;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-            }
-            .date-selector-form {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            }
-            .date-selector-form label {
-                font-weight: 500;
-            }
-            .date-selector-form input[type="date"] {
-                padding: 5px 10px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-            }
-            .menu-item {
-                background: #fff;
-                border: 1px solid #ddd;
-                margin-bottom: 10px;
-                padding: 10px;
-                border-radius: 4px;
-            }
-            .menu-item-header {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                margin-bottom: 10px;
-            }
-            .menu-item-field {
-                margin-bottom: 10px;
-            }
-            .menu-item-field label {
-                display: block;
-                margin-bottom: 5px;
-                font-weight: 500;
-            }
-            .menu-item-field input[type="text"],
-            .menu-item-field input[type="number"],
-            .menu-item-field textarea {
-                width: 100%;
-                padding: 8px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-            }
-            .menu-controls {
-                margin-bottom: 20px;
-                display: flex;
-                gap: 10px;
-            }
-        </style>
         <?php
     }
     

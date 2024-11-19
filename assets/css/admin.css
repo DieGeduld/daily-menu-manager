@@ -130,3 +130,128 @@
     margin-left: 5px;
     color: #666;
 }
+
+
+/* Date Selection */
+
+.date-selection {
+    margin: 20px 0;
+    padding: 15px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+}
+.date-selector-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.date-selector-form label {
+    font-weight: 500;
+}
+.date-selector-form input[type="date"] {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+.menu-item {
+    background: #fff;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 4px;
+}
+.menu-item-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.menu-item-field {
+    margin-bottom: 10px;
+}
+.menu-item-field label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+.menu-item-field input[type="text"],
+.menu-item-field input[type="number"],
+.menu-item-field textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+.menu-controls {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+
+/* extra */
+
+/* Füge diese CSS-Styles zu deiner bestehenden admin.css Datei hinzu */
+
+.menu-item-header {
+    background: #f8f8f8;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px 4px 0 0;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.menu-item-controls {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-right: 10px;
+}
+
+.toggle-menu-item {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: #666;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.toggle-menu-item:hover {
+    color: #000;
+}
+
+.menu-item-content {
+    border: 1px solid #ddd;
+    border-top: none;
+    padding: 15px;
+    background: #fff;
+    border-radius: 0 0 4px 4px;
+}
+
+/* Animation für das Ein-/Ausklappen */
+.menu-item-content {
+    transition: height 0.2s ease-in-out;
+}
+
+/* Verbesserte Drag & Drop Visualisierung */
+.menu-item.ui-sortable-helper {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.menu-item-placeholder {
+    border: 2px dashed #ccc;
+    margin: 10px 0;
+    height: 60px;
+    border-radius: 4px;
+    background: #f9f9f9;
+}
