@@ -49,7 +49,6 @@ jQuery(document).ready(function($) {
         stop: function(e, ui) {
             ui.item.removeClass('is-dragging')
                   .css('box-shadow', '');
-            updateSortOrder();
         },
         
         update: function() {
