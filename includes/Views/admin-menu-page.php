@@ -16,6 +16,13 @@
                    name="menu_date" 
                    value="<?php echo esc_attr($selected_date); ?>"
                    onchange="this.form.submit()">
+                <?php if ($selected_date !== current_time('Y-m-d')): ?>
+                <button type="submit" 
+                        class="button" 
+                        onclick="document.getElementById('menu_date').value='<?php echo esc_attr(current_time('Y-m-d')); ?>'; return true;">
+                    <?php _e('Heute', 'daily-menu-manager'); ?>
+                </button>
+            <?php endif; ?>
         </form>
 
         <?php if ($current_menu): ?>
