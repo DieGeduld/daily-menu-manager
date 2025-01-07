@@ -83,16 +83,19 @@ register_activation_hook(__FILE__, function() {
 /**
  * Plugin Deaktivierung
  */
-register_deactivation_hook(__FILE__, function() {
+function daily_menu_manager_deactivate() {
     Installer::deactivate();
-});
+}
+register_deactivation_hook(__FILE__, 'daily_menu_manager_deactivate');
 
 /**
  * Plugin Deinstallation
  */
-register_uninstall_hook(__FILE__, function() {
+function daily_menu_manager_uninstall() {
     Installer::uninstall();
-});
+}
+register_uninstall_hook(__FILE__, 'daily_menu_manager_uninstall');
+
 
 /**
  * Initialisierung nach der Plugin-Aktivierung
