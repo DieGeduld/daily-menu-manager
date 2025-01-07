@@ -74,7 +74,7 @@ jQuery(document).ready(function($) {
         $.ajax({
             url: dailyMenuAjax.ajaxurl,
             type: 'POST',
-            data: $(this).serialize() + '&action=submit_order&_ajax_nonce=' + dailyMenuAjax.nonce,
+            data: $(this).serialize() + '&action=submit_order',
             success: function(response) {
                 if (response.success) {
                     $('#order-number').text(response.data.order_number);
