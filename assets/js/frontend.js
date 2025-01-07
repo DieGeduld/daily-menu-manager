@@ -9,14 +9,53 @@ jQuery(document).ready(function($) {
         $('#total-amount').text(total.toFixed(2) + ' €');
     }
 
-    // Aktualisiere den Gesamtbetrag bei Änderung der Mengen
-    $('.quantity-input').on('change', updateTotal);
+    // Handle quantity buttons
+    $('.quantity-btn').on('click', function() {
+        const input = $(this).siblings('.quantity-input');
+        let value = parseInt(input.val()) || 0;
+        
+        if ($(this).hasClass('minus')) {
+            value = Math.max(0, value - 1); // Prevent negative values
+        } else if ($(this).hasClass('plus')) {
+            value += 1;
+        }
+        
+        input.val(value).trigger('change');
+        updateQuantityVisibility(input);
+    });
 
-    // Bestellformular absenden
+    function updateQuantityVisibility(input) {
+        const quantity = parseInt(input.val()) || 0;
+        const notesField = input.closest('.menu-item').find('.item-notes');
+        
+        if (quantity > 0) {
+            notesField.slideDown();
+        } else {
+            notesField.slideUp();
+        }
+        
+        updateTotal();
+    }
+
+    // Handle direct input changes
+    $('.quantity-input').on('change input', function() {
+        // Ensure non-negative integers
+        let value = parseInt($(this).val()) || 0;
+        if (value < 0) value = 0;
+        $(this).val(value);
+        
+        updateQuantityVisibility($(this));
+    });
+
+    // Initial state
+    $('.item-notes').hide();
+    updateTotal();
+
+    // Form submission handling
     $('#menu-order-form').on('submit', function(e) {
         e.preventDefault();
         
-        // Prüfe ob mindestens ein Gericht bestellt wurde
+        // Check if any items are ordered
         let hasItems = false;
         $('.quantity-input').each(function() {
             if (parseInt($(this).val()) > 0) {
@@ -26,7 +65,7 @@ jQuery(document).ready(function($) {
         });
 
         if (!hasItems) {
-            alert('Bitte wählen Sie mindestens ein Gericht aus.');
+            alert(dailyMenuAjax.messages.emptyOrder);
             return;
         }
 
@@ -35,13 +74,12 @@ jQuery(document).ready(function($) {
         $.ajax({
             url: dailyMenuAjax.ajaxurl,
             type: 'POST',
-            data: $(this).serialize() + '&action=submit_order',
+            data: $(this).serialize() + '&action=submit_order&_ajax_nonce=' + dailyMenuAjax.nonce,
             success: function(response) {
                 if (response.success) {
-                    // Bestellbestätigung anzeigen
                     $('#order-number').text(response.data.order_number);
                     
-                    // Bestelldetails zusammenstellen
+                    // Build order details
                     let detailsHtml = '<h4>Bestellte Gerichte:</h4><ul>';
                     response.data.items.forEach(function(item) {
                         detailsHtml += `<li>${item.quantity}x ${item.title} (${(item.price * item.quantity).toFixed(2)} €)`;
@@ -55,20 +93,18 @@ jQuery(document).ready(function($) {
                     
                     $('.confirmation-details').html(detailsHtml);
                     
-                    // Formular ausblenden und Bestätigung anzeigen
                     $('#menu-order-form').slideUp();
                     $('#order-confirmation').slideDown();
                     
-                    // Zum Anfang der Bestätigung scrollen
                     $('html, body').animate({
                         scrollTop: $('#order-confirmation').offset().top - 100
                     }, 500);
                 } else {
-                    alert('Es gab einen Fehler bei der Bestellung. Bitte versuchen Sie es erneut.');
+                    alert(dailyMenuAjax.messages.orderError);
                 }
             },
             error: function() {
-                alert('Es gab einen Fehler bei der Übertragung. Bitte versuchen Sie es erneut.');
+                alert(dailyMenuAjax.messages.orderError);
             },
             complete: function() {
                 $('.submit-order').prop('disabled', false).text('Bestellung aufgeben');
@@ -76,29 +112,9 @@ jQuery(document).ready(function($) {
         });
     });
 
-    // Zusätzliche Funktionen für bessere Benutzerfreundlichkeit
-    $('.quantity-input').on('input', function() {
-        // Negative Werte verhindern
-        if ($(this).val() < 0) {
-            $(this).val(0);
-        }
-        
-        // Anmerkungsfeld ein-/ausblenden
-        const notesField = $(this).closest('.menu-item-order').find('.item-notes');
-        if (parseInt($(this).val()) > 0) {
-            notesField.slideDown();
-        } else {
-            notesField.slideUp();
-        }
-        
-        updateTotal();
-    });
-
-    // Initial Anmerkungsfelder ausblenden
-    $('.item-notes').hide();
-
-    // "Neue Bestellung" Button zur Bestätigung hinzufügen
+    // Add "New Order" button to confirmation
     $('#order-confirmation').append(
-        '<button class="new-order-btn" onclick="location.reload()">Neue Bestellung aufgeben</button>'
+        '<button class="new-order-btn" onclick="location.reload()">' +
+        'Neue Bestellung aufgeben</button>'
     );
 });
