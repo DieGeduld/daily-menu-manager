@@ -257,7 +257,7 @@ jQuery(document).ready(function($) {
                         action: 'copy_menu',
                         menu_id: menuId,
                         new_date: newDate,
-                        nonce: dailyMenuAdmin.nonce
+                        _ajax_nonce: dailyMenuAdmin.nonce
                     },
                     beforeSend: function() {
                         dialog.find('button').prop('disabled', true);
