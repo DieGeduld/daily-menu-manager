@@ -4,19 +4,21 @@
     <h1><?php _e('Bestellungen', 'daily-menu-manager'); ?></h1>
 
     <!-- Statistik-Boxen -->
-    <div class="order-summary-boxes">
-        <div class="summary-box">
-            <h3><?php _e('Heutige Bestellungen', 'daily-menu-manager'); ?></h3>
-            <p class="big-number"><?php echo esc_html($stats['total_orders']); ?></p>
-        </div>
-        <div class="summary-box">
-            <h3><?php _e('Heutiger Umsatz', 'daily-menu-manager'); ?></h3>
-            <p class="big-number"><?php echo number_format($stats['total_revenue'], 2); ?> €</p>
-        </div>
-        <div class="summary-box">
-            <h3><?php _e('Bestellte Gerichte', 'daily-menu-manager'); ?></h3>
-            <p class="big-number"><?php echo esc_html($stats['total_items']); ?></p>
-        </div>
+    <div class="order-summary-table">
+        <table class="summary-table">
+            <tr>
+                <td><?php _e('Heutige Bestellungen', 'daily-menu-manager'); ?></td>
+                <td class="value"><?php echo esc_html($stats['total_orders']); ?></td>
+            </tr>
+            <tr>
+                <td><?php _e('Heutiger Umsatz', 'daily-menu-manager'); ?></td>
+                <td class="value"><?php echo number_format($stats['total_revenue'], 2, ',', '.'); ?> €</td>
+            </tr>
+            <tr>
+                <td><?php _e('Bestellte Gerichte', 'daily-menu-manager'); ?></td>
+                <td class="value"><?php echo esc_html($stats['total_items']); ?></td>
+            </tr>
+        </table>
     </div>
 
     <!-- Filter -->
@@ -81,7 +83,7 @@
                         if ($current_order !== ''): // Vorherige Bestellung abschließen ?>
                             <tr class="order-total">
                                 <td colspan="4"><strong><?php _e('Gesamtbetrag:', 'daily-menu-manager'); ?></strong></td>
-                                <td colspan="2"><strong><?php echo number_format($order_total, 2); ?> €</strong></td>
+                                <td colspan="2"><strong><?php echo number_format($order_total, 2, ',', '.'); ?> €</strong></td>
                             </tr>
                         <?php endif;
                         
@@ -119,7 +121,7 @@
                                 <br><small><?php _e('Anmerkung:', 'daily-menu-manager'); ?> <?php echo esc_html($order->notes); ?></small>
                             <?php endif; ?>
                         </td>
-                        <td><?php echo number_format($item_total, 2); ?> €</td>
+                        <td><?php echo number_format($item_total, 2, ',', '.'); ?> €</td>
                         <td>
                             <?php if ($order->id === $order->first_item_in_order): ?>
                                 <button class="button print-order" data-order="<?php echo esc_attr($order->order_number); ?>">
@@ -137,7 +139,7 @@
                 if ($current_order !== ''): ?>
                     <tr class="order-total">
                         <td colspan="4"><strong><?php _e('Gesamtbetrag:', 'daily-menu-manager'); ?></strong></td>
-                        <td colspan="2"><strong><?php echo number_format($order_total, 2); ?> €</strong></td>
+                        <td colspan="2"><strong><?php echo number_format($order_total, 2, ',', '.'); ?> €</strong></td>
                     </tr>
                 <?php endif; ?>
             </tbody>
