@@ -16,9 +16,9 @@
 
 .daily-menu .menu-item {
     margin-bottom: 25px;
-    padding: 20px;
+    padding: 10px;
     background: #fff;
-    border-radius: 8px;
+    border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
@@ -26,8 +26,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
     color: #333;
+    margin-bottom: 5px;
+}
+
+.daily-menu .menu-item-footer {
+    display: flex;
+    justify-content: space-between;
 }
 
 .daily-menu .menu-item-title {
@@ -45,29 +50,41 @@
     margin-bottom: 15px;
 }
 
-.daily-menu .menu-item-order {
-    display: grid;
-    gap: 15px;
-    align-items: center;
-    padding-top: 15px;
-    border-top: 1px solid #edf2f7;
-}
-
 .daily-menu .quantity-control {
     display: flex;
+    align-items: center;
 }
 
 .daily-menu .quantity-btn {
-    background: red;
-    width: 100px;
+    background: #2c5282;
+    color: white;
+    width: 40px;
     height: 40px;
+}
+
+.daily-menu .quantity-btn.minus {
+    margin-left: 10px;
 }
 
 .daily-menu .quantity-input {
     width: 80px;
     padding: 8px;
-    border: 1px solid #e2e8f0;
-    border-radius: 4px;
+    border-radius: 0;
+    text-align: center;
+    box-shadow: none;
+    margin: 0;
+}
+
+/* Chrome, Safari, Edge, Opera */
+.daily-menu input::-webkit-outer-spin-button,
+.daily-menu input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.daily-menu input[type=number] {
+  -moz-appearance: textfield;
 }
 
 .daily-menu .item-notes {

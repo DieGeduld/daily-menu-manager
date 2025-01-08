@@ -114,40 +114,44 @@ class ShortcodeController {
                                 <span class="menu-item-price"><?php echo number_format($item->price, 2); ?> €</span>
                             </div>
                             
-                            <?php if ($item->description): ?>
+                            <div class="menu-item-footer">
+
+                                
                                 <p class="menu-item-description">
-                                    <?php echo nl2br(esc_html($item->description)); ?>
+                                    <?php if ($item->description): ?>
+                                        <?php echo nl2br(esc_html($item->description)); ?>
+                                    <?php endif; ?>
                                 </p>
-                            <?php endif; ?>
-                            
-                            <?php if ($atts['show_order_form']): ?>
-                                <div class="menu-item-order">
-                                    <div class="quantity-control">
-                                        <label for="quantity_<?php echo esc_attr($item->id); ?>">
-                                            <?php _e('Anzahl:', 'daily-menu-manager'); ?>
-                                        </label>
-                                        <button type="button" class="quantity-btn minus">-</button>
-                                        <input type="number" 
-                                               class="quantity-input"
-                                               name="items[<?php echo esc_attr($item->id); ?>][quantity]" 
-                                               id="quantity_<?php echo esc_attr($item->id); ?>"
-                                               min="0" 
-                                               value="0"
-                                               data-price="<?php echo esc_attr($item->price); ?>">
-                                        <button type="button" class="quantity-btn plus">+</button>
+                                
+                                <?php if ($atts['show_order_form']): ?>
+                                    <div class="menu-item-order">
+                                        <div class="quantity-control">
+                                            <label for="quantity_<?php echo esc_attr($item->id); ?>">
+                                                <?php _e('Anzahl:', 'daily-menu-manager'); ?>
+                                            </label>
+                                            <button type="button" class="quantity-btn minus">-</button>
+                                            <input type="number" 
+                                                class="quantity-input"
+                                                name="items[<?php echo esc_attr($item->id); ?>][quantity]" 
+                                                id="quantity_<?php echo esc_attr($item->id); ?>"
+                                                min="0" 
+                                                value="0"
+                                                data-price="<?php echo esc_attr($item->price); ?>">
+                                            <button type="button" class="quantity-btn plus">+</button>
+                                        </div>
+                                            
+                                        <div class="item-notes">
+                                            <label for="notes_<?php echo esc_attr($item->id); ?>">
+                                                <?php _e('Anmerkungen:', 'daily-menu-manager'); ?>
+                                            </label>
+                                            <input type="text" 
+                                                name="items[<?php echo esc_attr($item->id); ?>][notes]" 
+                                                id="notes_<?php echo esc_attr($item->id); ?>"
+                                                placeholder="<?php _e('z.B. ohne Zwiebeln', 'daily-menu-manager'); ?>">
+                                        </div>
                                     </div>
-                                           
-                                    <div class="item-notes">
-                                        <label for="notes_<?php echo esc_attr($item->id); ?>">
-                                            <?php _e('Anmerkungen:', 'daily-menu-manager'); ?>
-                                        </label>
-                                        <input type="text" 
-                                               name="items[<?php echo esc_attr($item->id); ?>][notes]" 
-                                               id="notes_<?php echo esc_attr($item->id); ?>"
-                                               placeholder="<?php _e('z.B. ohne Zwiebeln', 'daily-menu-manager'); ?>">
-                                    </div>
-                                </div>
-                            <?php endif; ?>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     <?php endforeach; ?>
                 </div>
