@@ -36,7 +36,7 @@ class MenuController {
      * Lädt Admin Assets
      */
     public static function enqueueAdminScripts($hook) {
-        if ('toplevel_page_daily-menu-manager' !== $hook) {
+        if ('daily-menu_page_daily-menu-orders' !== $hook && 'toplevel_page_daily-menu-manager' !== $hook) {
             return;
         }
     
