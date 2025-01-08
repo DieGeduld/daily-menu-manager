@@ -70,7 +70,7 @@ class ShortcodeController {
         $current_menu = $menu->getMenuForDate($atts['date']);
         
         if (!$current_menu) {
-            return '<p class="no-menu">' . __('Heute ist kein Menü verfügbar.', 'daily-menu-manager') . '</p>';
+            return '<p class="no-menu">' . __('Heute ist kein Tagesmenü verfügbar.', 'daily-menu-manager') . '</p>';
         }
         
         $menu_items = $menu->getMenuItems($current_menu->id);
