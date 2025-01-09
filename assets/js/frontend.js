@@ -116,9 +116,6 @@ jQuery(document).ready(function($) {
                         `,
                         icon: 'success',
                         confirmButtonText: 'Schließen',
-                        // showCancelButton: true,
-                        // cancelButtonText: 'Schließen',
-                        // reverseButtons: true
                     }).then((result) => {
                         // Allways reload
                         // if (result.isConfirmed) {
