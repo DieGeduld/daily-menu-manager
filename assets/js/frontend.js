@@ -1,4 +1,13 @@
 jQuery(document).ready(function($) {
+
+    // Prevent form submission on Enter in input fields
+    $('#menu-order-form input[type="text"]').on('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            return false;
+        }
+    });
+    
     function updateTotal() {
         let total = 0;
         $('.quantity-input').each(function() {
