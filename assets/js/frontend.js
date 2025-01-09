@@ -105,7 +105,7 @@ jQuery(document).ready(function($) {
                         detailsHtml += '</li>';
                     });
                     detailsHtml += '</ul>';
-                    detailsHtml += `<p><strong>Gesamtbetrag: ${response.data.total_amount.toFixed(2)} €</strong></p>`;
+                    detailsHtml += `<p><strong>Gesamtbetrag: ${response.data.total_amount.toFixed(2)}&nbsp;€</strong></p>`;
                     
                     Swal.fire({
                         title: 'Bestellung erfolgreich aufgegeben!',
@@ -115,10 +115,10 @@ jQuery(document).ready(function($) {
                             ${detailsHtml}
                         `,
                         icon: 'success',
-                        confirmButtonText: 'Neue Bestellung',
-                        showCancelButton: true,
-                        cancelButtonText: 'Schließen',
-                        reverseButtons: true
+                        confirmButtonText: 'Schließen',
+                        // showCancelButton: true,
+                        // cancelButtonText: 'Schließen',
+                        // reverseButtons: true
                     }).then((result) => {
                         // Allways reload
                         // if (result.isConfirmed) {
