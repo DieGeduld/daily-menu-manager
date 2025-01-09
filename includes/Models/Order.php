@@ -21,19 +21,23 @@ class Order {
         global $wpdb;
         
         try {
-            // Generiere Bestellnummer (Datum + fortlaufende Nummer)
-            $order_date = current_time('Ymd');
-            $next_number = $wpdb->get_var($wpdb->prepare(
-                "SELECT MAX(CAST(SUBSTRING_INDEX(order_number, '-', -1) AS UNSIGNED)) + 1 
-                 FROM {$wpdb->prefix}menu_orders 
-                 WHERE order_number LIKE %s",
-                $order_date . '-%'
-            ));
+            // Generiere fortlaufende Bestellnummer (0000-9999)
+            $last_number = $wpdb->get_var(
+                "SELECT MAX(CAST(SUBSTRING_INDEX(order_number, '-', -1) AS UNSIGNED)) 
+                 FROM {$wpdb->prefix}menu_orders"
+            );
             
-            if (!$next_number) $next_number = 1;
-            $order_number = $order_date . '-' . str_pad($next_number, 3, '0', STR_PAD_LEFT);
+            // Wenn keine Bestellung existiert oder der letzte Wert 999 war, starte bei 0
+            if (!$last_number || $last_number >= 999) {
+                $next_number = 0;
+            } else {
+                $next_number = $last_number + 1;
+            }
             
-            // Bestellungsdetails speichern
+            // Formatiere die Bestellnummer mit führenden Nullen
+            $order_number = str_pad($next_number, 3, '0', STR_PAD_LEFT);
+            
+            // Rest des bestehenden Codes bleibt gleich
             $order_items = [];
             $total_amount = 0;
             
