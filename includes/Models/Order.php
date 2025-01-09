@@ -22,16 +22,19 @@ class Order {
         
         try {
             // Generiere fortlaufende Bestellnummer (0000-9999)
-            $last_number = $wpdb->get_var(
+            $last_order = $wpdb->get_var(
                 "SELECT MAX(CAST(SUBSTRING_INDEX(order_number, '-', -1) AS UNSIGNED)) 
-                 FROM {$wpdb->prefix}menu_orders"
+                FROM {$wpdb->prefix}menu_orders"
             );
-            
-            // Wenn keine Bestellung existiert oder der letzte Wert 999 war, starte bei 0
-            if (!$last_number || $last_number >= 999) {
+                        
+            // Wenn keine Bestellung existiert oder der letzte Wert kein gültiger Integer ist
+            if (!$last_order || !is_numeric($last_order)) {
                 $next_number = 0;
             } else {
-                $next_number = $last_number + 1;
+                $next_number = intval($last_order) + 1;
+                if ($next_number > 999) {
+                    $next_number = 0;
+                }
             }
             
             // Formatiere die Bestellnummer mit führenden Nullen
