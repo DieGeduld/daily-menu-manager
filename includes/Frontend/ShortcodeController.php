@@ -100,64 +100,70 @@ class ShortcodeController {
         ob_start();
         ?>
         <div class="daily-menu">
-            <h2><?php echo esc_html($atts['title']); ?></h2>
-            
+            <h2><?php echo esc_html($atts['title']); ?> - <?php echo date_i18n('d. F Y', strtotime($atts['date'])); ?></h2>
+
             <?php if ($atts['show_order_form']): ?>
             <form id="menu-order-form" class="menu-order-form">
-                <input type="hidden" name="menu_id" value="<?php echo esc_attr($current_menu->id); ?>">
-                <?php wp_nonce_field('menu_order_nonce'); ?>
-            <?php endif; ?>
-                
-            <?php
-            // Gruppiere Items nach Typ
-            $grouped_items = [];
-            foreach ($menu_items as $item) {
-                if (!isset($grouped_items[$item->item_type])) {
-                    $grouped_items[$item->item_type] = [];
-                }
-                $grouped_items[$item->item_type][] = $item;
-            }
-            
-            // Zeige Items nach Typ gruppiert
-            foreach ($grouped_items as $type => $items): 
-                $type_label = self::getTypeLabel($type);
-            ?>
-                <div class="menu-section menu-section-<?php echo esc_attr($type); ?>">
-                    <h3><?php echo esc_html($type_label); ?></h3>
-                    
-                    <?php foreach ($items as $item): ?>
-                        <div class="menu-item" data-item-id="<?php echo esc_attr($item->id); ?>">
-                            <div class="menu-item-header">
-                                <span class="menu-item-title"><?php echo esc_html($item->title); ?></span>
-                                <span class="menu-item-price"><?php echo number_format($item->price, 2); ?> €</span>
-                            </div>
-                            
-                            <div class="menu-item-footer">
-
+                <div class="menu-layout">
+                    <!-- Linke Spalte: Menü-Items -->
+                    <div class="menu-items-column">
+                        <input type="hidden" name="menu_id" value="<?php echo esc_attr($current_menu->id); ?>">
+                        <?php wp_nonce_field('menu_order_nonce'); ?>
+                        
+                        <?php
+                        // Gruppiere Items nach Typ
+                        $grouped_items = [];
+                        foreach ($menu_items as $item) {
+                            if (!isset($grouped_items[$item->item_type])) {
+                                $grouped_items[$item->item_type] = [];
+                            }
+                            $grouped_items[$item->item_type][] = $item;
+                        }
+                        
+                        // Zeige Items nach Typ gruppiert
+                        foreach ($grouped_items as $type => $items): 
+                            $type_label = self::getTypeLabelPlural($type);
+                        ?>
+                            <div class="menu-section menu-section-<?php echo esc_attr($type); ?>">
+                                <h3><?php echo esc_html($type_label); ?></h3>
                                 
-                                <p class="menu-item-description">
-                                    <?php if ($item->description): ?>
-                                        <?php echo nl2br(esc_html($item->description)); ?>
-                                    <?php endif; ?>
-                                </p>
-                                
-                                <?php if ($atts['show_order_form']): ?>
-                                    <div class="menu-item-order">
-                                        <div class="quantity-control">
-                                            <label for="quantity_<?php echo esc_attr($item->id); ?>">
-                                                <?php _e('Anzahl:', 'daily-menu-manager'); ?>
-                                            </label>
-                                            <button type="button" class="quantity-btn minus">-</button>
-                                            <input type="number" 
-                                                class="quantity-input"
-                                                name="items[<?php echo esc_attr($item->id); ?>][quantity]" 
-                                                id="quantity_<?php echo esc_attr($item->id); ?>"
-                                                min="0" 
-                                                value="0"
-                                                data-price="<?php echo esc_attr($item->price); ?>">
-                                            <button type="button" class="quantity-btn plus">+</button>
+                                <?php foreach ($items as $item): ?>
+                                    <div class="menu-item" data-item-id="<?php echo esc_attr($item->id); ?>">
+                                        <div class="menu-item-header">
+                                            <span class="menu-item-title"><?php echo esc_html($item->title); ?></span>
+                                            <span class="menu-item-price"><?php echo number_format($item->price, 2); ?> €</span>
                                         </div>
+                                        
+                                        <div class="menu-item-footer">
+
                                             
+                                            <p class="menu-item-description">
+                                                <?php if ($item->description): ?>
+                                                    <?php echo nl2br(esc_html($item->description)); ?>
+                                                <?php endif; ?>
+                                            </p>
+                                            
+                                            <?php if ($atts['show_order_form']): ?>
+                                                <div class="menu-item-order">
+                                                    <div class="quantity-control">
+                                                        <label for="quantity_<?php echo esc_attr($item->id); ?>">
+                                                            <?php _e('Anzahl:', 'daily-menu-manager'); ?>
+                                                        </label>
+                                                        <button type="button" class="quantity-btn minus">-</button>
+                                                        <input type="number" 
+                                                            class="quantity-input"
+                                                            name="items[<?php echo esc_attr($item->id); ?>][quantity]" 
+                                                            id="quantity_<?php echo esc_attr($item->id); ?>"
+                                                            min="0" 
+                                                            value="0"
+                                                            data-price="<?php echo esc_attr($item->price); ?>">
+                                                        <button type="button" class="quantity-btn plus">+</button>
+                                                    </div>
+                                                        
+                                                   
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
                                         <div class="item-notes">
                                             <label for="notes_<?php echo esc_attr($item->id); ?>">
                                                 <?php _e('Anmerkungen:', 'daily-menu-manager'); ?>
@@ -168,49 +174,42 @@ class ShortcodeController {
                                                 placeholder="<?php _e('z.B. ohne Zwiebeln', 'daily-menu-manager'); ?>">
                                         </div>
                                     </div>
-                                <?php endif; ?>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <!-- Rechte Spalte: Bestellinfos -->
+                    <div class="order-info-column">
+                        <div class="order-summary">
+                            <h3><?php _e('Bestellübersicht', 'daily-menu-manager'); ?></h3>
+                            <div class="order-total">
+                                <?php _e('Gesamtbetrag:', 'daily-menu-manager'); ?> 
+                                <span id="total-amount">0,00&nbsp;€</span>
                             </div>
                         </div>
-                    <?php endforeach; ?>
-                </div>
-            <?php endforeach; ?>
 
-            <?php if ($atts['show_order_form']): ?>
-                <div class="order-summary">
-                    <h3><?php _e('Bestellübersicht', 'daily-menu-manager'); ?></h3>
-                    <div class="order-total">
-                        <?php _e('Gesamtbetrag:', 'daily-menu-manager'); ?> 
-                        <span id="total-amount">0,00 €</span>
+                        <div class="customer-info">
+                            <div class="form-field">
+                                <label for="customer_name">
+                                    <?php _e('Name', 'daily-menu-manager'); ?>*
+                                </label>
+                                <input type="text" name="customer_name" id="customer_name" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="general_notes">
+                                    <?php _e('Anmerkungen zur Bestellung', 'daily-menu-manager'); ?>
+                                </label>
+                                <textarea name="general_notes" id="general_notes"></textarea>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="submit-order">
+                            <?php _e('Bestellung aufgeben', 'daily-menu-manager'); ?>
+                        </button>
                     </div>
                 </div>
-
-                <div class="customer-info">
-                    <h3><?php _e('Ihre Informationen', 'daily-menu-manager'); ?></h3>
-                    <div class="form-field">
-                        <label for="customer_name">
-                            <?php _e('Name', 'daily-menu-manager'); ?>*
-                        </label>
-                        <input type="text" name="customer_name" id="customer_name" required>
-                    </div>
-                    <div class="form-field">
-                        <label for="general_notes">
-                            <?php _e('Allgemeine Anmerkungen zur Bestellung', 'daily-menu-manager'); ?>
-                        </label>
-                        <textarea name="general_notes" id="general_notes"></textarea>
-                    </div>
-                </div>
-
-                <button type="submit" class="submit-order">
-                    <?php _e('Bestellung aufgeben', 'daily-menu-manager'); ?>
-                </button>
             </form>
-
-            <div id="order-confirmation" class="order-confirmation" style="display: none;">
-                <h3><?php _e('Bestellung erfolgreich aufgegeben!', 'daily-menu-manager'); ?></h3>
-                <p><?php _e('Ihre Bestellnummer:', 'daily-menu-manager'); ?> <strong id="order-number"></strong></p>
-                <p><?php _e('Bitte nennen Sie diese Nummer bei der Abholung.', 'daily-menu-manager'); ?></p>
-                <div class="confirmation-details"></div>
-            </div>
             <?php endif; ?>
         </div>
         <?php
@@ -251,4 +250,15 @@ class ShortcodeController {
         
         return isset($types[$type]) ? $types[$type] : ucfirst($type);
     }
+    private static function getTypeLabelPlural($type) {
+        $types = [
+            'appetizer' => __('Vorspeisen', 'daily-menu-manager'),
+            'main_course' => __('Hauptgänge', 'daily-menu-manager'),
+            'dessert' => __('Nachspeisen', 'daily-menu-manager')
+        ];
+        
+        return isset($types[$type]) ? $types[$type] : ucfirst($type);
+    }
+
+
 }
