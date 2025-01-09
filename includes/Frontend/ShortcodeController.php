@@ -29,11 +29,29 @@ class ShortcodeController {
             DMM_VERSION
         );
     
-        // JavaScript laden
+        // SweetAlert2 CSS
+        wp_enqueue_style(
+            'sweetalert2',
+            'https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.10.5/sweetalert2.min.css',
+            [],
+            '11.10.5'
+        );
+    
+        // SweetAlert2 JS
+        wp_register_script(
+            'sweetalert2',
+            'https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.10.5/sweetalert2.all.min.js',
+            [],
+            '11.10.5',
+            true
+        );
+        wp_enqueue_script('sweetalert2');
+    
+        // Frontend JavaScript laden
         wp_enqueue_script(
             'daily-menu-frontend',
             plugins_url('assets/js/frontend.js', dirname(__DIR__)),
-            ['jquery'],
+            ['jquery', 'sweetalert2'],  // sweetalert2 als Abhängigkeit hinzugefügt
             DMM_VERSION,
             true
         );
