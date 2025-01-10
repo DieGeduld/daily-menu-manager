@@ -21,6 +21,15 @@
     align-items: center;
 }
 
+table {
+    border-collapse: collapse;
+}  
+
+.order-total {
+    border-bottom: 2px solid black;
+}
+
+
 .menu-item-title {
     flex-grow: 1;
     font-weight: bold;
