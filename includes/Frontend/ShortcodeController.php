@@ -80,7 +80,7 @@ class ShortcodeController {
         $atts = shortcode_atts([
             'date' => current_time('Y-m-d'),
             'show_order_form' => true,
-            'title' => __('Heutiges Menü', 'daily-menu-manager')
+            'title' => __('Heutiges Tagesmenü', 'daily-menu-manager')
         ], $atts, 'daily_menu');
 
         // Hole das Menü
