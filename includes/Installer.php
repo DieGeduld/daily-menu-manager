@@ -1,3 +1,4 @@
+```php
 <?php
 namespace DailyMenuManager;
 
@@ -176,7 +177,7 @@ class Installer {
             wp_mkdir_p($plugin_upload_dir);
             
             // Erstelle .htaccess zum Schutz des Verzeichnisses
-            $htaccess_content = "Order Deny,Allow\\nDeny from all\\n";
+            $htaccess_content = "Order Deny,Allow\\\nDeny from all\\\n";
             file_put_contents($plugin_upload_dir . '/.htaccess', $htaccess_content);
             
             // Erstelle index.php für zusätzliche Sicherheit
@@ -317,3 +318,4 @@ class Installer {
         return false;
     }
 }
+```

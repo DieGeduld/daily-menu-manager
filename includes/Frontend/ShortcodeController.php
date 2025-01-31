@@ -7,6 +7,7 @@ class ShortcodeController {
     private static $instance = null;
     
     public static function init() {
+                                            <span class="menu-item-availability"><?php echo __('Verfügbar:', 'daily-menu-manager') . ' ' . esc_html($item->availability); ?></span>
         if (self::$instance === null) {
             self::$instance = new self();
         }

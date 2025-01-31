@@ -137,6 +137,15 @@ jQuery(document).ready(function($) {
                             location.reload();
                         // }
                     });
+
+                    // Update availability counts after successful order
+                    response.data.items.forEach(function(item) {
+                        const menuItem = $('.menu-item[data-item-id="' + item.id + '"]');
+                        const currentAvailability = parseInt(menuItem.data('availability')) || 0;
+                        const newAvailability = currentAvailability - item.quantity;
+                        menuItem.data('availability', newAvailability);
+                        menuItem.find('.menu-item-availability').text('Verfügbar: ' + newAvailability);
+                    });
                 } else {
                     Swal.fire({
                         title: dailyMenuAjax.messages.orderError,

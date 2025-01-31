@@ -67,6 +67,11 @@
                         <label><?php _e('Verfügbarkeit', 'daily-menu-manager'); ?></label>
                         <input type="number" name="menu_items[new-{id}][availability]" min="0" value="0">
                     </div>
+                    
+                    <div class="menu-item-field">
+                        <label><?php _e('Verfügbarkeit', 'daily-menu-manager'); ?></label>
+                        <input type="number" name="menu_items[new-{id}][availability]" min="0" value="0">
+                    </div>
                 </div>
             </div>
         </script>
