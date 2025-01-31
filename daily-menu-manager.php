@@ -67,7 +67,6 @@ register_activation_hook(__FILE__, function() {
     // Systemanforderungen prüfen
     $requirements = Installer::checkSystemRequirements();
     if (is_array($requirements)) {
-        // Aktivierung abbrechen wenn Anforderungen nicht erfüllt sind
         deactivate_plugins(plugin_basename(__FILE__));
         wp_die(
             implode('<br>', $requirements),
@@ -83,10 +82,9 @@ register_activation_hook(__FILE__, function() {
 /**
  * Plugin Deaktivierung
  */
-function daily_menu_manager_deactivate() {
+register_deactivation_hook(__FILE__, function() {
     Installer::deactivate();
-}
-register_deactivation_hook(__FILE__, 'daily_menu_manager_deactivate');
+});
 
 /**
  * Plugin Deinstallation
@@ -94,8 +92,7 @@ register_deactivation_hook(__FILE__, 'daily_menu_manager_deactivate');
 function daily_menu_manager_uninstall() {
     Installer::uninstall();
 }
-register_uninstall_hook(__FILE__, 'daily_menu_manager_uninstall');
-
+register_uninstall_hook(__FILE__, __NAMESPACE__ . '\daily_menu_manager_uninstall');
 
 /**
  * Initialisierung nach der Plugin-Aktivierung
