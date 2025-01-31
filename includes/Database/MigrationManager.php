@@ -113,7 +113,8 @@ class MigrationManager
     private function getMigrationClassName($file)
     {
         $baseName = basename($file, '.php');
-        $className = str_replace('.', '_', $baseName);
+        $className = preg_replace('/^\d+_\d+_\d+_/', '', $baseName);
+        $className = str_replace('_', '', ucwords($className, '_'));
         return 'DailyMenuManager\\Database\\migrations\\' . $className;
     }
 

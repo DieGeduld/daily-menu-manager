@@ -6,11 +6,11 @@ use DailyMenuManager\Database\Migration;
 use wpdb;
 
 /**
- * Class 1_1_0_add_general_notes
+ * Class AddGeneralNotes
  *
  * This migration adds the general_notes column to the menu_orders table.
  */
-class 1_1_0_add_general_notes extends Migration
+class AddGeneralNotes extends Migration
 {
     /**
      * Apply the migration.

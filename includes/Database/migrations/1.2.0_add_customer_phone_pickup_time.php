@@ -6,11 +6,11 @@ use DailyMenuManager\Database\Migration;
 use wpdb;
 
 /**
- * Class 1_2_0_add_customer_phone_pickup_time
+ * Class AddCustomerPhonePickupTime
  *
  * This migration adds the customer_phone and pickup_time columns to the menu_orders table.
  */
-class 1_2_0_add_customer_phone_pickup_time extends Migration
+class AddCustomerPhonePickupTime extends Migration
 {
     /**
      * Apply the migration.
