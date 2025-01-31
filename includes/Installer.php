@@ -7,7 +7,8 @@ class Installer {
      * Wird bei der Plugin-Aktivierung aufgerufen
      */
     public static function activate() {
-        self::createTables();
+        $migrationManager = new \DailyMenuManager\Database\MigrationManager($wpdb);
+        $migrationManager->runMigrations();
         self::addCapabilities();
         self::createDefaultOptions();
         self::createUploadDirectory();
@@ -30,77 +31,13 @@ class Installer {
      * Wird nur aufgerufen, wenn das Plugin gelöscht wird
      */
     public static function uninstall() {
-        self::dropTables();
+        $migrationManager = new \DailyMenuManager\Database\MigrationManager($wpdb);
+        $migrationManager->rollbackMigrations();
         self::removeOptions();
         self::removeCapabilities();
         self::removeUploadDirectory();
     }
 
-    /**
-     * Erstellt die erforderlichen Datenbanktabellen
-     */
-    private static function createTables() {
-        global $wpdb;
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        
-        $charset_collate = $wpdb->get_charset_collate();
-
-        // Tagesmenü-Tabelle
-        $sql_daily_menus = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}daily_menus (
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            menu_date date NOT NULL,
-            created_at datetime DEFAULT CURRENT_TIMESTAMP,
-            updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            PRIMARY KEY  (id),
-            UNIQUE KEY menu_date (menu_date)
-        ) $charset_collate;";
-
-        // Menüeinträge-Tabelle
-        $sql_menu_items = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}menu_items (
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            menu_id mediumint(9) NOT NULL,
-            item_type varchar(50) NOT NULL,
-            title varchar(255) NOT NULL,
-            description text,
-            price decimal(10,2) NOT NULL,
-            sort_order int NOT NULL,
-            allergens text,
-            created_at datetime DEFAULT CURRENT_TIMESTAMP,
-            updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            PRIMARY KEY  (id),
-            KEY menu_id (menu_id)
-        ) $charset_collate;";
-
-        // Bestellungen-Tabelle
-        $sql_menu_orders = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}menu_orders (
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            menu_id mediumint(9) NOT NULL,
-            menu_item_id mediumint(9) NOT NULL,
-            order_number varchar(50) NOT NULL,
-            customer_name varchar(100) NOT NULL,
-            customer_phone varchar(50) NOT NULL,      /* Neue Spalte für Telefonnummer */
-            pickup_time time NOT NULL,                /* Neue Spalte für Abholzeit */
-            customer_email varchar(100),
-            quantity int NOT NULL DEFAULT 1,
-            notes text,
-            general_notes text,
-            status varchar(50) DEFAULT 'pending',
-            order_date datetime NOT NULL,
-            created_at datetime DEFAULT CURRENT_TIMESTAMP,
-            updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            PRIMARY KEY  (id),
-            KEY order_number (order_number),
-            KEY status (status)
-        ) $charset_collate;";
-
-        // Führe die SQL-Befehle aus
-        dbDelta($sql_daily_menus);
-        dbDelta($sql_menu_items);
-        dbDelta($sql_menu_orders);
-
-        // Speichere die aktuelle Datenbankversion
-        update_option('daily_menu_manager_db_version', DMM_VERSION);
-    }
 
     /**
      * Erstellt die Standard-Plugin-Optionen
@@ -175,7 +112,7 @@ class Installer {
             wp_mkdir_p($plugin_upload_dir);
             
             // Erstelle .htaccess zum Schutz des Verzeichnisses
-            $htaccess_content = "Order Deny,Allow\nDeny from all\n";
+            $htaccess_content = "Order Deny,Allow\\nDeny from all\\n";
             file_put_contents($plugin_upload_dir . '/.htaccess', $htaccess_content);
             
             // Erstelle index.php für zusätzliche Sicherheit
@@ -309,7 +246,8 @@ class Installer {
         $installed_version = get_option('daily_menu_manager_db_version');
         
         if ($installed_version !== DMM_VERSION) {
-            self::createTables();
+            $migrationManager = new \DailyMenuManager\Database\MigrationManager($wpdb);
+            $migrationManager->runMigrations();
             return true;
         }
         

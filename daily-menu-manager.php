@@ -60,10 +60,11 @@ spl_autoload_register(function ($class) {
     }
 });
 
-/**
- * Plugin Aktivierung
- */
+use DailyMenuManager\Database\MigrationManager;
+
+// Plugin Aktivierung
 register_activation_hook(__FILE__, function() {
+    global $wpdb;
     // Systemanforderungen prüfen
     $requirements = Installer::checkSystemRequirements();
     if (is_array($requirements)) {
@@ -78,6 +79,10 @@ register_activation_hook(__FILE__, function() {
     
     // Plugin installieren
     Installer::activate();
+
+    // Migrations ausführen
+    $migrationManager = new MigrationManager($wpdb);
+    $migrationManager->runMigrations();
 });
 
 /**
@@ -108,8 +113,18 @@ add_action('plugins_loaded', function() {
         dirname(DMM_PLUGIN_BASENAME) . '/languages/'
     );
 
+    global $wpdb;
     // Plugin initialisieren
     Plugin::getInstance();
+
+    // Überprüfe auf ausstehende Migrationen
+    $migrationManager = new MigrationManager($wpdb);
+    $migrationManager->runMigrations();
+
+    // Plugin-Version aktualisieren
+    if (get_option('daily_menu_manager_version') !== DMM_VERSION) {
+        update_option('daily_menu_manager_version', DMM_VERSION);
+    }
 
     // Aktivierungs-Redirect
     if (get_transient('dmm_activation_redirect')) {
