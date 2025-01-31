@@ -92,7 +92,6 @@ register_deactivation_hook(__FILE__, function() {
 function daily_menu_manager_uninstall() {
     Installer::uninstall();
 }
-register_uninstall_hook(__FILE__, __NAMESPACE__ . '\daily_menu_manager_uninstall');
 
 /**
  * Initialisierung nach der Plugin-Aktivierung
