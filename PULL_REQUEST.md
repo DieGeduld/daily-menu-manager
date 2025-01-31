@@ -1,21 +1,21 @@
-# Pull Request: Implementierung des Datenbank-Migrations-Systems
+# Pull Request: Implementation of the Database Migration System
 
-## Beschreibung
-Dieses Pull Request führt ein robustes Datenbank-Migrations-System für das Daily Menu Manager Plugin ein.
+## Description
+This pull request introduces a robust database migration system for the Daily Menu Manager plugin.
 
-## Änderungen
-- Implementierung einer MigrationManager Klasse
-- Automatische Ausführung von Migrationen bei Plugin-Aktivierung
-- Versionierte Datenbank-Updates
-- Rollback-Funktionalität
-- Migrations-Tracking in separater Tabelle
+## Changes
+- Implementation of a `MigrationManager` class
+- Automatic execution of migrations upon plugin activation
+- Versioned database updates
+- Rollback functionality
+- Migration tracking in a separate table
 
 ## Tests
-- [x] Migrations-System wurde lokal getestet
-- [x] Upgrade-Pfad wurde getestet
-- [x] Rollback-Funktionalität wurde getestet
+- [x] Migration system tested locally
+- [x] Upgrade path tested
+- [x] Rollback functionality tested
 
-## Checkliste
-- [x] Code folgt den WordPress Coding Standards
-- [x] Dokumentation wurde aktualisiert
-- [x] Änderungen wurden getestet
+## Checklist
+- [x] Code adheres to WordPress Coding Standards
+- [x] Documentation updated
+- [x] Changes tested
