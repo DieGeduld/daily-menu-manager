@@ -178,12 +178,10 @@ class Plugin {
      */
     private function updateTo11() {
         global $wpdb;
+        $migrationManager = new \DailyMenuManager\Database\MigrationManager($wpdb);
+        $migrationManager->runMigrations(['20240101000000_create_initial_tables']);
         
-        // Füge general_notes Spalte hinzu
-        $wpdb->query("ALTER TABLE {$wpdb->prefix}menu_orders 
-                     ADD COLUMN IF NOT EXISTS general_notes text AFTER notes");
-        
-        self::log('Updated database schema to version 1.1');
+        self::log('Ran migrations for version 1.1');
     }
 
     /**
@@ -191,13 +189,10 @@ class Plugin {
      */
     private function updateTo12() {
         global $wpdb;
+        $migrationManager = new \DailyMenuManager\Database\MigrationManager($wpdb);
+        $migrationManager->runMigrations(['20240102000000_add_customer_phone_pickup_time']);
         
-        // Füge neue Spalten für Telefon und Abholzeit hinzu
-        $wpdb->query("ALTER TABLE {$wpdb->prefix}menu_orders 
-                     ADD COLUMN IF NOT EXISTS customer_phone varchar(50) AFTER customer_name,
-                     ADD COLUMN IF NOT EXISTS pickup_time time AFTER general_notes");
-        
-        self::log('Updated database schema to version 1.2 - Added customer_phone and pickup_time columns');
+        self::log('Ran migrations for version 1.2');
     }
 
     /**
