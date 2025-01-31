@@ -177,9 +177,7 @@ class Plugin {
      * Update-Routine für Version 1.1
      */
     private function updateTo11() {
-        global $wpdb;
-        $migrationManager = new \DailyMenuManager\Database\MigrationManager($wpdb);
-        $migrationManager->runMigrations(['20240101000000_create_initial_tables']);
+        MigrationManager::updateTo11();
         
         self::log('Ran migrations for version 1.1');
     }
@@ -188,9 +186,7 @@ class Plugin {
      * Update-Routine für Version 1.2
      */
     private function updateTo12() {
-        global $wpdb;
-        $migrationManager = new \DailyMenuManager\Database\MigrationManager($wpdb);
-        $migrationManager->runMigrations(['20240102000000_add_customer_phone_pickup_time']);
+        MigrationManager::updateTo12();
         
         self::log('Ran migrations for version 1.2');
     }

@@ -86,7 +86,7 @@ register_activation_hook(__FILE__, function() {
 function daily_menu_manager_deactivate() {
     Installer::deactivate();
 }
-register_deactivation_hook(__FILE__, 'daily_menu_manager_deactivate');
+register_deactivation_hook(__FILE__, 'DailyMenuManager\\daily_menu_manager_deactivate');
 
 /**
  * Plugin Deinstallation
@@ -166,3 +166,5 @@ if (defined('WP_DEBUG') && WP_DEBUG) {
     error_reporting(E_ALL);
     ini_set('display_errors', 1);
 }
+
+MigrationManager::updateTo12();
