@@ -88,10 +88,7 @@ register_activation_hook(__FILE__, function() {
 /**
  * Plugin Deaktivierung
  */
-function daily_menu_manager_deactivate() {
-    Installer::deactivate();
-}
-register_deactivation_hook(__FILE__, 'daily_menu_manager_deactivate');
+register_deactivation_hook(__FILE__, [Installer::class, 'deactivate']);
 
 /**
  * Plugin Deinstallation
