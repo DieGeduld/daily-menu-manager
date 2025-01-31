@@ -21,7 +21,7 @@ class Order {
         global $wpdb;
         
         try {
-            // Generiere fortlaufende Bestellnummer (0000-9999)
+            // Generiere fortlaufende Bestellnummer (000-999)
             $last_order = $wpdb->get_var(
                 "SELECT MAX(CAST(SUBSTRING_INDEX(order_number, '-', -1) AS UNSIGNED)) 
                 FROM {$wpdb->prefix}menu_orders"
@@ -57,12 +57,14 @@ class Order {
                             'menu_item_id' => $item_id,
                             'order_number' => $order_number,
                             'customer_name' => sanitize_text_field($data['customer_name']),
+                            'customer_phone' => sanitize_text_field($data['customer_phone']),
+                            'pickup_time' => sanitize_text_field($data['pickup_time']),
                             'quantity' => $quantity,
                             'notes' => sanitize_textarea_field($item_data['notes'] ?? ''),
                             'general_notes' => sanitize_textarea_field($data['general_notes'] ?? ''),
                             'order_date' => current_time('mysql')
                         ],
-                        ['%d', '%d', '%s', '%s', '%d', '%s', '%s', '%s']
+                        ['%d', '%d', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s']
                     );
                     
                     if ($inserted === false) {
@@ -94,7 +96,9 @@ class Order {
                 'order_number' => $order_number,
                 'items' => $order_items,
                 'total_amount' => $total_amount,
-                'customer_name' => $data['customer_name']
+                'customer_name' => $data['customer_name'],
+                'customer_phone' => $data['customer_phone'],
+                'pickup_time' => $data['pickup_time']
             ];
             
         } catch (\Exception $e) {
@@ -131,6 +135,12 @@ class Order {
         if (!empty($filters['customer_name'])) {
             $where_clauses[] = "o.customer_name LIKE %s";
             $where_values[] = '%' . $wpdb->esc_like($filters['customer_name']) . '%';
+        }
+
+        // Telefon Filter
+        if (!empty($filters['customer_phone'])) {
+            $where_clauses[] = "o.customer_phone LIKE %s";
+            $where_values[] = '%' . $wpdb->esc_like($filters['customer_phone']) . '%';
         }
         
         $query = "

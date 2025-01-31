@@ -197,6 +197,36 @@ class ShortcodeController {
                                 <input type="text" name="customer_name" id="customer_name" required>
                             </div>
                             <div class="form-field">
+                                <label for="customer_phone">
+                                    <?php _e('Telefonnummer', 'daily-menu-manager'); ?>
+                                    <?php _e('(für evtl. Rückfragen)', 'daily-menu-manager'); ?>
+                                </label>
+                                <input type="tel" 
+                                    name="customer_phone" 
+                                    id="customer_phone" 
+                                    pattern="[0-9\s\+\-()]+"
+                                    placeholder="<?php _e('z.B. 0650 456789', 'daily-menu-manager'); ?>">
+                            </div>
+                            <div class="form-field">
+                                <label for="pickup_time">
+                                    <?php _e('Abholzeit', 'daily-menu-manager'); ?>*
+                                </label>
+                                <select name="pickup_time" id="pickup_time" required>
+                                    <option value=""><?php _e('Bitte wählen', 'daily-menu-manager'); ?></option>
+                                    <?php
+                                    $start = strtotime('11:00');
+                                    $end = strtotime('16:00');
+                                    for ($time = $start; $time <= $end; $time += 1800) { // 1800 seconds = 30 minutes
+                                        printf(
+                                            '<option value="%s">%s</option>',
+                                            date('H:i', $time),
+                                            date('H:i', $time)
+                                        );
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="form-field">
                                 <label for="general_notes">
                                     <?php _e('Anmerkungen zur Bestellung', 'daily-menu-manager'); ?>
                                 </label>

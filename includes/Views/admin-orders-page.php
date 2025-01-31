@@ -46,6 +46,13 @@
                        name="filter_name" 
                        value="<?php echo esc_attr($filters['customer_name']); ?>" 
                        placeholder="Kundenname">
+
+                <label for="filter_phone"><?php _e('Telefon:', 'daily-menu-manager'); ?></label>
+                <input type="text" 
+                       id="filter_phone" 
+                       name="filter_phone" 
+                       value="<?php echo esc_attr($filters['customer_phone']); ?>" 
+                       placeholder="Telefonnummer">
                 
                 <input type="submit" class="button" value="<?php _e('Filtern', 'daily-menu-manager'); ?>">
                 <a href="?page=<?php echo esc_attr($_REQUEST['page']); ?>" class="button">
@@ -67,6 +74,8 @@
                     <th><?php _e('Bestellnummer', 'daily-menu-manager'); ?></th>
                     <th><?php _e('Datum/Uhrzeit', 'daily-menu-manager'); ?></th>
                     <th><?php _e('Name', 'daily-menu-manager'); ?></th>
+                    <th><?php _e('Telefon', 'daily-menu-manager'); ?></th>
+                    <th><?php _e('Abholzeit', 'daily-menu-manager'); ?></th>
                     <th><?php _e('Bestellte Gerichte', 'daily-menu-manager'); ?></th>
                     <th><?php _e('Gesamtbetrag', 'daily-menu-manager'); ?></th>
                     <th><?php _e('Aktionen', 'daily-menu-manager'); ?></th>
@@ -82,7 +91,7 @@
                     if ($current_order !== $order->order_number): 
                         if ($current_order !== ''): // Vorherige Bestellung abschließen ?>
                             <tr class="order-total">
-                                <td colspan="4"><strong><?php _e('Gesamtbetrag:', 'daily-menu-manager'); ?></strong></td>
+                                <td colspan="6"><strong><?php _e('Gesamtbetrag:', 'daily-menu-manager'); ?></strong></td>
                                 <td colspan="2"><strong><?php echo number_format($order_total, 2, ',', '.'); ?> €</strong></td>
                             </tr>
                         <?php endif;
@@ -95,6 +104,8 @@
                             <td><strong><?php echo esc_html($order->order_number); ?></strong></td>
                             <td><?php echo esc_html(date_i18n('d.m.Y H:i', strtotime($order->order_date))); ?></td>
                             <td><?php echo esc_html($order->customer_name); ?></td>
+                            <td><?php echo esc_html($order->customer_phone); ?></td>
+                            <td><?php echo date('H:i', strtotime($order->pickup_time)); ?></td>
                             <td colspan="3">
                                 <?php if ($order->general_notes): ?>
                                     <div class="general-notes">
@@ -111,6 +122,8 @@
                     ?>
                     
                     <tr class="order-item">
+                        <td></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -138,7 +151,7 @@
                 // Letzte Bestellung abschließen
                 if ($current_order !== ''): ?>
                     <tr class="order-total">
-                        <td colspan="4"><strong><?php _e('Gesamtbetrag:', 'daily-menu-manager'); ?></strong></td>
+                        <td colspan="6"><strong><?php _e('Gesamtbetrag:', 'daily-menu-manager'); ?></strong></td>
                         <td colspan="2"><strong><?php echo number_format($order_total, 2, ',', '.'); ?> €</strong></td>
                     </tr>
                 <?php endif; ?>

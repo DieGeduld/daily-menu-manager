@@ -78,6 +78,8 @@ class Installer {
             menu_item_id mediumint(9) NOT NULL,
             order_number varchar(50) NOT NULL,
             customer_name varchar(100) NOT NULL,
+            customer_phone varchar(50) NOT NULL,      /* Neue Spalte für Telefonnummer */
+            pickup_time time NOT NULL,                /* Neue Spalte für Abholzeit */
             customer_email varchar(100),
             quantity int NOT NULL DEFAULT 1,
             notes text,

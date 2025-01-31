@@ -89,20 +89,21 @@ class OrderController {
         $filters = [
             'date' => isset($_GET['filter_date']) ? sanitize_text_field($_GET['filter_date']) : current_time('Y-m-d'),
             'order_number' => isset($_GET['filter_order']) ? sanitize_text_field($_GET['filter_order']) : '',
-            'customer_name' => isset($_GET['filter_name']) ? sanitize_text_field($_GET['filter_name']) : ''
+            'customer_name' => isset($_GET['filter_name']) ? sanitize_text_field($_GET['filter_name']) : '',
+            'customer_phone' => isset($_GET['filter_phone']) ? sanitize_text_field($_GET['filter_phone']) : ''
         ];
 
         // Hole Bestellungen mit Filtern
         $orders = $order_model->getOrders($filters);
         
-        // Hole die Statistiken als Array
+        // Statistiken initialisieren
         $stats = [
             'total_orders' => 0,
             'total_revenue' => 0,
             'total_items' => 0
         ];
         
-        // Berechne die Statistiken aus den Bestellungen
+        // Berechne die Statistiken
         if (!empty($orders)) {
             $counted_orders = [];
             $total_revenue = 0;
@@ -192,9 +193,37 @@ class OrderController {
             ]);
         }
 
-        if (empty($_POST['customer_name'])) {
+        // Validiere Pflichtfelder
+        $required_fields = [
+            'customer_name' => __('Bitte geben Sie Ihren Namen an.', 'daily-menu-manager'),
+            'customer_phone' => __('Bitte geben Sie Ihre Telefonnummer an.', 'daily-menu-manager'),
+            'pickup_time' => __('Bitte wählen Sie eine Abholzeit.', 'daily-menu-manager')
+        ];
+
+        foreach ($required_fields as $field => $message) {
+            if (empty($_POST[$field])) {
+                wp_send_json_error([
+                    'message' => $message
+                ]);
+            }
+        }
+
+        // Validiere Abholzeit-Format und Bereich
+        $pickup_time = sanitize_text_field($_POST['pickup_time']);
+        if (!preg_match('/^([01][0-9]|2[0-3]):[0-5][0-9]$/', $pickup_time)) {
             wp_send_json_error([
-                'message' => __('Bitte geben Sie Ihren Namen an.', 'daily-menu-manager')
+                'message' => __('Ungültige Abholzeit.', 'daily-menu-manager')
+            ]);
+        }
+
+        // Prüfe ob die Zeit zwischen 11:00 und 16:00 liegt
+        $time_value = strtotime($pickup_time);
+        $min_time = strtotime('11:00');
+        $max_time = strtotime('16:00');
+        
+        if ($time_value < $min_time || $time_value > $max_time) {
+            wp_send_json_error([
+                'message' => __('Die Abholzeit muss zwischen 11:00 und 16:00 Uhr liegen.', 'daily-menu-manager')
             ]);
         }
 
