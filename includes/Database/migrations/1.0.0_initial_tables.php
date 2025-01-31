@@ -6,11 +6,11 @@ use DailyMenuManager\Database\Migration;
 use wpdb;
 
 /**
- * Class InitialTables
+ * Class V1_0_0_InitialTables
  *
  * This migration sets up the initial database tables for the Daily Menu Manager plugin.
  */
-class InitialTables extends Migration
+class V1_0_0_InitialTables extends Migration
 {
     /**
      * Apply the migration.
