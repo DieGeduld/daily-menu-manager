@@ -150,8 +150,9 @@ class Plugin {
         $installed_version = get_option('daily_menu_manager_version');
         
         if ($installed_version !== self::VERSION) {
-            // Führe Update-Routinen aus
-            $this->runUpdates($installed_version);
+            global $wpdb;
+            $migrationManager = new \DailyMenuManager\Database\MigrationManager($wpdb);
+            $migrationManager->runMigrations();
             
             // Aktualisiere die Version in der Datenbank
             update_option('daily_menu_manager_version', self::VERSION);

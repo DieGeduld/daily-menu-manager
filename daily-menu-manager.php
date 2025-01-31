@@ -58,6 +58,12 @@ spl_autoload_register(function ($class) {
     if (file_exists($path . $file)) {
         require_once $path . $file;
     }
+    // Migrations ausführen
+    $migrationManager = new MigrationManager($wpdb);
+    $migrationManager->runMigrations();
+
+    // Plugin-Version aktualisieren
+    update_option('daily_menu_manager_version', DMM_VERSION);
 });
 
 use DailyMenuManager\Database\MigrationManager;
@@ -65,8 +71,8 @@ use DailyMenuManager\Database\MigrationManager;
 // Plugin Aktivierung
 register_activation_hook(__FILE__, function() {
     global $wpdb;
+    global $wpdb;
     // Systemanforderungen prüfen
-    $requirements = Installer::checkSystemRequirements();
     if (is_array($requirements)) {
         // Aktivierung abbrechen wenn Anforderungen nicht erfüllt sind
         deactivate_plugins(plugin_basename(__FILE__));
