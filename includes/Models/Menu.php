@@ -97,9 +97,10 @@ class Menu {
                             'title' => sanitize_text_field($item_data['title']),
                             'description' => sanitize_textarea_field($item_data['description']),
                             'price' => floatval($item_data['price']),
-                            'sort_order' => $sort_order++
+                            'sort_order' => $sort_order++,
+                            'availability' => intval($item_data['availability'])
                         ],
-                        ['%d', '%s', '%s', '%s', '%f', '%d']
+                        ['%d', '%s', '%s', '%s', '%f', '%d', '%d']
                     );
                     
                     if ($inserted === false) {

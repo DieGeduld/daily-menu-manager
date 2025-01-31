@@ -1,4 +1,3 @@
-
 <?php defined('ABSPATH') or die('Direct access not allowed!'); ?>
 
 <div class="wrap">
@@ -62,6 +61,11 @@
                     <div class="menu-item-field">
                         <label><?php _e('Preis', 'daily-menu-manager'); ?> (€)</label>
                         <input type="number" step="0.01" name="menu_items[new-{id}][price]" required>
+                    </div>
+                    
+                    <div class="menu-item-field">
+                        <label><?php _e('Verfügbarkeit', 'daily-menu-manager'); ?></label>
+                        <input type="number" name="menu_items[new-{id}][availability]" min="0" value="0">
                     </div>
                 </div>
             </div>

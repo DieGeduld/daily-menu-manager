@@ -5,6 +5,7 @@ jQuery(document).ready(function($) {
             e.preventDefault();
             return false;
         }
+        updateAvailability($(this));
     });
 
     function updateTotal() {
@@ -15,6 +16,14 @@ jQuery(document).ready(function($) {
             total += quantity * price;
         });
         $('#total-amount').text(total.toFixed(2) + ' €');
+    }
+
+    function updateAvailability(input) {
+        const item = input.closest('.menu-item');
+        const availability = parseInt(item.data('availability')) || 0;
+        const quantity = parseInt(input.val()) || 0;
+        const remaining = availability - quantity;
+        item.find('.menu-item-availability').text('Verfügbar: ' + remaining);
     }
 
     // Handle quantity buttons
@@ -30,6 +39,7 @@ jQuery(document).ready(function($) {
         
         input.val(value).trigger('change');
         updateQuantityVisibility(input);
+        updateAvailability(input);
     });
 
     function updateQuantityVisibility(input) {
@@ -56,6 +66,11 @@ jQuery(document).ready(function($) {
 
     // Initial state
     $('.item-notes').hide();
+    $('.menu-item').each(function() {
+        const item = $(this);
+        const availability = parseInt(item.data('availability')) || 0;
+        item.find('.menu-item-availability').text('Verfügbar: ' + availability);
+    });
     updateTotal();
 
     // Form submission handling

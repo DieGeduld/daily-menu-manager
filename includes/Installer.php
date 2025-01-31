@@ -65,6 +65,7 @@ class Installer {
             price decimal(10,2) NOT NULL,
             sort_order int NOT NULL,
             allergens text,
+            availability int NOT NULL DEFAULT 0,
             created_at datetime DEFAULT CURRENT_TIMESTAMP,
             updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             PRIMARY KEY  (id),
@@ -175,7 +176,7 @@ class Installer {
             wp_mkdir_p($plugin_upload_dir);
             
             // Erstelle .htaccess zum Schutz des Verzeichnisses
-            $htaccess_content = "Order Deny,Allow\nDeny from all\n";
+            $htaccess_content = "Order Deny,Allow\\nDeny from all\\n";
             file_put_contents($plugin_upload_dir . '/.htaccess', $htaccess_content);
             
             // Erstelle index.php für zusätzliche Sicherheit

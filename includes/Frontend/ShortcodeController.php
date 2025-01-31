@@ -132,6 +132,7 @@ class ShortcodeController {
                                         <div class="menu-item-header">
                                             <span class="menu-item-title"><?php echo esc_html($item->title); ?></span>
                                             <span class="menu-item-price"><?php echo number_format($item->price, 2); ?> €</span>
+                                            <span class="menu-item-availability"><?php echo __('Verfügbar:', 'daily-menu-manager') . ' ' . esc_html($item->availability); ?></span>
                                         </div>
                                         
                                         <div class="menu-item-footer">
