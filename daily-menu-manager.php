@@ -46,7 +46,7 @@ if (!defined('DMM_PLUGIN_BASENAME')) {
  */
 spl_autoload_register(function ($class) {
     // Nur Klassen in unserem Namespace behandeln
-    if (strpos($class, 'DailyMenuManager\\') !== 0) {
+    if (strpos($class, needle: 'DailyMenuManager\\') !== 0) {
         return;
     }
 

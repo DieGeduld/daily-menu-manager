@@ -162,42 +162,8 @@ class Plugin {
      * Führt Update-Routinen aus
      */
     private function runUpdates($old_version) {
-        // Update auf Version 1.1
-        if (version_compare($old_version, '1.1', '<')) {
-            $this->updateTo11();
-        }
-        
-        // Update auf Version 1.2
-        if (version_compare($old_version, '1.2', '<')) {
-            $this->updateTo12();
-        }
-    }
-
-    /**
-     * Update-Routine für Version 1.1
-     */
-    private function updateTo11() {
-        global $wpdb;
-        
-        // Füge general_notes Spalte hinzu
-        $wpdb->query("ALTER TABLE {$wpdb->prefix}menu_orders 
-                     ADD COLUMN IF NOT EXISTS general_notes text AFTER notes");
-        
-        self::log('Updated database schema to version 1.1');
-    }
-
-    /**
-     * Update-Routine für Version 1.2
-     */
-    private function updateTo12() {
-        global $wpdb;
-        
-        // Füge neue Spalten für Telefon und Abholzeit hinzu
-        $wpdb->query("ALTER TABLE {$wpdb->prefix}menu_orders 
-                     ADD COLUMN IF NOT EXISTS customer_phone varchar(50) AFTER customer_name,
-                     ADD COLUMN IF NOT EXISTS pickup_time time AFTER general_notes");
-        
-        self::log('Updated database schema to version 1.2 - Added customer_phone and pickup_time columns');
+        $migrationManager = new \DailyMenuManager\Database\MigrationManager();
+        $migrationManager->runMigrations();
     }
 
     /**
