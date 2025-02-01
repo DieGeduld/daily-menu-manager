@@ -326,6 +326,22 @@ class MenuController {
                         <?php _e('Enter the price in euros (e.g., 12.50)', 'daily-menu-manager'); ?>
                     </span>
                 </div>
+
+                <!-- Quantity Field -->
+                <div class="menu-item-field">
+                    <label for="quantity_<?php echo esc_attr($item->id); ?>">
+                        <?php _e('Quantity', 'daily-menu-manager'); ?>
+                    </label>
+                    <input type="number" 
+                           id="quantity_<?php echo esc_attr($item->id); ?>"
+                           name="menu_items[<?php echo esc_attr($item->id); ?>][quantity]"
+                           value="<?php echo esc_attr($item->quantity); ?>"
+                           min="0"
+                           class="menu-item-quantity">
+                    <span class="field-description">
+                        <?php _e('Enter the available quantity of this item', 'daily-menu-manager'); ?>
+                    </span>
+                </div>
     
                 <!-- Additional Options Field -->
                 <div class="menu-item-field">
@@ -419,4 +435,4 @@ class MenuController {
         ];
     }
 
-}   
+}

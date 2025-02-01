@@ -38,6 +38,7 @@ class Menu {
                 description text,
                 price decimal(10,2) NOT NULL,
                 sort_order int NOT NULL,
+                quantity int NOT NULL DEFAULT 0,
                 PRIMARY KEY  (id),
                 KEY menu_id (menu_id)
             ) $charset_collate"
@@ -97,9 +98,10 @@ class Menu {
                             'title' => sanitize_text_field($item_data['title']),
                             'description' => sanitize_textarea_field($item_data['description']),
                             'price' => floatval($item_data['price']),
+                            'quantity' => intval($item_data['quantity']),
                             'sort_order' => $sort_order++
                         ],
-                        ['%d', '%s', '%s', '%s', '%f', '%d']
+                        ['%d', '%s', '%s', '%s', '%f', '%d', '%d']
                     );
                     
                     if ($inserted === false) {

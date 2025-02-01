@@ -130,7 +130,14 @@ class ShortcodeController {
                                 <?php foreach ($items as $item): ?>
                                     <div class="menu-item" data-item-id="<?php echo esc_attr($item->id); ?>">
                                         <div class="menu-item-header">
-                                            <span class="menu-item-title"><?php echo esc_html($item->title); ?></span>
+                                            <span class="menu-item-title">
+                                                <?php echo esc_html($item->title); ?>
+                                                <?php if ($item->quantity > 0): ?>
+                                                    (<?php echo esc_html($item->quantity); ?>x)
+                                                <?php else: ?>
+                                                    - <span class="sold-out"><?php _e('Ausverkauft', 'daily-menu-manager'); ?></span>
+                                                <?php endif; ?>
+                                            </span>
                                             <span class="menu-item-price"><?php echo number_format($item->price, 2); ?> €</span>
                                         </div>
                                         
