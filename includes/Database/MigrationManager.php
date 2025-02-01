@@ -71,13 +71,22 @@ class MigrationManager
      */
     public function runMigrations()
     {
+        global $wpdb;
         $migrations = $this->discoverMigrations();
-        foreach ($migrations as $file) {
-            $version = basename($file, '.php');
-            if (version_compare(substr($version, 0, 5), substr($this->currentVersion, 0, 5), '<=')) {
-                $this->executeMigration($file);
-                $this->setCurrentVersion($version);
+        
+        $wpdb->query('START TRANSACTION');
+        try {
+            foreach ($migrations as $file) {
+                $version = basename($file, '.php');
+                if (version_compare(substr($version, 0, 5), substr($this->currentVersion, 0, 5), '<=')) {
+                    $this->executeMigration($file);
+                    $this->setCurrentVersion($version);
+                }
             }
+            $wpdb->query('COMMIT');
+        } catch (Exception $e) {
+            $wpdb->query('ROLLBACK');
+            throw $e;
         }
     }
 
@@ -126,5 +135,17 @@ class MigrationManager
     private function includeMigrationFile($file)
     {
         require_once $file;
+    }
+
+    private function log($message) {
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log("DailyMenuManager Migration: $message");
+        }
+    }
+
+    private function validateMigrationVersion($version) {
+        if (!preg_match('/^\d+\.\d+\.\d+/', $version)) {
+            throw new Exception("Invalid migration version format: $version");
+        }
     }
 }
