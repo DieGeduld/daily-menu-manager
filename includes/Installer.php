@@ -17,6 +17,29 @@ class Installer {
         set_transient('dmm_activation_redirect', true, 30);
     }
 
+    public static function run_updates() {
+        // Get the stored version
+        $installed_version = get_option('daily_menu_manager_version');
+        $plugin_version = DMM_VERSION; // Define this in your main plugin file
+
+        // If versions don't match, run migrations
+        if ($installed_version !== $plugin_version) {
+            $migration_manager = new Database\MigrationManager();
+            
+            try {
+                $migration_manager->runMigrations();
+                // Update the stored version after successful migration
+                update_option('daily_menu_manager_version', $plugin_version);
+            } catch (\Exception $e) {
+                // Log error and maybe show admin notice
+                error_log('Daily Menu Manager migration failed: ' . $e->getMessage());
+                add_action('admin_notices', function() use ($e) {
+                    echo '<div class="error"><p>Daily Menu Manager update failed: ' . esc_html($e->getMessage()) . '</p></div>';
+                });
+            }
+        }
+    }
+
     /**
      * Deaktiviert das Plugin
      * Wird bei der Plugin-Deaktivierung aufgerufen

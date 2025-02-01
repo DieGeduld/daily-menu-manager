@@ -3,11 +3,6 @@ namespace DailyMenuManager;
 
 class Plugin {
     /**
-     * Plugin Version
-     */
-    const VERSION = '1.2';  // Version erhöht für das Update
-
-    /**
      * Plugin Instance
      */
     private static $instance = null;
@@ -54,9 +49,6 @@ class Plugin {
      * Definiert Plugin-Konstanten
      */
     private function defineConstants() {
-        if (!defined('DMM_VERSION')) {
-            define('DMM_VERSION', self::VERSION);
-        }
         if (!defined('DMM_PLUGIN_DIR')) {
             define('DMM_PLUGIN_DIR', plugin_dir_path(dirname(__FILE__)));
         }
@@ -149,13 +141,18 @@ class Plugin {
     public function checkUpdate() {
         $installed_version = get_option('daily_menu_manager_version');
         
-        if ($installed_version !== self::VERSION) {
+        if ($installed_version !== DMM_VERSION) {
             // Führe Update-Routinen aus
             $this->runUpdates($installed_version);
             
             // Aktualisiere die Version in der Datenbank
-            update_option('daily_menu_manager_version', self::VERSION);
+            update_option('daily_menu_manager_version', DMM_VERSION);
         }
+        
+        // Aktualisiere die Datenbank-Version
+        $migrationManager = new \DailyMenuManager\Database\MigrationManager();
+        $migrationManager->setCurrentVersion(DMM_VERSION);  
+
     }
 
     /**

@@ -26,7 +26,7 @@ if (file_exists(__DIR__ . '/vendor/autoload.php')) {
 
 // Plugin Konstanten definieren
 if (!defined('DMM_VERSION')) {
-    define('DMM_VERSION', '1.1');
+    define('DMM_VERSION', '1.2');
 }
 if (!defined('DMM_PLUGIN_DIR')) {
     define('DMM_PLUGIN_DIR', plugin_dir_path(__FILE__));
