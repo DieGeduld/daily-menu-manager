@@ -6,20 +6,26 @@ use DailyMenuManager\Database\Migration;
 use wpdb;
 
 /**
- * Class V1_0_0_InitialTables
+ * Class V100InitialTables
  *
  * This migration sets up the initial database tables for the Daily Menu Manager plugin.
  */
 class V100InitialTables extends Migration
 {
+    /**
+     * @var array<string> List of dependencies
+     */
+    protected array $dependencies = [];
 
-    protected $dependencies = [];
-    protected $batchSize = 500;
+    /**
+     * @var int Batch size for processing
+     */
+    protected int $batchSize = 500;
 
     /**
      * Apply the migration.
      */
-    public function up()
+    public function up(): void
     {
         global $wpdb;
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -98,7 +104,7 @@ class V100InitialTables extends Migration
     /**
      * Revert the migration.
      */
-    public function down()
+    public function down(): void
     {
         global $wpdb;
 
@@ -106,5 +112,70 @@ class V100InitialTables extends Migration
         $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}menu_items");
         $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}menu_orders");
         $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}dmm_migration_status");
+    }
+
+    /**
+     * Get the version of this migration.
+     */
+    public function getVersion(): string
+    {
+        return '1.0.0';
+    }
+
+    /**
+     * Get the description of this migration.
+     */
+    public function getDescription(): string
+    {
+        return 'Creates initial database tables for the Daily Menu Manager plugin';
+    }
+
+    /**
+     * Check if this migration can be reversed.
+     */
+    public function isReversible(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get tables affected by this migration.
+     *
+     * @return array<string>
+     */
+    public function getAffectedTables(): array
+    {
+        global $wpdb;
+        return [
+            "{$wpdb->prefix}daily_menus",
+            "{$wpdb->prefix}menu_items",
+            "{$wpdb->prefix}menu_orders",
+            "{$wpdb->prefix}dmm_migration_status"
+        ];
+    }
+
+    /**
+     * Validate prerequisites for this migration.
+     */
+    public function validatePrerequisites(): bool
+    {
+        // No prerequisites for initial migration
+        return true;
+    }
+
+    /**
+     * Get unique identifier for this migration.
+     */
+    public function getId(): string
+    {
+        return 'V100_initial_tables';
+    }
+
+    /**
+     * Get timestamp when this migration was created.
+     */
+    public function getTimestamp(): int
+    {
+        return strtotime('2024-02-01'); // Datum der Erstellung der Migration
     }
 }

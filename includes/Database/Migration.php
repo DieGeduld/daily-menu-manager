@@ -2,26 +2,28 @@
 
 namespace DailyMenuManager\Database;
 
+use DailyMenuManager\Contracts\Database\MigrationInterface;
+
 /**
  * Class Migration
  * 
  * This abstract class serves as the base for all database migrations.
  * Each migration should extend this class and implement the up() and down() methods.
  */
-abstract class Migration
+abstract class Migration implements MigrationInterface
 {
     protected $dependencies = [];
     protected $batchSize;
 
-    abstract public function up();
-    abstract public function down();
+    abstract public function up(): void;
+    abstract public function down(): void;
 
     public function getDependencies(): array
     {
         return $this->dependencies;
     }
 
-    public function setBatchSize($size)
+    public function setBatchSize(int $size): void
     {
         $this->batchSize = (int)$size;
     }
