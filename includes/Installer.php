@@ -274,4 +274,30 @@ class Installer {
         
         return false;
     }
+
+    /**
+     * Erstellt die Datenbanktabellen
+     * @throws \RuntimeException wenn die Tabellenerstellung fehlschlägt
+     * @return bool True bei Erfolg
+     */
+    private static function createTables(): bool
+    {
+        try {
+            $migrationManager = new Database\MigrationManager();
+            $migrationManager->runMigrations();
+
+            // Aktualisiere die gespeicherte Datenbankversion
+            update_option('daily_menu_manager_db_version', DMM_VERSION);
+            
+            return true;
+        } catch (\Exception $e) {
+            error_log('Daily Menu Manager table creation failed: ' . $e->getMessage());
+            throw new \RuntimeException(
+                sprintf(
+                    __('Fehler bei der Tabellenerstellung: %s', 'daily-menu-manager'),
+                    $e->getMessage()
+                )
+            );
+        }
+    }
 }
