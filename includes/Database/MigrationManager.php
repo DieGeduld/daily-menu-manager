@@ -74,7 +74,7 @@ class MigrationManager
         $migrations = $this->discoverMigrations();
         foreach ($migrations as $file) {
             $version = basename($file, '.php');
-            if (version_compare($version, $this->currentVersion, '>')) {
+            if (version_compare(substr($version, 0, 5), substr($this->currentVersion, 0, 5), '<=')) {
                 $this->executeMigration($file);
                 $this->setCurrentVersion($version);
             }
@@ -113,7 +113,7 @@ class MigrationManager
     private function getMigrationClassName($file)
     {
         $baseName = basename($file, '.php');
-        $className = preg_replace('/^v(\d+_\d+_\d+)_/', 'V$1', $baseName);
+        $className = preg_replace('/^(\d+)\.(\d+)\.(\d+)_/', 'V$1$2$3', $baseName);
         $className = str_replace('_', '', ucwords($className, '_'));
         return 'DailyMenuManager\\Database\\migrations\\' . $className;
     }

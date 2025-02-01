@@ -10,7 +10,7 @@ use wpdb;
  *
  * This migration sets up the initial database tables for the Daily Menu Manager plugin.
  */
-class V1_0_0_InitialTables extends Migration
+class V100InitialTables extends Migration
 {
     /**
      * Apply the migration.

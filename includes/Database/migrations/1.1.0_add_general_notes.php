@@ -10,7 +10,7 @@ use wpdb;
  *
  * This migration adds the general_notes column to the menu_orders table.
  */
-class AddGeneralNotes extends Migration
+class V110AddGeneralNotes extends Migration
 {
     /**
      * Apply the migration.

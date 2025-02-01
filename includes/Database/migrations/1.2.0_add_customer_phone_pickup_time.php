@@ -10,7 +10,8 @@ use wpdb;
  *
  * This migration adds the customer_phone and pickup_time columns to the menu_orders table.
  */
-class AddCustomerPhonePickupTime extends Migration
+
+class V120AddCustomerPhonePickupTime extends Migration
 {
     /**
      * Apply the migration.
