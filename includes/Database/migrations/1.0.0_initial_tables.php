@@ -12,6 +12,10 @@ use wpdb;
  */
 class V100InitialTables extends Migration
 {
+
+    protected $dependencies = [];
+    protected $batchSize = 500;
+
     /**
      * Apply the migration.
      */
@@ -70,10 +74,25 @@ class V100InitialTables extends Migration
             KEY status (status)
         ) $charset_collate;";
 
+        $sql_migration = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}dmm_migration_status (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            version varchar(50) NOT NULL,
+            batch int NOT NULL,
+            status varchar(20) NOT NULL DEFAULT 'pending',
+            started_at datetime DEFAULT NULL,
+            completed_at datetime DEFAULT NULL,
+            error_message text DEFAULT NULL,
+            dependencies text DEFAULT NULL,
+            is_dry_run tinyint(1) DEFAULT 0,
+            PRIMARY KEY  (id),
+            UNIQUE KEY version (version)
+        ) $charset_collate;";
+
         // Execute the SQL statements
         dbDelta($sql_daily_menus);
         dbDelta($sql_menu_items);
         dbDelta($sql_menu_orders);
+        dbDelta($sql_migration);
     }
 
     /**
@@ -86,5 +105,6 @@ class V100InitialTables extends Migration
         $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}daily_menus");
         $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}menu_items");
         $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}menu_orders");
+        $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}dmm_migration_status");
     }
 }

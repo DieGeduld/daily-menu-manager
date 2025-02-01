@@ -23,18 +23,62 @@ class MigrationManager
     private $migrationsPath;
 
     /**
+     * @var array Cache for loaded migration instances
+     */
+    private $loadedMigrations = [];
+
+    /**
+     * @var array Configuration options
+     */
+    private $config;
+
+    /**
      * MigrationManager constructor.
      */
-    public function __construct()
+    public function __construct(array $config = [])
     {
         $this->migrationsPath = DMM_PLUGIN_DIR . 'includes/Database/migrations/';
         $this->currentVersion = get_option('daily_menu_manager_db_version', '0.0.0');
+        $this->config = array_merge([
+            'batchSize' => 1000,
+            'debug' => defined('WP_DEBUG') && WP_DEBUG,
+        ], $config);
+
+        $this->setupMigrationTable();
+    }
+
+    /**
+     * Set up the migration status table if it doesn't exist
+     */
+    private function setupMigrationTable()
+    {
+        global $wpdb;
+        
+        $tableName = $wpdb->prefix . 'dmm_migration_status';
+        $charsetCollate = $wpdb->get_charset_collate();
+
+        $sql = "CREATE TABLE IF NOT EXISTS $tableName (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            version varchar(50) NOT NULL,
+            batch int NOT NULL,
+            status varchar(20) NOT NULL DEFAULT 'pending',
+            started_at datetime DEFAULT NULL,
+            completed_at datetime DEFAULT NULL,
+            error_message text DEFAULT NULL,
+            dependencies text DEFAULT NULL,
+            is_dry_run tinyint(1) DEFAULT 0,
+            PRIMARY KEY  (id),
+            UNIQUE KEY version (version),
+            KEY batch (batch),
+            KEY status (status)
+        ) $charsetCollate;";
+
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
     }
 
     /**
      * Get the current database version.
-     *
-     * @return string
      */
     public function getCurrentVersion()
     {
@@ -43,47 +87,127 @@ class MigrationManager
 
     /**
      * Set the current database version.
-     *
-     * @param string $version
      */
     public function setCurrentVersion($version)
     {
+        $this->validateMigrationVersion($version);
         $this->currentVersion = $version;
         update_option('daily_menu_manager_db_version', $version);
     }
 
     /**
      * Discover migration files.
-     *
-     * @return array
      */
     public function discoverMigrations()
     {
         $files = glob($this->migrationsPath . '*.php');
         usort($files, function ($a, $b) {
-            return version_compare(basename($a, '.php'), basename($b, '.php'));
+            $versionA = $this->extractVersion(basename($a, '.php'));
+            $versionB = $this->extractVersion(basename($b, '.php'));
+            return version_compare($versionA, $versionB);
         });
         return $files;
     }
 
     /**
-     * Run migrations.
+     * Extract version from filename
      */
-    public function runMigrations()
+    private function extractVersion($filename)
+    {
+        // Unterstützt V100InitialTables und 1.0.0_initial_tables Format
+        if (preg_match('/^V(\d)(\d{2})(\d+)/', $filename, $matches)) {
+            return $matches[1] . '.' . $matches[2] . '.' . $matches[3];
+        } elseif (preg_match('/^(\d+\.\d+\.\d+)/', $filename, $matches)) {
+            return $matches[1];
+        }
+        return '0.0.0';
+    }
+
+    /**
+     * Get the migration class name from filename
+     */
+    private function getMigrationClassName($file)
+    {
+        $baseName = basename($file, '.php');
+        
+        // Unterstützt beide Formate
+        if (preg_match('/^V(\d+)/', $baseName)) {
+            $className = $baseName;
+        } else {
+            // Konvertiert 1.0.0_initial_tables zu V100InitialTables
+            $className = preg_replace('/^(\d+)\.(\d+)\.(\d+)_/', 'V$1$2$3_', $baseName);
+            $className = str_replace('_', '', ucwords($className, '_'));
+        }
+        
+        return 'DailyMenuManager\\Database\\migrations\\' . $className;
+    }
+
+    /**
+     * Get a migration instance
+     */
+    private function getMigrationInstance($file)
+    {
+        // Return cached instance if available
+        if (isset($this->loadedMigrations[$file])) {
+            return $this->loadedMigrations[$file];
+        }
+
+        if (!file_exists($file)) {
+            throw new Exception("Migration file not found: $file");
+        }
+
+        require_once $file;
+        $className = $this->getMigrationClassName($file);
+
+        if (!class_exists($className)) {
+            throw new Exception("Migration class $className not found in file $file");
+        }
+
+        $migration = new $className();
+        if (!$migration instanceof Migration) {
+            throw new Exception("Class $className must extend Migration");
+        }
+
+        // Set batch size from config
+        $migration->setBatchSize($this->config['batchSize']);
+
+        // Cache the instance
+        $this->loadedMigrations[$file] = $migration;
+
+        return $migration;
+    }
+
+    /**
+     * Execute a migration
+     */
+    private function executeMigration($file)
+    {
+        $migration = $this->getMigrationInstance($file);
+        $migration->up();
+    }
+
+    /**
+     * Validate migration version format
+     */
+    private function validateMigrationVersion($version)
+    {
+        if (!preg_match('/^\d+\.\d+\.\d+$/', $version)) {
+            throw new Exception("Invalid migration version format: $version");
+        }
+    }
+
+    /**
+     * Perform a dry run of migrations
+     */
+    public function dryRun()
     {
         global $wpdb;
-        $migrations = $this->discoverMigrations();
-        
         $wpdb->query('START TRANSACTION');
+        
         try {
-            foreach ($migrations as $file) {
-                $version = basename($file, '.php');
-                if (version_compare(substr($version, 0, 5), substr($this->currentVersion, 0, 5), '<=')) {
-                    $this->executeMigration($file);
-                    $this->setCurrentVersion($version);
-                }
-            }
-            $wpdb->query('COMMIT');
+            $this->runMigrations(true);
+            $wpdb->query('ROLLBACK');
+            return true;
         } catch (Exception $e) {
             $wpdb->query('ROLLBACK');
             throw $e;
@@ -91,61 +215,230 @@ class MigrationManager
     }
 
     /**
-     * Execute a migration.
-     *
-     * @param string $file
-     * @throws Exception
+     * Run migrations
      */
-    private function executeMigration($file)
+    public function runMigrations($isDryRun = false)
     {
-        $className = $this->getMigrationClassName($file);
-        $this->includeMigrationFile($file);
+        global $wpdb;
+        $migrations = $this->discoverMigrations();
+        $batch = $this->getNextBatchNumber();
+        $this->log("Starting migrations batch #$batch");
 
-        if (!class_exists($className)) {
-            throw new Exception("Migration class $className not found in file $file.");
+        // Erstelle einen Abhängigkeitsgraphen
+        $dependencyGraph = [];
+        foreach ($migrations as $file) {
+            $version = $this->extractVersion(basename($file, '.php'));
+            $migration = $this->getMigrationInstance($file);
+            $dependencyGraph[$version] = $migration->getDependencies();
         }
 
-        $migration = new $className();
-        if (!$migration instanceof Migration) {
-            throw new Exception("Migration class $className must extend Migration.");
+        // Sortiere Migrationen nach Abhängigkeiten
+        $sortedVersions = $this->topologicalSort($dependencyGraph);
+        
+        // Führe Migrationen in sortierter Reihenfolge aus
+        foreach ($sortedVersions as $version) {
+            $file = $this->findMigrationFile($version);
+            
+            if ($this->shouldRunMigration($version)) {
+                $this->log("Running migration $version");
+                $this->recordMigrationStart($version, $batch, $isDryRun);
+                
+                try {
+                    $this->executeMigration($file);
+                    $this->recordMigrationSuccess($version);
+                    $this->log("Successfully completed migration $version");
+                } catch (Exception $e) {
+                    $this->log("Failed migration $version: " . $e->getMessage());
+                    $this->recordMigrationError($version, $e->getMessage());
+                    throw $e;
+                }
+            } else {
+                $this->log("Skipping migration $version - already executed");
+            }
         }
-
-        $migration->up();
     }
 
     /**
-     * Get the migration class name from the file name.
-     *
-     * @param string $file
-     * @return string
+     * Topologische Sortierung der Migrationen
      */
-    private function getMigrationClassName($file)
+    private function topologicalSort($graph)
     {
-        $baseName = basename($file, '.php');
-        $className = preg_replace('/^(\d+)\.(\d+)\.(\d+)_/', 'V$1$2$3', $baseName);
-        $className = str_replace('_', '', ucwords($className, '_'));
-        return 'DailyMenuManager\\Database\\migrations\\' . $className;
+        $sorted = [];
+        $visited = [];
+        $temp = [];
+
+        // Für jeden Knoten im Graphen
+        foreach ($graph as $node => $edges) {
+            if (!isset($visited[$node])) {
+                $this->visit($node, $graph, $visited, $temp, $sorted);
+            }
+        }
+
+        return array_reverse($sorted);
     }
 
     /**
-     * Include the migration file.
-     *
-     * @param string $file
+     * Hilfsfunktion für topologische Sortierung
      */
-    private function includeMigrationFile($file)
+    private function visit($node, &$graph, &$visited, &$temp, &$sorted)
     {
-        require_once $file;
+        if (isset($temp[$node])) {
+            throw new Exception("Circular dependency detected: $node");
+        }
+        if (!isset($visited[$node])) {
+            $temp[$node] = true;
+            
+            if (isset($graph[$node])) {
+                foreach ($graph[$node] as $dependency) {
+                    $this->visit($dependency, $graph, $visited, $temp, $sorted);
+                }
+            }
+            
+            $visited[$node] = true;
+            unset($temp[$node]);
+            $sorted[] = $node;
+        }
     }
 
-    private function log($message) {
-        if (defined('WP_DEBUG') && WP_DEBUG) {
+    /**
+     * Findet die Migrationsdatei für eine bestimmte Version
+     */
+    private function findMigrationFile($version)
+    {
+        $files = glob($this->migrationsPath . '*.php');
+        
+        foreach ($files as $file) {
+            if ($this->extractVersion(basename($file, '.php')) === $version) {
+                return $file;
+            }
+        }
+        
+        throw new Exception("Migration file for version $version not found");
+    }
+
+    private function getNextBatchNumber()
+    {
+        global $wpdb;
+        $lastBatch = $wpdb->get_var("
+            SELECT MAX(batch) 
+            FROM {$wpdb->prefix}dmm_migration_status
+        ");
+        
+        return (int)$lastBatch + 1;
+    }
+
+    private function recordMigrationStart($version, $batch, $isDryRun)
+    {
+        global $wpdb;
+        
+        $wpdb->insert(
+            $wpdb->prefix . 'dmm_migration_status',
+            [
+                'version' => $version,
+                'batch' => $batch,
+                'status' => 'running',
+                'started_at' => current_time('mysql'),
+                'is_dry_run' => $isDryRun ? 1 : 0
+            ]
+        );
+    }
+
+    private function recordMigrationSuccess($version)
+    {
+        global $wpdb;
+        
+        $wpdb->update(
+            $wpdb->prefix . 'dmm_migration_status',
+            [
+                'status' => 'completed',
+                'completed_at' => current_time('mysql')
+            ],
+            ['version' => $version]
+        );
+    }
+
+    private function recordMigrationError($version, $errorMessage)
+    {
+        global $wpdb;
+        
+        $wpdb->update(
+            $wpdb->prefix . 'dmm_migration_status',
+            [
+                'status' => 'failed',
+                'error_message' => $errorMessage,
+                'completed_at' => current_time('mysql')
+            ],
+            ['version' => $version]
+        );
+    }
+
+    private function shouldRunMigration($version)
+    {
+        global $wpdb;
+        
+        $status = $wpdb->get_var($wpdb->prepare(
+            "SELECT status FROM {$wpdb->prefix}dmm_migration_status WHERE version = %s",
+            $version
+        ));
+
+        return !$status || $status === 'failed';
+    }
+
+    private function checkDependencies($version)
+    {
+        // Finde die tatsächliche Migrationsdatei basierend auf der Version
+        $files = glob($this->migrationsPath . '*.php');
+        $migrationFile = null;
+        
+        foreach ($files as $file) {
+            if ($this->extractVersion(basename($file, '.php')) === $version) {
+                $migrationFile = $file;
+                break;
+            }
+        }
+        
+        if (!$migrationFile) {
+            throw new Exception("Migration file for version $version not found");
+        }
+
+        $migration = $this->getMigrationInstance($migrationFile);
+        $dependencies = $migration->getDependencies();
+
+        foreach ($dependencies as $dependency) {
+            if (!$this->isMigrationCompleted($dependency)) {
+                throw new Exception("Dependency not satisfied: $dependency");
+            }
+        }
+
+        return true;
+    }
+
+    private function isMigrationCompleted($version)
+    {
+        global $wpdb;
+        
+        $status = $wpdb->get_var($wpdb->prepare(
+            "SELECT status FROM {$wpdb->prefix}dmm_migration_status WHERE version = %s",
+            $version
+        ));
+
+        return $status === 'completed';
+    }
+
+    private function log($message)
+    {
+        if ($this->config['debug']) {
             error_log("DailyMenuManager Migration: $message");
         }
     }
 
-    private function validateMigrationVersion($version) {
-        if (!preg_match('/^\d+\.\d+\.\d+/', $version)) {
-            throw new Exception("Invalid migration version format: $version");
-        }
+    public function getBatchSize()
+    {
+        return $this->config['batchSize'];
+    }
+
+    public function setBatchSize($size)
+    {
+        $this->config['batchSize'] = (int)$size;
     }
 }

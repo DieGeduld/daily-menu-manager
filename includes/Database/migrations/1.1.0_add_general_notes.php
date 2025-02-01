@@ -12,6 +12,8 @@ use wpdb;
  */
 class V110AddGeneralNotes extends Migration
 {
+    protected $dependencies = ['1.0.0'];
+    protected $batchSize = 500;
     /**
      * Apply the migration.
      */

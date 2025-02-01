@@ -13,6 +13,8 @@ use wpdb;
 
 class V120AddCustomerPhonePickupTime extends Migration
 {
+    protected $dependencies = ['1.0.0', '1.1.0'];
+    protected $batchSize = 500;
     /**
      * Apply the migration.
      */
