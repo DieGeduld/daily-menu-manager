@@ -516,4 +516,27 @@ jQuery(document).ready(function($) {
         }
     }
 
+    function getItemId($item) {
+        // Versuche zuerst die ID aus dem data-id Attribut zu holen
+        let itemId = $item.data('id');
+        
+        // Falls nicht vorhanden, suche nach verstecktem ID Input
+        if (!itemId) {
+            const $idInput = $item.find('input[name*="[id]"]');
+            itemId = $idInput.length ? $idInput.val() : null;
+        }
+        
+        // Falls immer noch keine ID, suche nach new-X Pattern in Namen
+        if (!itemId) {
+            const nameMatch = $item.find('input[name*="menu_items"]').first().attr('name')?.match(/\[new-(\d+)\]/);
+            itemId = nameMatch ? 'new-' + nameMatch[1] : null;
+        }
+        
+        return itemId;
+    }
+    
+    function getStorageKey(itemId) {
+        return 'menuItem_' + itemId + '_collapsed';
+    }
+
 });
