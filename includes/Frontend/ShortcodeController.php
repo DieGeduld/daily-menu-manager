@@ -269,6 +269,13 @@ class ShortcodeController {
                 'message' => $result->get_error_message()
             ]);
         } else {
+            $menu = new Menu();
+            $update = $menu->updateAvailableQuantities($_POST['items']);
+            if (is_wp_error($update)) {
+                wp_send_json_error([
+                    'message' => __('Fehler beim Aktualisieren der verfügbaren Mengen: ', 'daily-menu-manager') . $update->get_error_message()
+                ]);
+            }
             wp_send_json_success($result);
         }
     }
