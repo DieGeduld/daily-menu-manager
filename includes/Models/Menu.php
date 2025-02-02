@@ -357,4 +357,36 @@ class Menu {
             return new \WP_Error('quantity_update_failed', $e->getMessage());
         }
     }
+    
+    /**
+     * Updates the available quantities of menu items when orders are placed.
+     *
+     * @param array $order_items Array of item_id => quantity ordered
+     * @return bool|WP_Error True on success, WP_Error on failure
+     */
+    public function updateAvailableQuantities($order_items) {
+        global $wpdb;
+        
+        try {
+            $wpdb->query('START TRANSACTION');
+    
+            foreach ($order_items as $item_id => $quantity) {
+                $updated = $wpdb->query($wpdb->prepare(
+                    "UPDATE {$wpdb->prefix}menu_items SET available_quantity = available_quantity - %d WHERE id = %d AND available_quantity >= %d",
+                    $quantity, $item_id, $quantity
+                ));
+    
+                if ($updated === false) {
+                    throw new \Exception('Fehler beim Aktualisieren der verfügbaren Mengen');
+                }
+            }
+    
+            $wpdb->query('COMMIT');
+            return true;
+    
+        } catch (\Exception $e) {
+            $wpdb->query('ROLLBACK');
+            return new \WP_Error('quantity_update_failed', $e->getMessage());
+        }
+    }
 }

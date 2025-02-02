@@ -229,12 +229,19 @@ class OrderController {
 
         $order_model = new Order();
         $result = $order_model->createOrder($_POST);
-
+    
         if (is_wp_error($result)) {
             wp_send_json_error([
                 'message' => $result->get_error_message()
             ]);
         } else {
+            $menu = new \DailyMenuManager\Models\Menu();
+            $update = $menu->updateAvailableQuantities($_POST['items']);
+            if (is_wp_error($update)) {
+                wp_send_json_error([
+                    'message' => __('Fehler beim Aktualisieren der verfügbaren Mengen: ', 'daily-menu-manager') . $update->get_error_message()
+                ]);
+            }
             wp_send_json_success($result);
         }
     }

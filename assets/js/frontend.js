@@ -87,11 +87,12 @@ jQuery(document).ready(function($) {
                 $('.submit-order').prop('disabled', true);
             }
         });
-
+        // Form data already includes quantity values as part of the items array (e.g., items[ID][quantity])
+        var formData = $(this).serialize() + '&action=submit_order';
         $.ajax({
             url: dailyMenuAjax.ajaxurl,
             type: 'POST',
-            data: $(this).serialize() + '&action=submit_order',
+            data: formData,
             success: function(response) {
                 if (response.success) {
                     // Build order details
