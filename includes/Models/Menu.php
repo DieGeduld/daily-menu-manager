@@ -338,10 +338,10 @@ class Menu {
         try {
             $wpdb->query('START TRANSACTION');
 
-            foreach ($order_items as $item_id => $quantity) {
+            foreach ($order_items as $item_id => $item) {
                 $updated = $wpdb->query($wpdb->prepare(
                     "UPDATE {$wpdb->prefix}menu_items SET available_quantity = available_quantity - %d WHERE id = %d AND available_quantity >= %d",
-                    $quantity, $item_id, $quantity
+                    $item["quantity"], $item_id, $item["quantity"]
                 ));
 
                 if ($updated === false) {
