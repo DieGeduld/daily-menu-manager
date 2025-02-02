@@ -70,6 +70,13 @@ jQuery(document).ready(function($) {
         }
     );
 
+    let templateItem;
+    
+    // Versuche zuerst ein existierendes Menu-Item als Template zu verwenden
+    const $existingItem = $('.menu-item').first();
+    if ($existingItem.length) {
+        templateItem = $existingItem.clone();
+    }
 
     // Zähler für neue Menü-Items
     let newItemCounter = 0;
@@ -77,101 +84,67 @@ jQuery(document).ready(function($) {
     // Hinzufügen neuer Menü-Items
     $('.add-menu-item').on('click', function() {
         const type = $(this).data('type');
-        let template = $('#menu-item-template-' + type).html();
-        
-        // Eindeutige ID für das neue Item
         newItemCounter++;
-        template = template.replace(/\{id\}/g, newItemCounter);
         
-        // Template in jQuery-Objekt umwandeln für einfachere Manipulation
-        const $newItem = $(template);
+        let $newItem;
         
-        // Füge Toggle-Button und Controls zum Template hinzu
-        const $header = $newItem.find('.menu-item-header');
-        const $controls = $('<div class="menu-item-controls"></div>');
+        if (templateItem) {
+            // Verwende das geklonte Template wenn verfügbar
+            $newItem = templateItem.clone();
+            
+            // Aktualisiere IDs und Namen
+            $newItem.find('input, textarea').each(function() {
+                let name = $(this).attr('name');
+                if (name) {
+                    name = name.replace(/\[\d+\]/g, '[new-' + newItemCounter + ']');
+                    $(this).attr('name', name);
+                }
+                
+                let id = $(this).attr('id');
+                if (id) {
+                    id = id.replace(/\d+/, newItemCounter);
+                    $(this).attr('id', id);
+                }
+                
+                // Setze Werte zurück
+                if ($(this).is('input[type="text"], textarea')) {
+                    $(this).val('');
+                } else if ($(this).is('input[type="number"]')) {
+                    $(this).val($(this).attr('min') || 0);
+                } else if ($(this).is('input[type="checkbox"]')) {
+                    $(this).prop('checked', false);
+                }
+            });
+        } else {
+            // Verwende das Template aus den script-Tags
+            let template = $('#menu-item-template-' + type).html();
+            template = template.replace(/\{id\}/g, newItemCounter);
+            $newItem = $(template);
+            
+            // Füge Controls hinzu
+            const $header = $newItem.find('.menu-item-header');
+            const $controls = $('<div class="menu-item-controls"></div>');
+            
+            $controls.append(`
+                <span class="move-handle dashicons dashicons-move"></span>
+                <button type="button" class="toggle-menu-item dashicons dashicons-arrow-down" aria-expanded="true"></button>
+            `);
+            
+            $header.find('.move-handle').remove();
+            $header.prepend($controls);
+        }
         
-        // Move-Handle und Toggle-Button zu Controls hinzufügen
-        $controls.append(`
-            <span class="move-handle dashicons dashicons-move"></span>
-            <button type="button" class="toggle-menu-item dashicons dashicons-arrow-down" aria-expanded="true"></button>
-        `);
+        // Aktualisiere type
+        $newItem.find('input[name*="[type]"]').val(type);
+        $newItem.attr('data-type', type);
         
-        // Bestehenden move-handle entfernen und neue Controls einfügen
-        $header.find('.move-handle').remove();
-        $header.prepend($controls);
+        // Aktualisiere Label basierend auf type
+        $newItem.find('.menu-item-type-label').text(getTypeLabel(type));
         
-        // Additional Content Fields hinzufügen
-        const additionalFields = `
-            <div class="menu-item-field">
-                <label>Verfügbare Menge</label>
-                <input type="number" 
-                    name="menu_items[new-${newItemCounter}][available_quantity]"
-                    class="menu-item-available-quantity"
-                    min="0"
-                    value="0">
-                <span class="field-description">
-                    Geben Sie die verfügbare Menge für dieses Gericht ein
-                </span>
-            </div>
-
-            <div class="menu-item-field">
-                <label>Zusätzliche Optionen</label>
-                <div class="options-grid">
-                    <label class="checkbox-label">
-                        <input type="checkbox" 
-                               name="menu_items[new-${newItemCounter}][is_vegetarian]">
-                        Vegetarisch
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox"
-                               name="menu_items[new-${newItemCounter}][is_vegan]">
-                        Vegan
-                    </label>
-                    <label class="checkbox-label">
-                        <input type="checkbox"
-                               name="menu_items[new-${newItemCounter}][is_gluten_free]">
-                        Glutenfrei
-                    </label>
-                </div>
-            </div>
-
-            <div class="menu-item-field">
-                <label>Allergen-Informationen</label>
-                <textarea name="menu_items[new-${newItemCounter}][allergens]"
-                          class="menu-item-allergens"
-                          rows="2"></textarea>
-                <span class="field-description">
-                    Listen Sie alle Allergene in diesem Gericht auf
-                </span>
-            </div>
-
-            <div class="advanced-settings" style="display: none;">
-                <button type="button" class="toggle-advanced-settings">
-                    Erweiterte Einstellungen
-                </button>
-                <div class="advanced-settings-content">
-                    <div class="menu-item-field">
-                        <label>
-                            Verfügbarkeitszeiten
-                        </label>
-                        <div class="time-range-inputs">
-                            <input type="time" 
-                                   name="menu_items[new-${newItemCounter}][available_from]">
-                            <span>-</span>
-                            <input type="time" 
-                                   name="menu_items[new-${newItemCounter}][available_until]">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        $content.append(additionalFields);
+        // Stelle sicher, dass der Content-Bereich sichtbar ist
+        $newItem.find('.menu-item-content').show();
         
-        // Stelle sicher, dass der Content-Bereich initial sichtbar ist
-        $content.show();
-        
-        // Event-Handler für Preisformatierung hinzufügen
+        // Event-Handler für Preisformatierung
         $newItem.find('input[type="number"][step="0.01"]').on('change', function() {
             let value = parseFloat($(this).val());
             if (!isNaN(value)) {
@@ -189,6 +162,8 @@ jQuery(document).ready(function($) {
         
         // Item zur Liste hinzufügen
         $('.menu-items').append($newItem);
+        
+        // Aktualisiere Sortierung
         updateSortOrder();
         
         // Smooth Scroll zum neuen Item
@@ -196,52 +171,33 @@ jQuery(document).ready(function($) {
             scrollTop: $newItem.offset().top - 100
         }, 500);
         
-        // Fokus auf das erste Eingabefeld setzen
+        // Fokus auf das erste Eingabefeld
         $newItem.find('input[type="text"]').first().focus();
         
-        // Validation Event-Handler
+        // Event-Handler für Validation
         $newItem.find('input[required]').on('input', function() {
             if ($(this).val()) {
                 $(this).removeClass('error');
             }
         });
         
-        // Tooltips initialisieren
-        $newItem.find('.help-tip').each(function() {
-            const $tip = $(this);
-            const tipText = $tip.data('tip');
-            if (tipText) {
-                $tip.attr('title', tipText)
-                    .attr('aria-label', tipText);
-            }
-        });
-        
         // Animation beim Hinzufügen
         $newItem.hide().slideDown(300);
         
-        // Zustand im localStorage speichern
+        // Speichere Zustand
         const itemKey = 'menuItem_new_' + newItemCounter;
         localStorage.setItem(itemKey + '_collapsed', 'false');
-        
-        // Tastaturnavigation aktivieren
-        $newItem.attr('tabindex', '0').on('keydown', function(e) {
-            if (e.ctrlKey || e.metaKey) {
-                switch(e.key) {
-                    case 'ArrowUp':
-                        e.preventDefault();
-                        $(this).insertBefore($(this).prev('.menu-item'));
-                        updateSortOrder();
-                        break;
-                    case 'ArrowDown':
-                        e.preventDefault();
-                        $(this).insertAfter($(this).next('.menu-item'));
-                        updateSortOrder();
-                        break;
-                }
-            }
-        });
     });
-
+    
+    // Helper Funktion für Type Label
+    function getTypeLabel(type) {
+        const types = {
+            'appetizer': 'Vorspeise',
+            'main_course': 'Hauptgang',
+            'dessert': 'Nachspeise'
+        };
+        return types[type] || type;
+    }
     // Entfernen von Menü-Items
     $(document).on('click', '.remove-menu-item', function() {
         if (confirm(dailyMenuAdmin.messages.deleteConfirm)) {
