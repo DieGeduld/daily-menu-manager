@@ -4,6 +4,10 @@ jQuery(document).ready(function($) {
         ajaxurl: ajaxurl, // WordPress stellt ajaxurl standardmäßig zur Verfügung
         nonce: '',
         messages: {
+                    <div class="menu-item-field">
+                        <label><?php _e('Verfügbare Menge', 'daily-menu-manager'); ?></label>
+                        <input type="number" name="menu_items[new-{id}][available_quantity]" min="0" value="0" required>
+                    </div>
             copySuccess: 'Menü wurde erfolgreich kopiert!',
             copyError: 'Fehler beim Kopieren des Menüs.',
             saveSuccess: 'Menü wurde gespeichert!',
