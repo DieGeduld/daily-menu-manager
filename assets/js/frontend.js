@@ -7,6 +7,44 @@ jQuery(document).ready(function($) {
         }
     });
 
+    // Funktion zur Aktualisierung der verfügbaren Mengen
+    function updateAvailableQuantities() {
+        const menuId = $('input[name="menu_id"]').val();
+         $.ajax({
+            url: dailyMenuAjax.ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'get_available_quantities',
+                menu_id: menuId
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Aktualisiere die Mengen für jedes Item
+                    Object.keys(response.data.quantities).forEach(itemId => {
+                        const quantity = response.data.quantities[itemId];
+                        const item = $(`.menu-item[data-item-id="${itemId}"]`);
+                        const input = item.find('.quantity-input');
+                        const title = item.find('.menu-item-title');
+        
+                        // Aktualisiere max-Attribut und Titel
+                        input.attr('max', quantity);
+                        item.attr('data-item-available_quantity', quantity);
+
+                        const baseTitle = title.text().split('(')[0].trim();
+                        if (quantity === 0) {
+                            title.addClass('unavailable').text(`${baseTitle} (ausverkauft)`);
+                        } else {
+                            title.removeClass('unavailable').text(`${baseTitle} (${quantity}x verfügbar)`);
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    // Starte periodische Aktualisierung
+    setInterval(updateAvailableQuantities, 30000);
+
     function updateTotal() {
         let total = 0;
         $('.quantity-input').each(function() {

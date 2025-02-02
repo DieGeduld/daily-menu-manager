@@ -15,6 +15,8 @@ class ShortcodeController {
         add_action('wp_enqueue_scripts', [self::class, 'enqueueAssets']);
         add_action('wp_ajax_submit_order', [self::class, 'handleOrder']);
         add_action('wp_ajax_nopriv_submit_order', [self::class, 'handleOrder']);
+        add_action('wp_ajax_get_available_quantities', [self::class, 'getAvailableQuantities']);
+        add_action('wp_ajax_nopriv_get_available_quantities', [self::class, 'getAvailableQuantities']);        
     }
 
     /**
@@ -251,6 +253,26 @@ class ShortcodeController {
         return ob_get_clean();
     }
 
+    /**
+    * AJAX Handler zum Abrufen der verfügbaren Mengen
+    */
+    public static function getAvailableQuantities() {
+        $menu_id = isset($_POST['menu_id']) ? intval($_POST['menu_id']) : 0;
+        if (!$menu_id) {
+            wp_send_json_error(['message' => 'Keine Menü-ID angegeben']);
+        }
+    
+        $menu = new Menu();
+        $items = $menu->getMenuItems($menu_id);
+        
+        $quantities = [];
+        foreach ($items as $item) {
+            $quantities[$item->id] = $item->available_quantity;
+        }
+        
+        wp_send_json_success(['quantities' => $quantities]);
+    }
+    
     /**
      * Verarbeitet eingehende Bestellungen via AJAX
      */
