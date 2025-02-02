@@ -1,7 +1,7 @@
 jQuery(document).ready(function($) {
 
     window.dailyMenuAdmin = window.dailyMenuAdmin || {
-        ajaxurl: ajaxurl, // WordPress stellt ajaxurl standardmäßig zur Verfügung
+        ajaxurl: ajaxurl,
         nonce: '',
         messages: {
             copySuccess: 'Menü wurde erfolgreich kopiert!',
@@ -100,8 +100,76 @@ jQuery(document).ready(function($) {
         $header.find('.move-handle').remove();
         $header.prepend($controls);
         
+        // Additional Content Fields hinzufügen
+        const additionalFields = `
+            <div class="menu-item-field">
+                <label>Verfügbare Menge</label>
+                <input type="number" 
+                    name="menu_items[new-${newItemCounter}][available_quantity]"
+                    class="menu-item-available-quantity"
+                    min="0"
+                    value="0">
+                <span class="field-description">
+                    Geben Sie die verfügbare Menge für dieses Gericht ein
+                </span>
+            </div>
+
+            <div class="menu-item-field">
+                <label>Zusätzliche Optionen</label>
+                <div class="options-grid">
+                    <label class="checkbox-label">
+                        <input type="checkbox" 
+                               name="menu_items[new-${newItemCounter}][is_vegetarian]">
+                        Vegetarisch
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox"
+                               name="menu_items[new-${newItemCounter}][is_vegan]">
+                        Vegan
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox"
+                               name="menu_items[new-${newItemCounter}][is_gluten_free]">
+                        Glutenfrei
+                    </label>
+                </div>
+            </div>
+
+            <div class="menu-item-field">
+                <label>Allergen-Informationen</label>
+                <textarea name="menu_items[new-${newItemCounter}][allergens]"
+                          class="menu-item-allergens"
+                          rows="2"></textarea>
+                <span class="field-description">
+                    Listen Sie alle Allergene in diesem Gericht auf
+                </span>
+            </div>
+
+            <div class="advanced-settings" style="display: none;">
+                <button type="button" class="toggle-advanced-settings">
+                    Erweiterte Einstellungen
+                </button>
+                <div class="advanced-settings-content">
+                    <div class="menu-item-field">
+                        <label>
+                            Verfügbarkeitszeiten
+                        </label>
+                        <div class="time-range-inputs">
+                            <input type="time" 
+                                   name="menu_items[new-${newItemCounter}][available_from]">
+                            <span>-</span>
+                            <input type="time" 
+                                   name="menu_items[new-${newItemCounter}][available_until]">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        $content.append(additionalFields);
+        
         // Stelle sicher, dass der Content-Bereich initial sichtbar ist
-        $newItem.find('.menu-item-content').show();
+        $content.show();
         
         // Event-Handler für Preisformatierung hinzufügen
         $newItem.find('input[type="number"][step="0.01"]').on('change', function() {
@@ -110,14 +178,20 @@ jQuery(document).ready(function($) {
                 $(this).val(value.toFixed(2));
             }
         });
+
+        // Event-Handler für Mengenfeld
+        $newItem.find('.menu-item-available-quantity').on('change', function() {
+            let value = parseInt($(this).val());
+            if (isNaN(value) || value < 0) {
+                $(this).val(0);
+            }
+        });
         
         // Item zur Liste hinzufügen
         $('.menu-items').append($newItem);
-        
-        // Sortierreihenfolge aktualisieren
         updateSortOrder();
         
-        // Optional: Smooth Scroll zum neuen Item
+        // Smooth Scroll zum neuen Item
         $('html, body').animate({
             scrollTop: $newItem.offset().top - 100
         }, 500);
@@ -125,28 +199,27 @@ jQuery(document).ready(function($) {
         // Fokus auf das erste Eingabefeld setzen
         $newItem.find('input[type="text"]').first().focus();
         
-        // Event-Handler für Validation
+        // Validation Event-Handler
         $newItem.find('input[required]').on('input', function() {
             if ($(this).val()) {
                 $(this).removeClass('error');
             }
         });
         
-        // Tooltip-Initialisierung für neue Elemente
+        // Tooltips initialisieren
         $newItem.find('.help-tip').each(function() {
             const $tip = $(this);
             const tipText = $tip.data('tip');
-            
             if (tipText) {
                 $tip.attr('title', tipText)
                     .attr('aria-label', tipText);
             }
         });
         
-        // Optional: Animation beim Hinzufügen
+        // Animation beim Hinzufügen
         $newItem.hide().slideDown(300);
         
-        // Speichere den Zustand im localStorage
+        // Zustand im localStorage speichern
         const itemKey = 'menuItem_new_' + newItemCounter;
         localStorage.setItem(itemKey + '_collapsed', 'false');
         
@@ -167,29 +240,21 @@ jQuery(document).ready(function($) {
                 }
             }
         });
-        
-        // Error-Handler für required Felder
-        $newItem.find('input[required]').on('invalid', function() {
-            $(this).addClass('error');
-        });
-        
-        // Auto-Save Trigger
-        $newItem.find('input, textarea').on('change', function() {
-            clearTimeout(autoSaveTimer);
-            autoSaveTimer = setTimeout(function() {
-                // Auto-Save Logik hier implementieren
-                console.log('Auto-Save würde jetzt ausgeführt...');
-            }, 30000);
-        });
     });
-    
-    
 
     // Entfernen von Menü-Items
     $(document).on('click', '.remove-menu-item', function() {
         if (confirm(dailyMenuAdmin.messages.deleteConfirm)) {
             $(this).closest('.menu-item').remove();
             updateSortOrder();
+        }
+    });
+
+    // Event-Handler für existierende Mengenfelder
+    $('.menu-item-available-quantity').on('change', function() {
+        let value = parseInt($(this).val());
+        if (isNaN(value) || value < 0) {
+            $(this).val(0);
         }
     });
 
