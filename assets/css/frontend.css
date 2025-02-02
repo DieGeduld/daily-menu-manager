@@ -266,3 +266,9 @@
         margin-top: 2rem;
     }
 }
+
+.menu-item[data-item-available_quantity="0"] {
+    opacity: 0.5;
+    background: #f9f9f9;
+    cursor: not-allowed;  
+}

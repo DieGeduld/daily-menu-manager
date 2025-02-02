@@ -128,9 +128,13 @@ class ShortcodeController {
                                 <h3><?php echo esc_html($type_label); ?></h3>
                                 
                                 <?php foreach ($items as $item): ?>
-                                    <div class="menu-item" data-item-id="<?php echo esc_attr($item->id); ?>">
+                                    <div class="menu-item" data-item-available_quantity="<?php echo esc_attr($item->available_quantity); ?>" data-item-id="<?php echo esc_attr($item->id); ?>">
                                         <div class="menu-item-header">
-                                            <span class="menu-item-title"><?php echo esc_html($item->title); ?> (<?php echo esc_html($item->available_quantity); ?>x verfügbar)</span>
+                                            <?php if ($item->available_quantity == 0): ?>
+                                                <span class="menu-item-title unavailable"><?php echo esc_html($item->title); ?> (ausverkauft)</span>
+                                            <?php else: ?>
+                                                <span class="menu-item-title"><?php echo esc_html($item->title); ?> (<?php echo esc_html($item->available_quantity); ?>x verfügbar)</span>
+                                            <?php endif; ?>
                                             <span class="menu-item-price"><?php echo number_format($item->price, 2); ?> €</span>
                                         </div>
                                         
