@@ -97,9 +97,10 @@ class Menu {
                             'title' => sanitize_text_field($item_data['title']),
                             'description' => sanitize_textarea_field($item_data['description']),
                             'price' => floatval($item_data['price']),
-                            'sort_order' => $sort_order++
+                            'sort_order' => $sort_order++,
+                            'available_quantity' => intval($item_data['available_quantity'])
                         ],
-                        ['%d', '%s', '%s', '%s', '%f', '%d']
+                        ['%d', '%s', '%s', '%s', '%f', '%d', '%d']
                     );
                     
                     if ($inserted === false) {
@@ -110,7 +111,6 @@ class Menu {
             
             $wpdb->query('COMMIT');
             return $menu_id;
-            
         } catch (\Exception $e) {
             $wpdb->query('ROLLBACK');
             return new \WP_Error('menu_save_failed', $e->getMessage());
@@ -324,5 +324,37 @@ class Menu {
             GROUP BY dm.menu_date
             ORDER BY dm.menu_date DESC
         ", $start_date, $end_date));
+    }
+
+    /**
+     * Updates the available quantities of menu items when orders are placed.
+     *
+     * @param array $order_items Array of item_id => quantity ordered
+     * @return bool|WP_Error True on success, WP_Error on failure
+     */
+    public function updateAvailableQuantities($order_items) {
+        global $wpdb;
+
+        try {
+            $wpdb->query('START TRANSACTION');
+
+            foreach ($order_items as $item_id => $quantity) {
+                $updated = $wpdb->query($wpdb->prepare(
+                    "UPDATE {$wpdb->prefix}menu_items SET available_quantity = available_quantity - %d WHERE id = %d AND available_quantity >= %d",
+                    $quantity, $item_id, $quantity
+                ));
+
+                if ($updated === false) {
+                    throw new \Exception('Fehler beim Aktualisieren der verfügbaren Mengen');
+                }
+            }
+
+            $wpdb->query('COMMIT');
+            return true;
+
+        } catch (\Exception $e) {
+            $wpdb->query('ROLLBACK');
+            return new \WP_Error('quantity_update_failed', $e->getMessage());
+        }
     }
 }

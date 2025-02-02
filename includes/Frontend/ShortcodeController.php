@@ -130,7 +130,7 @@ class ShortcodeController {
                                 <?php foreach ($items as $item): ?>
                                     <div class="menu-item" data-item-id="<?php echo esc_attr($item->id); ?>">
                                         <div class="menu-item-header">
-                                            <span class="menu-item-title"><?php echo esc_html($item->title); ?></span>
+                                            <span class="menu-item-title"><?php echo esc_html($item->title); ?> (<?php echo esc_html($item->available_quantity); ?>x verfügbar)</span>
                                             <span class="menu-item-price"><?php echo number_format($item->price, 2); ?> €</span>
                                         </div>
                                         
@@ -155,6 +155,7 @@ class ShortcodeController {
                                                             name="items[<?php echo esc_attr($item->id); ?>][quantity]" 
                                                             id="quantity_<?php echo esc_attr($item->id); ?>"
                                                             min="0" 
+                                                            max="<?php echo esc_attr($item->available_quantity); ?>"
                                                             value="0"
                                                             data-price="<?php echo esc_attr($item->price); ?>">
                                                         <button type="button" class="quantity-btn plus">+</button>

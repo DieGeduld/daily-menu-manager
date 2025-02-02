@@ -326,6 +326,22 @@ class MenuController {
                         <?php _e('Enter the price in euros (e.g., 12.50)', 'daily-menu-manager'); ?>
                     </span>
                 </div>
+
+                <!-- Available Quantity Field -->
+                <div class="menu-item-field">
+                    <label for="available_quantity_<?php echo esc_attr($item->id); ?>">
+                        <?php _e('Available Quantity', 'daily-menu-manager'); ?>
+                    </label>
+                    <input type="number" 
+                        id="available_quantity_<?php echo esc_attr($item->id); ?>"
+                        name="menu_items[<?php echo esc_attr($item->id); ?>][available_quantity]"
+                        value="<?php echo esc_attr($item->available_quantity); ?>"
+                        min="0"
+                        class="menu-item-available-quantity">
+                    <span class="field-description">
+                        <?php _e('Enter the available quantity for this item', 'daily-menu-manager'); ?>
+                    </span>
+                </div>
     
                 <!-- Additional Options Field -->
                 <div class="menu-item-field">
@@ -419,4 +435,30 @@ class MenuController {
         ];
     }
 
-}   
+}
+
+
+
+// Füge neue Menüeinträge hinzu
+if (isset($menu_data['menu_items'])) {
+    $sort_order = 1;
+    foreach ($menu_data['menu_items'] as $item_data) {
+        $inserted = $wpdb->insert(
+            $wpdb->prefix . 'menu_items',
+            [
+                'menu_id' => $menu_id,
+                'item_type' => sanitize_text_field($item_data['type']),
+                'title' => sanitize_text_field($item_data['title']),
+                'description' => sanitize_textarea_field($item_data['description']),
+                'price' => floatval($item_data['price']),
+                'available_quantity' => intval($item_data['available_quantity']),
+                'sort_order' => $sort_order++
+            ],
+            ['%d', '%s', '%s', '%s', '%f', '%d', '%d']
+        );
+        
+        if ($inserted === false) {
+            throw new \Exception('Fehler beim Speichern der Menüeinträge');
+        }
+    }
+}
