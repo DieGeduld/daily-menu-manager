@@ -21,11 +21,12 @@ jQuery(document).ready(function($) {
     $('.quantity-btn').on('click', function() {
         const input = $(this).siblings('.quantity-input');
         let value = parseInt(input.val()) || 0;
+        let max = parseInt(input.attr('max')) || 0;
         
         if ($(this).hasClass('minus')) {
             value = Math.max(0, value - 1);
         } else if ($(this).hasClass('plus')) {
-            value += 1;
+            value = Math.min(max, value + 1);
         }
         
         input.val(value).trigger('change');
