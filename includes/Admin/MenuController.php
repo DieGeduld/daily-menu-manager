@@ -323,7 +323,7 @@ class MenuController {
                             class="menu-item-price">
                     </div>
                     <span class="field-description">
-                        <?php _e('Enter the price in euros (e.g., 12.50)', 'daily-menu-manager'); ?>
+                        <?php _e('Enter the price in euros (e.g., 12,50)', 'daily-menu-manager'); ?>
                     </span>
                 </div>
 
@@ -349,24 +349,23 @@ class MenuController {
                         <?php _e('Additional Options', 'daily-menu-manager'); ?>
                     </label>
                     <div class="options-grid">
+                    <?php
+
+                        $allProps = [
+                            __("Vegetarian", "daily-menu-manager"),
+                            __("Vegan", "daily-menu-manager"),
+                            __("Glutenfree", "daily-menu-manager"),
+                        ];
+
+                        $props = json_decode($item->properties);
+                        foreach ($allProps as $key => $prop): ?>
                         <label class="checkbox-label">
                             <input type="checkbox" 
-                                   name="menu_items[<?php echo esc_attr($item->id); ?>][is_vegetarian]"
-                                   <?php checked(isset($item->is_vegetarian) && $item->is_vegetarian); ?>>
-                            <?php _e('Vegetarian', 'daily-menu-manager'); ?>
+                                   name="menu_items[<?php echo esc_attr($item->id); ?>][properties][<?php echo $prop; ?>]"
+                                   <?php checked(property_exists($props, $prop)); ?>>
+                            <?php echo $prop; ?>
                         </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox"
-                                   name="menu_items[<?php echo esc_attr($item->id); ?>][is_vegan]"
-                                   <?php checked(isset($item->is_vegan) && $item->is_vegan); ?>>
-                            <?php _e('Vegan', 'daily-menu-manager'); ?>
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox"
-                                   name="menu_items[<?php echo esc_attr($item->id); ?>][is_gluten_free]"
-                                   <?php checked(isset($item->is_gluten_free) && $item->is_gluten_free); ?>>
-                            <?php _e('Gluten Free', 'daily-menu-manager'); ?>
-                        </label>
+                        <?php endforeach; ?>
                     </div>
                 </div>
     

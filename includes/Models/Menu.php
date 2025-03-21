@@ -89,6 +89,9 @@ class Menu {
             if (isset($menu_data['menu_items'])) {
                 $sort_order = 1;
                 foreach ($menu_data['menu_items'] as $item_data) {
+
+                    $props = !empty($item_data["properties"]) ? wp_json_encode($item_data["properties"]) : null;
+
                     $inserted = $wpdb->insert(
                         $wpdb->prefix . 'menu_items',
                         [
@@ -98,9 +101,10 @@ class Menu {
                             'description' => sanitize_textarea_field($item_data['description']),
                             'price' => floatval($item_data['price']),
                             'sort_order' => $sort_order++,
-                            'available_quantity' => intval($item_data['available_quantity'])
+                            'available_quantity' => intval($item_data['available_quantity']),
+                            'properties' => $props
                         ],
-                        ['%d', '%s', '%s', '%s', '%f', '%d', '%d']
+                        ['%d', '%s', '%s', '%s', '%f', '%d', '%d', '%s']
                     );
                     
                     if ($inserted === false) {

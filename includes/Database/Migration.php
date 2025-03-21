@@ -12,8 +12,9 @@ use DailyMenuManager\Contracts\Database\MigrationInterface;
  */
 abstract class Migration implements MigrationInterface
 {
-    protected $dependencies = [];
-    protected $batchSize;
+    protected array $dependencies = [];
+
+    protected int $batchSize;
 
     abstract public function up(): void;
     abstract public function down(): void;

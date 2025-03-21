@@ -130,6 +130,7 @@ class ShortcodeController {
                                 <h3><?php echo esc_html($type_label); ?></h3>
                                 
                                 <?php foreach ($items as $item): ?>
+                                    <?php $props = array_keys(json_decode($item->properties, true)); ?>
                                     <div class="menu-item" data-item-available_quantity="<?php echo esc_attr($item->available_quantity); ?>" data-item-id="<?php echo esc_attr($item->id); ?>">
                                         <div class="menu-item-header">
                                             <?php if ($item->available_quantity == 0): ?>
@@ -139,7 +140,7 @@ class ShortcodeController {
                                             <?php endif; ?>
                                             <span class="menu-item-price"><?php echo number_format($item->price, 2); ?> €</span>
                                         </div>
-                                        
+                                        <?php echo implode(", ", $props); ?>
                                         <div class="menu-item-footer">
 
                                             
