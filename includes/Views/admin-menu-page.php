@@ -63,6 +63,12 @@
                         <label><?php _e('Preis', 'daily-menu-manager'); ?> (€)</label>
                         <input type="number" step="0.01" name="menu_items[new-{id}][price]" required>
                     </div>
+                    
+                    <div class="menu-item-field">
+                        <label><?php _e('Anzahl', 'daily-menu-manager'); ?></label>
+                        <input type="number" step="0.01" name="menu_items[new-{id}][available_quantity]" required>
+                    </div>
+
                 </div>
             </div>
         </script>

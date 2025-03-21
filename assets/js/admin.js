@@ -86,7 +86,7 @@ jQuery(document).ready(function($) {
             isValid = false;
         }
 
-        const quantity = parseInt($item.find('.menu-item-available-quantity').val());
+        const quantity = parseInt($item.find('input[name*="[available_quantity]"]').val());
         if (isNaN(quantity) || quantity < 0) {
             errors.push('Ungültige Menge');
             isValid = false;
