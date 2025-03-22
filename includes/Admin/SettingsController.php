@@ -37,7 +37,7 @@ class SettingsController {
         $settings_model = Settings::getInstance();
         
         // Verarbeite das Formular, wenn es abgesendet wurde
-        if (isset($_POST['save_settings']) && check_admin_referer('daily_menu_settings_nonce')) {
+        if (isset($_POST['save_menu_settings']) && check_admin_referer('daily_menu_settings_nonce')) {
             $properties = isset($_POST['daily_menu_properties']) ? $_POST['daily_menu_properties'] : [];
             $sanitized_properties = [];
             

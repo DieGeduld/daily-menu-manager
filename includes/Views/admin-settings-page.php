@@ -6,7 +6,7 @@
     <div class="daily-menu-settings-container">
         <form method="post" action="" id="daily-menu-settings-form">
             <?php wp_nonce_field('daily_menu_settings_nonce'); ?>
-            
+            <input type="hidden" name="save_menu_settings" value="1">
             
             <div class="daily-menu-settings-section">
                 <h2><?php _e('Menü-Eigenschaften verwalten', 'daily-menu-manager'); ?></h2>
