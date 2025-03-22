@@ -1,6 +1,7 @@
 <?php
 namespace DailyMenuManager\Frontend;
 
+use DailyMenuManager\Admin\SettingsController;
 use DailyMenuManager\Models\Menu;
 
 class ShortcodeController {
@@ -148,8 +149,9 @@ class ShortcodeController {
                                             <span class="menu-item-price"><?php echo number_format($item->price, 2); ?> €</span>
                                         </div>
                                         <?php
+                                            $main_color = SettingsController::getMainColor();
                                             foreach ($props as &$prop) {
-                                                echo "<div class=\"badge text-decoration-none me-1 mb-1\">$prop</div>";
+                                                echo "<div style=\"background-color: $main_color;\" class=\"badge text-decoration-none me-1 mb-1\">$prop</div>";
                                             }
                                         ?>
                                         <div class="menu-item-footer">

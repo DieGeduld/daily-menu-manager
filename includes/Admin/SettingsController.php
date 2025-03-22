@@ -53,6 +53,21 @@ class SettingsController {
             // Also update in WordPress options for backward compatibility
             update_option('daily_menu_properties', $sanitized_properties);
             
+            // Speichere die Hauptfarbe
+            if (isset($_POST['daily_menu_main_color'])) {
+                // Verwende unsere eigene Funktion, falls WordPress-Funktion nicht verfügbar
+                if (function_exists('sanitize_hex_color')) {
+                    $main_color = sanitize_hex_color($_POST['daily_menu_main_color']);
+                } else {
+                    require_once DMM_PLUGIN_DIR . 'includes/Utils/ColorUtils.php';
+                    $main_color = \DailyMenuManager\Utils\ColorUtils::sanitizeHexColor($_POST['daily_menu_main_color']);
+                }
+                
+                if ($main_color) {
+                    $settings_model->set('main_color', $main_color);
+                }
+            }
+            
             // Zeige eine Erfolgsmeldung an
             add_settings_error(
                 'daily_menu_properties',
@@ -94,7 +109,19 @@ class SettingsController {
         
         return $properties;
     }
+    
+    /**
+     * Get main color
+     * 
+     * @return string The main color in hex format
+     */
+    public static function getMainColor(): string {
+        Settings::init();
+        $settings_model = Settings::getInstance();
+        
+        // Get main color from database with default value
+        $main_color = $settings_model->get('main_color', '#3498db');
+        
+        return $main_color;
+    }
 }
-
-// Initialisierung der Klasse
-SettingsController::init();
