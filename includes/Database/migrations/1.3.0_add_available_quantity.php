@@ -15,7 +15,7 @@ class V130AddAvailableQuantity extends Migration
     /**
      * @var array<string>
      */
-    protected array $dependencies = ['1.0.0'];
+    protected array $dependencies = ['1.2.0'];
 
     /**
      * @var int

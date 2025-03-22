@@ -351,18 +351,14 @@ class MenuController {
                     <div class="options-grid">
                     <?php
 
-                        $allProps = [
-                            __("Vegetarian", "daily-menu-manager"),
-                            __("Vegan", "daily-menu-manager"),
-                            __("Glutenfree", "daily-menu-manager"),
-                        ];
+                        $allProps = \DailyMenuManager\Admin\SettingsController::getMenuProperties() ?? [];
 
-                        $props = json_decode($item->properties);
+                        $props = json_decode($item->properties ?? '{}', true) ?? [];
                         foreach ($allProps as $key => $prop): ?>
                         <label class="checkbox-label">
                             <input type="checkbox" 
                                    name="menu_items[<?php echo esc_attr($item->id); ?>][properties][<?php echo $prop; ?>]"
-                                   <?php checked(property_exists($props, $prop)); ?>>
+                                   <?php checked(isset($props[$prop])); ?>>
                             <?php echo $prop; ?>
                         </label>
                         <?php endforeach; ?>

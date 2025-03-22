@@ -47,6 +47,7 @@ class Plugin {
         // Initialize Models
         Models\Menu::init();
         Models\Order::init();
+        Models\Settings::init();
         
         // Initialize Components based on context
         if (is_admin()) {
@@ -59,6 +60,7 @@ class Plugin {
     private function initAdminComponents(): void {
         Admin\MenuController::init();
         Admin\OrderController::init();
+        Admin\SettingsController::init();
     }
 
     private function initFrontendComponents(): void {

@@ -15,7 +15,7 @@ class V120AddCustomerPhonePickupTime extends Migration
     /**
      * @var array<string>
      */
-    protected array $dependencies = ['1.0.0', '1.1.0'];
+    protected array $dependencies = ['1.1.0'];
 
     /**
      * @var int

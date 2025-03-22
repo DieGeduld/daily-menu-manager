@@ -15,7 +15,7 @@ class V140AddProperties extends Migration
     /**
      * @var array<string>
      */
-    protected array $dependencies = ['1.0.0'];
+    protected array $dependencies = ['1.3.0'];
 
     /**
      * @var int
