@@ -30,6 +30,13 @@ class ShortcodeController {
             [],
             DMM_VERSION
         );
+
+        wp_enqueue_style(
+            'bootstrap-css',
+            'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
+            array(),
+            '5.3.0'
+        );
     
         // SweetAlert2 CSS
         wp_enqueue_style(
@@ -140,7 +147,11 @@ class ShortcodeController {
                                             <?php endif; ?>
                                             <span class="menu-item-price"><?php echo number_format($item->price, 2); ?> €</span>
                                         </div>
-                                        <?php echo implode(", ", $props); ?>
+                                        <?php
+                                            foreach ($props as &$prop) {
+                                                echo "<div class=\"badge text-decoration-none me-1 mb-1\">$prop</div>";
+                                            }
+                                        ?>
                                         <div class="menu-item-footer">
 
                                             
