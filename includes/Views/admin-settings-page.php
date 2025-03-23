@@ -60,7 +60,7 @@ settings_errors('daily_menu_properties');
                            name="daily_menu_main_color" 
                            value="<?php echo esc_attr($main_color); ?>" 
                            class="regular-text" />
-                    <p class="description"><?php _e('Wählen Sie eine Hauptfarbe für das Plugin.', 'daily-menu-manager'); ?></p>
+                    <p class="description"><?php _e('Wählen Sie eine Hauptfarbe.', 'daily-menu-manager'); ?></p>
                 </td>
             </tr>
         </table>

@@ -347,6 +347,7 @@ class MenuController {
                 <div class="menu-item-field">
                     <label for="options_<?php echo esc_attr($item->id); ?>">
                         <?php _e('Additional Options', 'daily-menu-manager'); ?>
+                        <a href="<?php echo esc_url(admin_url('admin.php?page=daily-menu-settings')); ?>"><?php _e('Manage additional options', 'daily-menu-manager'); ?></a>
                     </label>
                     <div class="options-grid">
                     <?php

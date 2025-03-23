@@ -59,8 +59,7 @@ class SettingsController {
                 if (function_exists('sanitize_hex_color')) {
                     $main_color = sanitize_hex_color($_POST['daily_menu_main_color']);
                 } else {
-                    require_once DMM_PLUGIN_DIR . 'includes/Utils/ColorUtils.php';
-                    $main_color = \DailyMenuManager\Utils\ColorUtils::sanitizeHexColor($_POST['daily_menu_main_color']);
+                    $main_color = sanitize_text_field($_POST['daily_menu_main_color']);
                 }
                 
                 if ($main_color) {

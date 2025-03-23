@@ -169,7 +169,7 @@ class ShortcodeController {
                                                         <label for="quantity_<?php echo esc_attr($item->id); ?>">
                                                             <?php _e('Anzahl:', 'daily-menu-manager'); ?>
                                                         </label>
-                                                        <button type="button" class="quantity-btn minus">-</button>
+                                                        <button type="button" style="background: <?php echo SettingsController::getMainColor(); ?>" class="quantity-btn minus">-</button>
                                                         <input type="number" 
                                                             class="quantity-input"
                                                             name="items[<?php echo esc_attr($item->id); ?>][quantity]" 
@@ -178,7 +178,7 @@ class ShortcodeController {
                                                             max="<?php echo esc_attr($item->available_quantity); ?>"
                                                             value="0"
                                                             data-price="<?php echo esc_attr($item->price); ?>">
-                                                        <button type="button" class="quantity-btn plus">+</button>
+                                                        <button type="button" style="background: <?php echo SettingsController::getMainColor(); ?>" class="quantity-btn plus">+</button>
                                                     </div>
                                                         
                                                    
