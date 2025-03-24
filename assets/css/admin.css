@@ -385,3 +385,21 @@ table {
     border-color: #ffc107;
     font-weight: bold;
 }
+
+.flatpickr-wrapper {
+    border: 1px grey solid;
+    border-radius: 4px;
+    display: flex!important;
+}
+
+.flatpickr-wrapper input[type="text"] {
+    background: none;
+    border: none!important;
+    width: 100px;
+}
+
+.flatpickr-wrapper .dashicons {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+}

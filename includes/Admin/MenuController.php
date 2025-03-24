@@ -75,6 +75,15 @@ class MenuController {
             [],
             '4.6.13'
         );
+
+        
+        // Flatpickr Light Theme
+        // wp_enqueue_style(
+        //     'flatpickr-light',
+        //     'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/themes/light.css',
+        //     [],
+        //     '4.6.13'
+        // );
         
         // Flatpickr JS
         wp_enqueue_script(

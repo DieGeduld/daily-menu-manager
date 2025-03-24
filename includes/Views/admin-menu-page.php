@@ -12,23 +12,28 @@
             <input type="hidden" name="page" value="daily-menu-manager">
             <label for="menu_date"><?php _e('Datum auswählen:', 'daily-menu-manager'); ?></label>
             
-            <div class="date-input-wrapper">
-            <input type="date" 
-                   id="menu_date" 
-                   name="menu_date" 
-                   value="<?php echo esc_attr($selected_date); ?>"
-                   onchange="this.form.submit()">
-                <!-- Flatpickr will add the visible input here -->
-                <span class="calendar-icon"></span>
-            </div>
-            
-                <?php if ($selected_date !== current_time('Y-m-d')): ?>
+
+            <div class="flatpickr-wrapper">
+                <input type="date" 
+                    id="menu_date" 
+                    name="menu_date" 
+                    value="<?php echo esc_attr($selected_date); ?>"
+                    onchange="this.form.submit()"
+                    data-input>  <!-- data-input hinzugefügt -->
+
+                    <a class="input-button" title="toggle" data-toggle>
+                        <span class="dashicons dashicons-calendar-alt"></span>
+                    </a>
+
+                </div>
+            <?php if ($selected_date !== current_time('Y-m-d')): ?>
                 <button type="submit" 
                         class="button" 
                         onclick="document.getElementById('menu_date').value='<?php echo esc_attr(current_time('Y-m-d')); ?>'; return true;">
                     <?php _e('Heute', 'daily-menu-manager'); ?>
                 </button>
             <?php endif; ?>
+
         </form>
 
         <?php if ($current_menu): ?>

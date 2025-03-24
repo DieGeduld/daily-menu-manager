@@ -550,21 +550,50 @@ jQuery(document).ready(function($) {
         return 'menuItem_' + itemId + '_collapsed';
     }
 
-    flatpickr("#menu_date", {
-        dateFormat: "Y-m-d",
-        altInput: true,
-        altFormat: "d.m.Y",  // Todo: Make format selectable in admin settings
-        weekNumbers: true,
-        theme: "light",
-        // Todo: Locale settings
-        appendTo: document.querySelector('.date-selection'),
-        onDayCreate: function(dObj, dStr, fp, dayElem) {
-            const dateStr = flatpickr.formatDate(dayElem.dateObj, "Y-m-d");
-            if (window.dailyMenuAdmin.menus.includes(dateStr)) {
-                dayElem.classList.add("has-event");
-            }
-        }
-    });
+    // flatpickr(".flatpickr", {
+    //     dateFormat: "Y-m-d",
+    //     altInput: true,
+    //     altFormat: "d.m.Y",  // Todo: Make format selectable in admin settings
+    //     weekNumbers: true,
+    //     theme: "light",
+    //     wrap: true,
+    //     // Todo: Locale settings
+    //     //appendTo: document.querySelector('.date-selection'),
+    //     onDayCreate: function(dObj, dStr, fp, dayElem) {
+    //         const dateStr = flatpickr.formatDate(dayElem.dateObj, "Y-m-d");
+    //         if (window.dailyMenuAdmin.menus.includes(dateStr)) {
+    //             dayElem.classList.add("has-event");
+    //         }
+    //     }
+    // });
 
 
 });
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    try {
+        const flatpickrInstance = flatpickr(".flatpickr-wrapper", {  // Container-Klasse, nicht Input-ID
+            dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "d.m.Y",
+            weekNumbers: true,
+            wrap: true,
+            onDayCreate: function(dObj, dStr, fp, dayElem) {
+                try {
+                    const dateStr = flatpickr.formatDate(dayElem.dateObj, "Y-m-d");
+                    if (window.dailyMenuAdmin && window.dailyMenuAdmin.menus && 
+                        window.dailyMenuAdmin.menus.includes(dateStr)) {
+                        dayElem.classList.add("has-event");
+                    }
+                } catch (innerError) {
+                    console.log("Fehler beim Markieren der Tage:", innerError);
+                }
+            }
+        });
+        
+        console.log("Flatpickr erfolgreich initialisiert", flatpickrInstance);
+    } catch (error) {
+        console.error("Fehler bei der Initialisierung von flatpickr:", error);
+    }
+}); 
