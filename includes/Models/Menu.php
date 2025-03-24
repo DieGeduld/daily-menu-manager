@@ -136,7 +136,12 @@ class Menu {
         ));
         
         if ($menu) {
-            $menu->items = $this->getMenuItems($menu->id);
+            $items = $this->getMenuItems($menu->id);
+            if ($items) {
+                $menu->items = $items;
+            } else {
+                $menu = null;
+            }
         }
         
         return $menu;
