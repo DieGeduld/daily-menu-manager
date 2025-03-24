@@ -15,7 +15,8 @@ jQuery(document).ready(function($) {
             type: 'POST',
             data: {
                 action: 'get_available_quantities',
-                menu_id: menuId
+                menu_id: menuId,
+
             },
             success: function(response) {
                 if (response.success) {

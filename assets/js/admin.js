@@ -279,10 +279,10 @@ jQuery(document).ready(function($) {
         let isValid = true;
         let firstError = null;
 
-        if ($('.menu-item').length === 0) {
-            showFeedback(window.dailyMenuAdmin.messages.noItems, 'error');
-            return false;
-        }
+        // if ($('.menu-item').length === 0) {
+        //     showFeedback(window.dailyMenuAdmin.messages.noItems, 'error');
+        //     return false;
+        // }
 
         $('.menu-item').each(function() {
             const validation = validateMenuItem($(this));
@@ -354,7 +354,7 @@ jQuery(document).ready(function($) {
     }
 
     // Menü kopieren Dialog
-    $('#copy-menu-dialog').dialog({
+    $('#copy-menu-dialog-to, #copy-menu-dialog-from').dialog({
         autoOpen: false,
         modal: true,
         width: 400,
@@ -363,10 +363,12 @@ jQuery(document).ready(function($) {
         buttons: {
             [window.dailyMenuAdmin.messages.copy || "Kopieren"]: function() {
                 const dialog = $(this);
-                const newDate = $('#copy-menu-date').val();
                 const menuId = $('.copy-menu').data('menu-id');
+                const selectedDate =  $(this).find('input[name="selectedDate"]').val();
+                const type = $(this).find('input[name="type"]').val();
+                const currentDate = $('#menu_date').val();
                 
-                if (!newDate) {
+                if (!selectedDate) {
                     showFeedback(window.dailyMenuAdmin.messages.selectDate, 'error');
                     return;
                 }
@@ -377,7 +379,9 @@ jQuery(document).ready(function($) {
                     data: {
                         action: 'copy_menu',
                         menu_id: menuId,
-                        new_date: newDate,
+                        selectedDate: selectedDate,
+                        currentDate: currentDate,
+                        type: type,
                         _ajax_nonce: window.dailyMenuAdmin.nonce
                     },
                     beforeSend: function() {
@@ -386,8 +390,11 @@ jQuery(document).ready(function($) {
                     success: function(response) {
                         if (response.success) {
                             showFeedback(window.dailyMenuAdmin.messages.copySuccess);
-                            window.location.href = window.location.pathname + 
-                                '?page=daily-menu-manager&menu_date=' + newDate;
+                            if (type == "to") {
+                                window.location.href = window.location.pathname + '?page=daily-menu-manager&menu_date=' + currentDate;
+                            } else {
+                                window.location.href = window.location.pathname + '?page=daily-menu-manager&menu_date=' + newDate;
+                            }
                         } else {
                             showFeedback(response.data.message || window.dailyMenuAdmin.messages.copyError, 'error');
                         }
@@ -409,7 +416,11 @@ jQuery(document).ready(function($) {
 
     // Copy Button Click Handler
     $('.copy-menu').on('click', function() {
-        $('#copy-menu-dialog').dialog('open');
+        if ($(this).data('menu-id') === 0) {
+            $('#copy-menu-dialog-from').dialog('open');
+        } else {
+            $('#copy-menu-dialog-to').dialog('open');
+        } 
     });
 
     // Initialisiere bestehende Items

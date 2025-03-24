@@ -164,13 +164,55 @@ class MenuController {
         }
 
         $menu_id = intval($_POST['menu_id']);
-        $new_date = sanitize_text_field($_POST['new_date']);
+        $type = sanitize_text_field($_POST['type']);
+        $selectedDate = sanitize_text_field($_POST["selectedDate"]);
+        $currentDate = sanitize_text_field($_POST["currentDate"]);
 
-        if (!$menu_id || !$new_date) {
+        if (!$currentDate) {
             wp_send_json_error(['message' => __('Ungültige Parameter.', 'daily-menu-manager')]);
         }
 
         $menu = new Menu();
+        if ($type == "from") {
+            $items = $menu->getMenuForDate($selectedDate);
+
+            if (!$items) {
+                wp_send_json_error(['message' => __('Für dieses Datum existiert kein Menü.', 'daily-menu-manager')]);
+                exit();
+            } 
+
+            $result = $menu->copyMenu(intval($items->id), $currentDate);
+
+            if (is_wp_error($result)) {
+                wp_send_json_error(['message' => $result->get_error_message()]);
+            } else {
+                wp_send_json_success([
+                    'message' => __('Menü erfolgreich kopiert.', 'daily-menu-manager'),
+                    'new_menu_id' => $result
+                ]);
+            } 
+        } else if ($type == "to") {
+
+            if (!$currentDate || !$menu_id) {
+                wp_send_json_error(['message' => __('Ungültige Parameter, MenuID missing', 'daily-menu-manager')]);
+            }
+
+            $result = $menu->copyMenu(intval($menu_id), $selectedDate);
+
+            if (is_wp_error($result)) {
+                wp_send_json_error(['message' => $result->get_error_message()]);
+            } else {
+                wp_send_json_success([
+                    'message' => __('Menü erfolgreich kopiert.', 'daily-menu-manager'),
+                    'new_menu_id' => $result
+                ]);
+            } 
+        } else {
+            wp_send_json_error(['message' => __('Ungültige Parameter.', 'daily-menu-manager')]);
+        }
+
+        $menu = new Menu();
+        $items = $menu->getMenuForDate($selectedDate);
         
         // Prüfe ob bereits ein Menü für das Zieldatum existiert
         if ($menu->menuExists($new_date)) {

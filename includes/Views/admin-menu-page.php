@@ -28,7 +28,13 @@
         <?php if ($current_menu): ?>
         <div class="menu-actions">
             <button type="button" class="button copy-menu" data-menu-id="<?php echo esc_attr($current_menu->id); ?>">
-                <?php _e('Menü kopieren', 'daily-menu-manager'); ?>
+                <?php _e('Menu Kopieren', 'daily-menu-manager'); ?>
+            </button>
+        </div>
+        <?php else: ?>
+            <div class="menu-actions">
+            <button type="button" class="button copy-menu" data-menu-id="0">
+                <?php _e('Menu importieren', 'daily-menu-manager'); ?>
             </button>
         </div>
         <?php endif; ?>
@@ -101,14 +107,27 @@
     </form>
 </div>
 
-<!-- Kopier-Dialog -->
-<div id="copy-menu-dialog" style="display: none;" title="<?php _e('Menü kopieren', 'daily-menu-manager'); ?>">
-        <p><?php _e('Wählen Sie das Zieldatum für die Kopie:', 'daily-menu-manager'); ?></p>
-        <input type="date" 
-               id="copy-menu-date" 
-               min="<?php echo esc_attr(date('Y-m-d')); ?>"
-               value="<?php echo esc_attr(date('Y-m-d', strtotime('+1 day'))); ?>">
-    </div>
+<!-- Kopier-Dialog to -->
+<div id="copy-menu-dialog-to" style="display: none;" title="<?php _e('Menü kopieren', 'daily-menu-manager'); ?>">
+    <p><?php _e('Wählen Sie das Zieldatum für die Kopie:', 'daily-menu-manager'); ?></p>
+    <input type="date" 
+            name="selectedDate"
+            min="<?php echo esc_attr(date('Y-m-d')); ?>"
+            value="<?php echo esc_attr(date('Y-m-d', strtotime('+1 day'))); ?>">
+    <input type="hidden" name="type" value="to">
+</div>
+
+<!-- Kopier-Dialog from -->
+<div id="copy-menu-dialog-from" style="display: none;" title="<?php _e('Importiere Menu', 'daily-menu-manager'); ?>">
+    <p><?php _e('Wählen Sie das Quelldatum:', 'daily-menu-manager'); ?></p>
+    <input type="date" 
+            name="selectedDate"
+            min="<?php echo esc_attr(date('Y-m-d')); ?>"
+            value="<?php echo esc_attr(date('Y-m-d', strtotime('-1 day'))); ?>">
+    <input type="hidden" name="type" value="from">
+</div>
+
+
 
 <?php if ($current_menu): ?>
     <button type="button" class="button copy-menu" data-menu-id="<?php echo esc_attr($current_menu->id); ?>">

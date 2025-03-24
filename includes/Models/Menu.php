@@ -157,7 +157,7 @@ class Menu {
      * @param int $menu_id
      * @return array
      */
-    public function getMenuItems($menu_id) {
+    public function getMenuItems(int $menu_id) {
         global $wpdb;
         
         if (!$menu_id) return [];
@@ -264,7 +264,7 @@ class Menu {
      * @param string $new_date
      * @return int|WP_Error Neue Menu ID oder Fehler
      */
-    public function copyMenu($menu_id, $new_date) {
+    public function copyMenu(int $menu_id, $new_date) {
         global $wpdb;
         
         try {

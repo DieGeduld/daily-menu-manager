@@ -106,7 +106,7 @@ table {
     margin-left: 10px;
 }
 
-#copy-menu-dialog input[type="date"] {
+#copy-menu-dialog-from input[type="date"], #copy-menu-dialog-to input[type="date"] {
     width: 100%;
     padding: 5px;
     margin: 10px 0;
