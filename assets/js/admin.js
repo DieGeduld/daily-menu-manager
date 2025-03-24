@@ -393,7 +393,7 @@ jQuery(document).ready(function($) {
                             if (type == "to") {
                                 window.location.href = window.location.pathname + '?page=daily-menu-manager&menu_date=' + currentDate;
                             } else {
-                                window.location.href = window.location.pathname + '?page=daily-menu-manager&menu_date=' + newDate;
+                                window.location.href = window.location.pathname + '?page=daily-menu-manager&menu_date=' + selectedDate;
                             }
                         } else {
                             showFeedback(response.data.message || window.dailyMenuAdmin.messages.copyError, 'error');
@@ -549,5 +549,22 @@ jQuery(document).ready(function($) {
     function getStorageKey(itemId) {
         return 'menuItem_' + itemId + '_collapsed';
     }
+
+    flatpickr("#menu_date", {
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "d.m.Y",  // Todo: Make format selectable in admin settings
+        weekNumbers: true,
+        theme: "light",
+        // Todo: Locale settings
+        appendTo: document.querySelector('.date-selection'),
+        onDayCreate: function(dObj, dStr, fp, dayElem) {
+            const dateStr = flatpickr.formatDate(dayElem.dateObj, "Y-m-d");
+            if (window.dailyMenuAdmin.menus.includes(dateStr)) {
+                dayElem.classList.add("has-event");
+            }
+        }
+    });
+
 
 });

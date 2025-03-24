@@ -67,6 +67,23 @@ class MenuController {
             [],
             DMM_VERSION
         );
+
+        // Flatpickr CSS
+        wp_enqueue_style(
+            'flatpickr',
+            'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css',
+            [],
+            '4.6.13'
+        );
+        
+        // Flatpickr JS
+        wp_enqueue_script(
+            'flatpickr',
+            'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js',
+            [],
+            '4.6.13',
+            true
+        );
     
         // Lokalisierung - WICHTIG: Muss nach dem Enqueue des Scripts erfolgen
         wp_localize_script(
@@ -86,7 +103,8 @@ class MenuController {
                     'requiredFields' => __('Bitte füllen Sie alle Pflichtfelder aus.', 'daily-menu-manager'),
                     'copy' => __('Kopieren', 'daily-menu-manager'),
                     'cancel' => __('Abbrechen', 'daily-menu-manager')
-                ]
+                ],
+                'menus' => Menu::getMenuDates(),
             ]
         );
     }

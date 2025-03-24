@@ -379,3 +379,9 @@ table {
     font-size: 1.2em;
     font-weight: bold;
 }
+
+.flatpickr-day.has-event {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    font-weight: bold;
+}

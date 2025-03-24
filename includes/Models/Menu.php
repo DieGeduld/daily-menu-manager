@@ -263,6 +263,26 @@ class Menu {
     }
 
     /**
+     * Gibt ein Array von Daten zurück, an denen ein Menü existiert
+     * 
+     * @return array
+     */
+    public static function getMenuDates() {
+        global $wpdb;
+        
+        $dates = $wpdb->get_col("
+            SELECT DISTINCT dm.menu_date
+            FROM {$wpdb->prefix}daily_menus dm
+            INNER JOIN {$wpdb->prefix}menu_items mi
+                ON dm.id = mi.menu_id
+            ORDER BY dm.menu_date ASC
+        ");
+        
+        return $dates;
+    }
+
+
+    /**
      * Kopiert ein Menü auf ein anderes Datum
      * 
      * @param int $menu_id

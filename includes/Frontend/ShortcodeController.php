@@ -138,7 +138,7 @@ class ShortcodeController {
                                 <h3><?php echo esc_html($type_label); ?></h3>
                                 
                                 <?php foreach ($items as $item): ?>
-                                    <?php $props = array_keys(json_decode($item->properties, true)); ?>
+                                    <?php $props = array_keys(json_decode($item->properties ?? "{}", true) ?? []); ?>
                                     <div class="menu-item" data-item-available_quantity="<?php echo esc_attr($item->available_quantity); ?>" data-item-id="<?php echo esc_attr($item->id); ?>">
                                         <div class="menu-item-header">
                                             <?php if ($item->available_quantity == 0): ?>
@@ -227,6 +227,17 @@ class ShortcodeController {
                                     id="customer_phone" 
                                     pattern="[0-9\s\+\-()]+"
                                     placeholder="<?php _e('z.B. 0650 456789', 'daily-menu-manager'); ?>">
+                            </div>
+
+                            <div class="form-field">
+                                <label for="pickup_type">
+                                    <?php _e('Abholen oder im Lokal essen', 'daily-menu-manager'); ?>*
+                                </label>
+                                <select name="pickup_type" id="pickup_type" required>
+                                    <option value=""><?php _e('Bitte wählen', 'daily-menu-manager'); ?></option>
+                                    <option value="take_away"><?php _e('Abholen', 'daily-menu-manager'); ?></option>
+                                    <option value="eat_in"><?php _e('Im Lokal essen', 'daily-menu-manager'); ?></option>
+                                </select>
                             </div>
                             <div class="form-field">
                                 <label for="pickup_time">
