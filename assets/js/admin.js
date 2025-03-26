@@ -364,9 +364,15 @@ jQuery(document).ready(function($) {
             [window.dailyMenuAdmin.messages.copy || "Kopieren"]: function() {
                 const dialog = $(this);
                 const menuId = $('.copy-menu').data('menu-id');
-                const selectedDate =  $(this).find('input[name="selectedDate"]').val();
                 const type = $(this).find('input[name="type"]').val();
+                let selectedDate;
+                if (type == "to") {
+                    selectedDate = $('#selectedDateTo').val();
+                } else  {
+                    selectedDate = $('#selectedDateFrom').val();
+                }
                 const currentDate = $('#menu_date').val();
+
                 
                 if (!selectedDate) {
                     showFeedback(window.dailyMenuAdmin.messages.selectDate, 'error');
@@ -391,9 +397,9 @@ jQuery(document).ready(function($) {
                         if (response.success) {
                             showFeedback(window.dailyMenuAdmin.messages.copySuccess);
                             if (type == "to") {
-                                window.location.href = window.location.pathname + '?page=daily-menu-manager&menu_date=' + currentDate;
-                            } else {
                                 window.location.href = window.location.pathname + '?page=daily-menu-manager&menu_date=' + selectedDate;
+                            } else {
+                                window.location.href = window.location.pathname + '?page=daily-menu-manager&menu_date=' + currentDate;
                             }
                         } else {
                             showFeedback(response.data.message || window.dailyMenuAdmin.messages.copyError, 'error');
@@ -550,50 +556,42 @@ jQuery(document).ready(function($) {
         return 'menuItem_' + itemId + '_collapsed';
     }
 
-    // flatpickr(".flatpickr", {
-    //     dateFormat: "Y-m-d",
-    //     altInput: true,
-    //     altFormat: "d.m.Y",  // Todo: Make format selectable in admin settings
-    //     weekNumbers: true,
-    //     theme: "light",
-    //     wrap: true,
-    //     // Todo: Locale settings
-    //     //appendTo: document.querySelector('.date-selection'),
-    //     onDayCreate: function(dObj, dStr, fp, dayElem) {
-    //         const dateStr = flatpickr.formatDate(dayElem.dateObj, "Y-m-d");
-    //         if (window.dailyMenuAdmin.menus.includes(dateStr)) {
-    //             dayElem.classList.add("has-event");
-    //         }
-    //     }
-    // });
+    const mainPickr = flatpickr(".flatpickr-wrapper", {
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "d.m.Y",
+        weekNumbers: true,
+        wrap: true,
+        onDayCreate: function(dObj, dStr, fp, dayElem) {
+            try {
+                const dateStr = flatpickr.formatDate(dayElem.dateObj, "Y-m-d");
+                if (window.dailyMenuAdmin && window.dailyMenuAdmin.menus && 
+                    window.dailyMenuAdmin.menus.includes(dateStr)) {
+                    dayElem.classList.add("has-event");
+                }
+            } catch (innerError) {
+                console.log("Fehler beim Markieren der Tage:", innerError);
+            }
+        }
+    });
+
+    const selectedDateTo = flatpickr(".selectedDateTo", {
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "d.m.Y",
+        weekNumbers: true,
+        wrap: true,
+        disable: window.dailyMenuAdmin.menus ?? [],
+    });
+    const selectedDateFrom = flatpickr(".selectedDateFrom", {
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "d.m.Y",
+        weekNumbers: true,
+        wrap: true,
+        enable: window.dailyMenuAdmin.menus ?? [],
+    });
+
 
 
 });
-
-
-document.addEventListener("DOMContentLoaded", function() {
-    try {
-        const flatpickrInstance = flatpickr(".flatpickr-wrapper", {  // Container-Klasse, nicht Input-ID
-            dateFormat: "Y-m-d",
-            altInput: true,
-            altFormat: "d.m.Y",
-            weekNumbers: true,
-            wrap: true,
-            onDayCreate: function(dObj, dStr, fp, dayElem) {
-                try {
-                    const dateStr = flatpickr.formatDate(dayElem.dateObj, "Y-m-d");
-                    if (window.dailyMenuAdmin && window.dailyMenuAdmin.menus && 
-                        window.dailyMenuAdmin.menus.includes(dateStr)) {
-                        dayElem.classList.add("has-event");
-                    }
-                } catch (innerError) {
-                    console.log("Fehler beim Markieren der Tage:", innerError);
-                }
-            }
-        });
-        
-        console.log("Flatpickr erfolgreich initialisiert", flatpickrInstance);
-    } catch (error) {
-        console.error("Fehler bei der Initialisierung von flatpickr:", error);
-    }
-}); 

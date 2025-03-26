@@ -381,25 +381,46 @@ table {
 }
 
 .flatpickr-day.has-event {
-    background-color: #ffc107;
-    border-color: #ffc107;
+    background-color: #569ff730;
     font-weight: bold;
 }
 
-.flatpickr-wrapper {
+.flatpickr-wrapper,
+.selectedDateFrom,
+.selectedDateTo {
     border: 1px grey solid;
     border-radius: 4px;
     display: flex!important;
+    justify-content: space-between;
 }
 
-.flatpickr-wrapper input[type="text"] {
+.flatpickr-wrapper input[type="text"],
+.selectedDateFrom, input[type="text"],
+.selectedDateTo input[type="text"]
+ {
     background: none;
     border: none!important;
     width: 100px;
+    box-shadow: none;
 }
 
-.flatpickr-wrapper .dashicons {
+.flatpickr-wrapper .dashicons,
+.selectedDateFrom .dashicons,
+.selectedDateTo .dashicons {
     display: inline-flex;
     justify-content: center;
     align-items: center;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+}
+
+input[type="date"] {
+    appearance: textfield;
+    -webkit-appearance: textfield;
+}
+
+.flatpickr-day.today, .flatpickr-day.today:hover, .flatpickr-day.today:focus {
+    border: red 1px solid!important;
 }

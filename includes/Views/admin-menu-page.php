@@ -121,21 +121,36 @@
 <!-- Kopier-Dialog to -->
 <div id="copy-menu-dialog-to" style="display: none;" title="<?php _e('Menü kopieren', 'daily-menu-manager'); ?>">
     <p><?php _e('Wählen Sie das Zieldatum für die Kopie:', 'daily-menu-manager'); ?></p>
-    <input type="date" 
-            name="selectedDate"
-            min="<?php echo esc_attr(date('Y-m-d')); ?>"
-            value="<?php echo esc_attr(date('Y-m-d', strtotime('+1 day'))); ?>">
-    <input type="hidden" name="type" value="to">
+
+    <div class="selectedDateTo">
+        <input type="hidden" name="type" value="to">
+        <input type="date" 
+            name="selectedDateTo" 
+            id="selectedDateTo" 
+            value="<?php echo esc_attr(date('Y-m-d', strtotime('+1 day'))); ?>"
+            data-input>
+
+            <a class="input-button" title="toggle" data-toggle>
+                <span class="dashicons dashicons-calendar-alt"></span>
+            </a>
+    </div>
 </div>
 
 <!-- Kopier-Dialog from -->
 <div id="copy-menu-dialog-from" style="display: none;" title="<?php _e('Importiere Menu', 'daily-menu-manager'); ?>">
     <p><?php _e('Wählen Sie das Quelldatum:', 'daily-menu-manager'); ?></p>
-    <input type="date" 
-            name="selectedDate"
-            min="<?php echo esc_attr(date('Y-m-d')); ?>"
-            value="<?php echo esc_attr(date('Y-m-d', strtotime('-1 day'))); ?>">
-    <input type="hidden" name="type" value="from">
+    <div class="selectedDateFrom">
+        <input type="hidden" name="type" value="from">
+        <input type="date" 
+            name="selectedDateFrom" 
+            id="selectedDateFrom" 
+            value="<?php echo esc_attr(date('Y-m-d', strtotime('+1 day'))); ?>"
+            data-input>
+
+            <a class="input-button" title="toggle" data-toggle>
+                <span class="dashicons dashicons-calendar-alt"></span>
+            </a>
+    </div>
 </div>
 
 
