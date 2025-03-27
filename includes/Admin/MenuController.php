@@ -423,7 +423,8 @@ class MenuController {
 
                         $allProps = \DailyMenuManager\Admin\SettingsController::getMenuProperties() ?? [];
 
-                        $props = json_decode($item->properties ?? '{}', true) ?? [];
+                        //$props = json_decode($item->properties ?? '{}', true) ?? [];
+                        $props = $item->properties ?? [];
                         foreach ($allProps as $key => $prop): ?>
                         <label class="checkbox-label">
                             <input type="checkbox" 
