@@ -28,7 +28,7 @@ class Order {
             );
                         
             // Wenn keine Bestellung existiert oder der letzte Wert kein gültiger Integer ist
-            if (!$last_order || !is_numeric($last_order)) {
+            if ($last_order === false || !is_numeric($last_order)) {
                 $next_number = 0;
             } else {
                 $next_number = intval($last_order) + 1;
