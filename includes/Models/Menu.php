@@ -4,6 +4,23 @@ namespace DailyMenuManager\Models;
 class Menu {
     private static $instance = null;
     
+    /**
+     * @var wpdb
+     */
+    private $wpdb;
+    
+    /**
+     * @var string
+     */
+    private $table_name;
+
+    
+    public function __construct() {
+        global $wpdb;
+        $this->wpdb = $wpdb;
+        $this->table_name = $wpdb->prefix . 'daily_menus';
+    }
+    
     public static function init() {
         if (self::$instance === null) {
             self::$instance = new self();
@@ -25,6 +42,8 @@ class Menu {
             "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}daily_menus (
                 id mediumint(9) NOT NULL AUTO_INCREMENT,
                 menu_date date NOT NULL,
+                created_at datetime DEFAULT CURRENT_TIMESTAMP,
+                updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 PRIMARY KEY  (id),
                 UNIQUE KEY menu_date (menu_date)
             ) $charset_collate",
@@ -37,7 +56,12 @@ class Menu {
                 title varchar(255) NOT NULL,
                 description text,
                 price decimal(10,2) NOT NULL,
+                available_quantity int(11) NOT NULL DEFAULT 0,
+                properties text DEFAULT NULL,
+                allergens text DEFAULT NULL,
                 sort_order int NOT NULL,
+                created_at datetime DEFAULT CURRENT_TIMESTAMP,
+                updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 PRIMARY KEY  (id),
                 KEY menu_id (menu_id)
             ) $charset_collate"
@@ -89,8 +113,8 @@ class Menu {
             if (isset($menu_data['menu_items'])) {
                 $sort_order = 1;
                 foreach ($menu_data['menu_items'] as $item_data) {
-
                     $props = !empty($item_data["properties"]) ? wp_json_encode($item_data["properties"]) : null;
+                    $allergens = !empty($item_data["allergens"]) ? sanitize_textarea_field($item_data["allergens"]) : null;
 
                     $inserted = $wpdb->insert(
                         $wpdb->prefix . 'menu_items',
@@ -100,11 +124,12 @@ class Menu {
                             'title' => sanitize_text_field($item_data['title']),
                             'description' => sanitize_textarea_field($item_data['description']),
                             'price' => floatval($item_data['price']),
-                            'sort_order' => $sort_order++,
                             'available_quantity' => intval($item_data['available_quantity']),
-                            'properties' => $props
+                            'properties' => $props,
+                            'allergens' => $allergens,
+                            'sort_order' => $sort_order++
                         ],
-                        ['%d', '%s', '%s', '%s', '%f', '%d', '%d', '%s']
+                        ['%d', '%s', '%s', '%s', '%f', '%d', '%s', '%s', '%d']
                     );
                     
                     if ($inserted === false) {
@@ -167,12 +192,21 @@ class Menu {
         
         if (!$menu_id) return [];
         
-        return $wpdb->get_results($wpdb->prepare(
+        $items = $wpdb->get_results($wpdb->prepare(
             "SELECT * FROM {$wpdb->prefix}menu_items 
             WHERE menu_id = %d 
             ORDER BY sort_order ASC",
             $menu_id
         ));
+        
+        // Decode JSON properties if they exist
+        foreach ($items as &$item) {
+            if (!empty($item->properties)) {
+                $item->properties = json_decode($item->properties, true);
+            }
+        }
+        
+        return $items;
     }
 
     /**
@@ -296,24 +330,61 @@ class Menu {
             $wpdb->query('START TRANSACTION');
             
             // Erstelle neues Menü
-            $wpdb->insert(
-                $wpdb->prefix . 'daily_menus',
-                ['menu_date' => $new_date],
-                ['%s']
-            );
-            $new_menu_id = $wpdb->insert_id;
+            // Prüfe ob Menü bereits existiert
+            $existing_menu = $wpdb->get_var($wpdb->prepare(
+                "SELECT id FROM {$wpdb->prefix}daily_menus WHERE menu_date = %s",
+                $new_date
+            ));
+            
+            if (!$existing_menu) {
+                $wpdb->insert(
+                    $wpdb->prefix . 'daily_menus',
+                    ['menu_date' => $new_date],
+                    ['%s']
+                );
+                $new_menu_id = $wpdb->insert_id;
+            } else {
+                $new_menu_id = $existing_menu;
+            }
             
             // Kopiere alle Menüeinträge
             $items = $this->getMenuItems($menu_id);
             foreach ($items as $item) {
-                unset($item->id);
-                $item->menu_id = $new_menu_id;
+                $item_array = (array)$item;
+                
+                // Remove the ID to create a new record
+                unset($item_array['id']);
+                
+                // Set the new menu ID
+                $item_array['menu_id'] = $new_menu_id;
+                
+                // Remove created_at and updated_at if present
+                unset($item_array['created_at']);
+                unset($item_array['updated_at']);
+                
+                // Encode properties back to JSON if it was decoded
+                if (isset($item_array['properties']) && is_array($item_array['properties'])) {
+                    $item_array['properties'] = wp_json_encode($item_array['properties']);
+                }
                 
                 $wpdb->insert(
                     $wpdb->prefix . 'menu_items',
-                    (array)$item,
-                    ['%d', '%s', '%s', '%s', '%f', '%d']
+                    $item_array,
+                    ['%d', '%s', '%s', '%s', '%f', '%d', '%s', '%s', '%d']
                 );
+
+                // `menu_id` mediumint(9) NOT NULL,
+                // `item_type` varchar(50) NOT NULL,
+                // `title` varchar(255) NOT NULL,
+                // `description` text DEFAULT NULL,
+                // `price` decimal(10,2) NOT NULL,
+                // `available_quantity` int(11) NOT NULL DEFAULT 0,
+                // `properties` varchar(255) DEFAULT NULL,
+                // `sort_order` int(11) NOT NULL,
+                // `allergens` text DEFAULT NULL,
+                // `created_at` datetime DEFAULT current_timestamp(),
+                // `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+
             }
             
             $wpdb->query('COMMIT');
@@ -345,6 +416,7 @@ class Menu {
                 MIN(mi.price) as min_price,
                 MAX(mi.price) as max_price,
                 AVG(mi.price) as avg_price,
+                SUM(mi.available_quantity) as total_available_items,
                 COUNT(DISTINCT o.order_number) as total_orders
             FROM {$wpdb->prefix}daily_menus dm
             LEFT JOIN {$wpdb->prefix}menu_items mi ON dm.id = mi.menu_id
@@ -385,5 +457,47 @@ class Menu {
             $wpdb->query('ROLLBACK');
             return new \WP_Error('quantity_update_failed', $e->getMessage());
         }
+    }
+    
+    /**
+     * Aktualisiert die Allergene eines Menüeintrags
+     *
+     * @param int $item_id
+     * @param string $allergens
+     * @return bool
+     */
+    public function updateItemAllergens($item_id, $allergens) {
+        global $wpdb;
+        
+        $updated = $wpdb->update(
+            $wpdb->prefix . 'menu_items',
+            ['allergens' => sanitize_textarea_field($allergens)],
+            ['id' => intval($item_id)],
+            ['%s'],
+            ['%d']
+        );
+        
+        return $updated !== false;
+    }
+    
+    /**
+     * Aktualisiert die verfügbare Menge eines Menüeintrags
+     *
+     * @param int $item_id
+     * @param int $quantity
+     * @return bool
+     */
+    public function updateItemQuantity($item_id, $quantity) {
+        global $wpdb;
+        
+        $updated = $wpdb->update(
+            $wpdb->prefix . 'menu_items',
+            ['available_quantity' => intval($quantity)],
+            ['id' => intval($item_id)],
+            ['%d'],
+            ['%d']
+        );
+        
+        return $updated !== false;
     }
 }
