@@ -159,6 +159,8 @@ class Installer {
         $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}daily_menus");
         $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}menu_items");
         $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}menu_orders");
+        $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}menu_settings");
+        $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}dmm_migration_status");
     }
 
     /**
