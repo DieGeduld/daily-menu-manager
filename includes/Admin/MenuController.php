@@ -242,11 +242,11 @@ class MenuController {
         $items = $menu->getMenuForDate($selectedDate);
         
         // Prüfe ob bereits ein Menü für das Zieldatum existiert
-        if ($menu->menuExists($new_date)) {
+        if ($menu->menuExists($currentDate)) {
             wp_send_json_error(['message' => __('Für dieses Datum existiert bereits ein Menü.', 'daily-menu-manager')]);
         }
 
-        $result = $menu->copyMenu($menu_id, $new_date);
+        $result = $menu->copyMenu($menu_id, $currentDate);
 
         if (is_wp_error($result)) {
             wp_send_json_error(['message' => $result->get_error_message()]);
