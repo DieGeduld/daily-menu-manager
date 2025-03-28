@@ -395,7 +395,7 @@ table {
 }
 
 .flatpickr-wrapper input[type="text"],
-.selectedDateFrom, input[type="text"],
+.selectedDateFrom input[type="text"],
 .selectedDateTo input[type="text"]
  {
     background: none;
