@@ -518,13 +518,16 @@ if (isset($menu_data['menu_items'])) {
                 'description' => sanitize_textarea_field($item_data['description']),
                 'price' => floatval($item_data['price']),
                 'available_quantity' => intval($item_data['available_quantity']),
+                'properties' => sanitize_text_field($item_data['properties']),
+                'allergens' => sanitize_textarea_field($item_data['allergens']),
                 'sort_order' => $sort_order++
             ],
-            ['%d', '%s', '%s', '%s', '%f', '%d', '%d']
+            ['%d', '%s', '%s', '%s', '%f', '%d', '%s', '%s', '%d']
         );
         
         if ($inserted === false) {
-            throw new \Exception('Fehler beim Speichern der Menüeinträge');
+            error_log($wpdb->last_error);
+            throw new \Exception('Fehler beim Speichern der Menüeinträge.' . $wpdb->last_error);
         }
     }
 }
