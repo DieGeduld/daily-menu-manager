@@ -27,20 +27,20 @@ class V110AddGeneralNotes extends Migration
      */
     public function up(): void
     {
-        global $wpdb;
-
-        $table_name = $wpdb->prefix . 'menu_orders';
+        $table_name = $this->wpdb->prefix . 'menu_orders';
         $column_name = 'general_notes';
 
         // Check if the column already exists
-        $column_exists = $wpdb->get_results($wpdb->prepare(
+        $column_exists = $this->wpdb->get_results($this->wpdb->prepare(
             "SHOW COLUMNS FROM $table_name LIKE %s",
             $column_name
         ));
 
         if (empty($column_exists)) {
-            $wpdb->query("ALTER TABLE $table_name ADD COLUMN $column_name TEXT AFTER notes");
+            $this->wpdb->query("ALTER TABLE $table_name ADD COLUMN $column_name TEXT AFTER notes");
         }
+        
+        parent::up();
     }
 
     /**

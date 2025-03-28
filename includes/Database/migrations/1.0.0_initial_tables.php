@@ -27,13 +27,12 @@ class V100InitialTables extends Migration
      */
     public function up(): void
     {
-        global $wpdb;
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
-        $charset_collate = $wpdb->get_charset_collate();
+        $charset_collate = $this->wpdb->get_charset_collate();
 
         // Create daily_menus table
-        $sql_daily_menus = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}daily_menus (
+        $sql_daily_menus = "CREATE TABLE IF NOT EXISTS {$this->wpdb->prefix}daily_menus (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             menu_date date NOT NULL,
             created_at datetime DEFAULT CURRENT_TIMESTAMP,
@@ -43,7 +42,7 @@ class V100InitialTables extends Migration
         ) $charset_collate;";
 
         // Create menu_items table
-        $sql_menu_items = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}menu_items (
+        $sql_menu_items = "CREATE TABLE IF NOT EXISTS {$this->wpdb->prefix}menu_items (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             menu_id mediumint(9) NOT NULL,
             item_type varchar(50) NOT NULL,
@@ -59,7 +58,7 @@ class V100InitialTables extends Migration
         ) $charset_collate;";
 
         // Create menu_orders table
-        $sql_menu_orders = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}menu_orders (
+        $sql_menu_orders = "CREATE TABLE IF NOT EXISTS {$this->wpdb->prefix}menu_orders (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             menu_id mediumint(9) NOT NULL,
             menu_item_id mediumint(9) NOT NULL,
@@ -80,7 +79,7 @@ class V100InitialTables extends Migration
             KEY status (status)
         ) $charset_collate;";
 
-        $sql_migration = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}dmm_migration_status (
+        $sql_migration = "CREATE TABLE IF NOT EXISTS {$this->wpdb->prefix}dmm_migration_status (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             version varchar(50) NOT NULL,
             batch int NOT NULL,
@@ -99,6 +98,8 @@ class V100InitialTables extends Migration
         dbDelta($sql_menu_items);
         dbDelta($sql_menu_orders);
         dbDelta($sql_migration);
+
+        parent::up();
     }
 
     /**

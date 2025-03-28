@@ -26,10 +26,8 @@ class V150AddSettingsTable extends Migration
      */
     public function up(): void
     {
-        global $wpdb;
-
-        $table_name = $wpdb->prefix . 'menu_settings';
-        $charset_collate = $wpdb->get_charset_collate();
+        $table_name = $this->wpdb->prefix . 'menu_settings';
+        $charset_collate = $this->wpdb->get_charset_collate();
 
         // Check if the table already exists
         if (!$this->tableExists($table_name)) {

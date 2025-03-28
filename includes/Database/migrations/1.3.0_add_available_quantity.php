@@ -27,19 +27,17 @@ class V130AddAvailableQuantity extends Migration
      */
     public function up(): void
     {
-        global $wpdb;
-
-        $table_name = $wpdb->prefix . 'menu_items';
+        $table_name = $this->wpdb->prefix . 'menu_items';
         $column_name = 'available_quantity';
 
         // Check if the column already exists
-        $column_exists = $wpdb->get_results($wpdb->prepare(
+        $column_exists = $this->wpdb->get_results($this->wpdb->prepare(
             "SHOW COLUMNS FROM $table_name LIKE %s",
             $column_name
         ));
 
         if (empty($column_exists)) {
-            $wpdb->query("ALTER TABLE $table_name ADD COLUMN $column_name INT NOT NULL DEFAULT 0 AFTER price");
+            $this->wpdb->query("ALTER TABLE $table_name ADD COLUMN $column_name INT NOT NULL DEFAULT 0 AFTER price");
         }
     }
 

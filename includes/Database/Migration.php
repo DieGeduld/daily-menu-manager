@@ -16,7 +16,22 @@ abstract class Migration implements MigrationInterface
 
     protected int $batchSize;
 
-    abstract public function up(): void;
+    protected $wpdb;
+
+    public function __construct() {
+        global $wpdb;
+        $this->wpdb = $wpdb;
+        $this->logMigration("Running migration {$this->getVersion()}");
+    }
+
+    public function up():void {
+        if ($this->wpdb->last_error) {
+            $this->logMigration("Failed to run migration {$this->getVersion()}: {$this->wpdb->last_error}");
+        } else {
+            $this->logMigration("Successfully ran migration {$this->getVersion()}");
+        }
+    }
+    
     abstract public function down(): void;
 
     public function getDependencies(): array
@@ -62,5 +77,27 @@ abstract class Migration implements MigrationInterface
             "SHOW COLUMNS FROM $tableName LIKE %s",
             $columnName
         )));
+    }
+
+    protected function logMigration(string $message): void
+    {
+        $logFile = DMM_PLUGIN_DIR . 'logs/errors.log';
+
+        if(!file_exists(dirname($logFile))) {
+            mkdir(dirname($logFile), 0777, true);
+        }
+        
+        if (!file_exists($logFile)) {
+            touch($logFile);
+        }
+
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            $class = get_class($this);            
+            error_log(
+                "[" . date("Y-m-d H:i:s") . "] {$class}: {$message}", 
+                3, 
+                DMM_PLUGIN_DIR . 'logs/errors.log'
+            );
+        }
     }
 }

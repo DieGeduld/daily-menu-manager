@@ -274,7 +274,7 @@ class MigrationManager
             }
         }
 
-        return array_reverse($sorted);
+        return $sorted;
     }
 
     /**

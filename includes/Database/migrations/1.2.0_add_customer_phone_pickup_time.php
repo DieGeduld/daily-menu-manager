@@ -27,29 +27,30 @@ class V120AddCustomerPhonePickupTime extends Migration
      */
     public function up(): void
     {
-        global $wpdb;
-
-        $table_name = $wpdb->prefix . 'menu_orders';
+        $table_name = $this->wpdb->prefix . 'menu_orders';
 
         // Add customer_phone column if it doesn't exist
-        $column_exists = $wpdb->get_results($wpdb->prepare(
+        $column_exists = $this->wpdb->get_results($this->wpdb->prepare(
             "SHOW COLUMNS FROM $table_name LIKE %s",
             'customer_phone'
         ));
 
         if (empty($column_exists)) {
-            $wpdb->query("ALTER TABLE $table_name ADD COLUMN customer_phone VARCHAR(50) AFTER customer_name");
+            $this->wpdb->query("ALTER TABLE $table_name ADD COLUMN customer_phone VARCHAR(50) AFTER customer_name");
         }
 
         // Add pickup_time column if it doesn't exist
-        $column_exists = $wpdb->get_results($wpdb->prepare(
+        $column_exists = $this->wpdb->get_results($this->wpdb->prepare(
             "SHOW COLUMNS FROM $table_name LIKE %s",
             'pickup_time'
         ));
 
         if (empty($column_exists)) {
-            $wpdb->query("ALTER TABLE $table_name ADD COLUMN pickup_time TIME AFTER general_notes");
+            $this->wpdb->query("ALTER TABLE $table_name ADD COLUMN pickup_time TIME AFTER general_notes");
         }
+        
+        parent::up();
+
     }
 
     /**
