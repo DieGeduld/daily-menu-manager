@@ -26,6 +26,7 @@ class Plugin {
         $this->initialized = true;
     }
 
+    // Todo: 
     private function setupMenuTypes(): void {
         $this->menu_types = [
             'appetizer' => [

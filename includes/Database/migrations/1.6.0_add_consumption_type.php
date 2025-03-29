@@ -47,22 +47,22 @@ class V160AddConsumptionType extends Migration
      */
     private function insertDefaultSettings(string $table_name): void
     {
-        global $wpdb;
+        // global $wpdb;
         
-        // Default menu properties
-        $default_properties = [
-            __("Vegetarian", "daily-menu-manager"),
-            __("Vegan", "daily-menu-manager"),
-            __("Glutenfree", "daily-menu-manager"),
-        ];
+        // // Default menu properties
+        // $default_properties = [
+        //     __("Vegetarian", "daily-menu-manager"),
+        //     __("Vegan", "daily-menu-manager"),
+        //     __("Glutenfree", "daily-menu-manager"),
+        // ];
         
-        $wpdb->insert(
-            $table_name,
-            [
-                'setting_key' => 'menu_properties',
-                'setting_value' => json_encode($default_properties)
-            ]
-        );
+        // $wpdb->insert(
+        //     $table_name,
+        //     [
+        //         'setting_key' => 'menu_properties',
+        //         'setting_value' => json_encode($default_properties)
+        //     ]
+        // );
     }
 
     /**

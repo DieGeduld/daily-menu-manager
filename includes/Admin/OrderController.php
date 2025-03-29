@@ -37,8 +37,8 @@ class OrderController {
     public static function addAdminMenu() {
         add_submenu_page(
             'daily-menu-manager',
-            __('Bestellungen', 'daily-menu-manager'),
-            __('Bestellungen', 'daily-menu-manager'),
+            __('Orders', 'daily-menu-manager'),
+            __('Orders', 'daily-menu-manager'),
             'manage_options',
             'daily-menu-orders',
             [self::class, 'displayOrdersPage']
@@ -72,9 +72,9 @@ class OrderController {
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('daily_menu_orders_nonce'),
             'messages' => [
-                'deleteConfirm' => __('Möchten Sie diese Bestellung wirklich löschen?', 'daily-menu-manager'),
-                'deleteSuccess' => __('Bestellung wurde gelöscht.', 'daily-menu-manager'),
-                'deleteError' => __('Fehler beim Löschen der Bestellung.', 'daily-menu-manager')
+                'deleteConfirm' => __('Are you sure you want to delete this order?', 'daily-menu-manager'),
+                'deleteSuccess' => __('Order has been deleted.', 'daily-menu-manager'),
+                'deleteError' => __('Error deleting the order.', 'daily-menu-manager')
             ]
         ]);
     }
@@ -133,22 +133,22 @@ class OrderController {
         check_ajax_referer('daily_menu_orders_nonce');
         
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(['message' => __('Keine Berechtigung.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);
         }
 
         $order_number = sanitize_text_field($_POST['order_number']);
         if (empty($order_number)) {
-            wp_send_json_error(['message' => __('Keine Bestellnummer angegeben.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('No order number provided.', 'daily-menu-manager')]);
         }
 
         $order_model = new Order();
         $order = $order_model->getOrderByNumber($order_number);
 
         if (empty($order)) {
-            wp_send_json_error(['message' => __('Bestellung nicht gefunden.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('Order not found.', 'daily-menu-manager')]);
         }
 
-        // Generiere HTML für den Druck
+        // Generate HTML for printing
         ob_start();
         require DMM_PLUGIN_DIR . 'includes/Views/print-order.php';
         $print_html = ob_get_clean();
@@ -157,27 +157,27 @@ class OrderController {
     }
 
     /**
-     * AJAX Handler für das Löschen von Bestellungen
+     * AJAX Handler for deleting orders
      */
     public static function handleDeleteOrder() {
         check_ajax_referer('daily_menu_orders_nonce');
         
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(['message' => __('Keine Berechtigung.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);
         }
 
         $order_number = sanitize_text_field($_POST['order_number']);
         if (empty($order_number)) {
-            wp_send_json_error(['message' => __('Keine Bestellnummer angegeben.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('No order number provided.', 'daily-menu-manager')]);
         }
 
         $order_model = new Order();
         $result = $order_model->deleteOrder($order_number);
 
         if ($result) {
-            wp_send_json_success(['message' => __('Bestellung wurde gelöscht.', 'daily-menu-manager')]);
+            wp_send_json_success(['message' => __('Order deleted successfully.', 'daily-menu-manager')]);
         } else {
-            wp_send_json_error(['message' => __('Fehler beim Löschen der Bestellung.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('Error deleting order.', 'daily-menu-manager')]);
         }
     }
 }

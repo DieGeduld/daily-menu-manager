@@ -20,8 +20,8 @@ class SettingsController {
     public static function addAdminMenu() {
         add_submenu_page(
             'daily-menu-manager',
-            __('Einstellungen', 'daily-menu-manager'),
-            __('Einstellungen', 'daily-menu-manager'),
+            __('Settings', 'daily-menu-manager'),
+            __('Settings', 'daily-menu-manager'),
             'manage_options',
             'daily-menu-settings',
             [self::class, 'displaySettingsPage']

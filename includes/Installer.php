@@ -73,23 +73,23 @@ class Installer {
                 'notification_email' => get_option('admin_email'),
                 'menu_types' => [
                     'appetizer' => [
-                        'label' => __('Vorspeise', 'daily-menu-manager'),
+                        'label' => __('Appetizer', 'daily-menu-manager'),
                         'enabled' => true
                     ],
                     'main_course' => [
-                        'label' => __('Hauptgang', 'daily-menu-manager'),
+                        'label' => __('Main Course', 'daily-menu-manager'),
                         'enabled' => true
                     ],
                     'dessert' => [
-                        'label' => __('Nachspeise', 'daily-menu-manager'),
+                        'label' => __('Dessert', 'daily-menu-manager'),
                         'enabled' => true
                     ]
                 ],
                 'order_statuses' => [
-                    'pending' => __('Ausstehend', 'daily-menu-manager'),
-                    'confirmed' => __('Bestätigt', 'daily-menu-manager'),
-                    'completed' => __('Abgeschlossen', 'daily-menu-manager'),
-                    'cancelled' => __('Storniert', 'daily-menu-manager')
+                    'pending' => __('Pending', 'daily-menu-manager'),
+                    'confirmed' => __('Confirmed', 'daily-menu-manager'),
+                    'completed' => __('Completed', 'daily-menu-manager'),
+                    'cancelled' => __('Cancelled', 'daily-menu-manager')
                 ]
             ]
         ];
@@ -238,14 +238,13 @@ class Installer {
         // PHP Version
         if (version_compare(PHP_VERSION, '7.2', '<')) {
             $errors[] = sprintf(
-                __('Daily Menu Manager benötigt PHP 7.2 oder höher. Aktuell läuft PHP %s.', 'daily-menu-manager'),
-                PHP_VERSION
+                'Daily Menu Manager requires PHP 7.2 or higher. Currently running PHP %s.', PHP_VERSION
             );
         }
         
         // WordPress Version
         if (version_compare($GLOBALS['wp_version'], '5.0', '<')) {
-            $errors[] = __('Daily Menu Manager benötigt WordPress 5.0 oder höher.', 'daily-menu-manager');
+            $errors[] = __('Daily Menu Manager requires WordPress 5.0 or higher.', 'daily-menu-manager');
         }
         
         // Erforderliche PHP-Erweiterungen
@@ -253,7 +252,7 @@ class Installer {
         foreach ($required_extensions as $ext) {
             if (!extension_loaded($ext)) {
                 $errors[] = sprintf(
-                    __('Die PHP-Erweiterung %s wird benötigt.', 'daily-menu-manager'),
+                    'The PHP extension %s is required.',
                     $ext
                 );
             }
@@ -296,7 +295,7 @@ class Installer {
             error_log('Daily Menu Manager table creation failed: ' . $e->getMessage());
             throw new \RuntimeException(
                 sprintf(
-                    __('Fehler bei der Tabellenerstellung: %s', 'daily-menu-manager'),
+                    __('Error creating tables: %s', 'daily-menu-manager'),
                     $e->getMessage()
                 )
             );

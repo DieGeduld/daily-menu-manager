@@ -102,16 +102,16 @@ class MenuController {
                 'ajaxurl' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('daily_menu_admin_nonce'),
                 'messages' => [
-                    'copySuccess' => __('Menü wurde erfolgreich kopiert!', 'daily-menu-manager'),
-                    'copyError' => __('Fehler beim Kopieren des Menüs.', 'daily-menu-manager'),
-                    'saveSuccess' => __('Menü wurde gespeichert!', 'daily-menu-manager'),
-                    'saveError' => __('Fehler beim Speichern des Menüs.', 'daily-menu-manager'),
-                    'deleteConfirm' => __('Möchten Sie dieses Menü-Item wirklich löschen?', 'daily-menu-manager'),
-                    'selectDate' => __('Bitte wählen Sie ein Datum.', 'daily-menu-manager'),
-                    'noItems' => __('Bitte fügen Sie mindestens ein Menü-Item hinzu.', 'daily-menu-manager'),
-                    'requiredFields' => __('Bitte füllen Sie alle Pflichtfelder aus.', 'daily-menu-manager'),
-                    'copy' => __('Kopieren', 'daily-menu-manager'),
-                    'cancel' => __('Abbrechen', 'daily-menu-manager')
+                    'copySuccess' => __('Menu was copied successfully!', 'daily-menu-manager'),
+                    'copyError' => __('Error copying menu.', 'daily-menu-manager'),
+                    'saveSuccess' => __('Menu was saved!', 'daily-menu-manager'),
+                    'saveError' => __('Error saving menu.', 'daily-menu-manager'),
+                    'deleteConfirm' => __('Are you sure you want to delete this menu item?', 'daily-menu-manager'),
+                    'selectDate' => __('Please select a date.', 'daily-menu-manager'),
+                    'noItems' => __('Please add at least one menu item.', 'daily-menu-manager'),
+                    'requiredFields' => __('Please fill in all required fields.', 'daily-menu-manager'),
+                    'copy' => __('Copy', 'daily-menu-manager'),
+                    'cancel' => __('Cancel', 'daily-menu-manager')
                 ],
                 'menus' => Menu::getMenuDates(),
             ]
@@ -162,21 +162,21 @@ class MenuController {
         check_ajax_referer('daily_menu_admin_nonce');
         
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(['message' => __('Keine Berechtigung.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);
         }
 
         $item_order = $_POST['item_order'] ?? [];
         if (empty($item_order)) {
-            wp_send_json_error(['message' => __('Keine Sortierinformationen erhalten.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('No order information received.', 'daily-menu-manager')]);
         }
 
         $menu = new Menu();
         $result = $menu->updateItemOrder($item_order);
 
         if ($result) {
-            wp_send_json_success(['message' => __('Reihenfolge aktualisiert.', 'daily-menu-manager')]);
+            wp_send_json_success(['message' => __('Order updated.', 'daily-menu-manager')]);
         } else {
-            wp_send_json_error(['message' => __('Fehler beim Aktualisieren der Reihenfolge.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('Error updating order.', 'daily-menu-manager')]);
         }
     }
 
@@ -187,7 +187,7 @@ class MenuController {
         check_ajax_referer('daily_menu_admin_nonce');
         
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(['message' => __('Keine Berechtigung.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);
         }
 
         $menu_id = intval($_POST['menu_id']);
@@ -196,7 +196,7 @@ class MenuController {
         $currentDate = sanitize_text_field($_POST["currentDate"]);
 
         if (!$currentDate) {
-            wp_send_json_error(['message' => __('Ungültige Parameter.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('Invalid parameters.', 'daily-menu-manager')]);
         }
 
         $menu = new Menu();
@@ -204,7 +204,7 @@ class MenuController {
             $items = $menu->getMenuForDate($selectedDate);
 
             if (!$items) {
-                wp_send_json_error(['message' => __('Für dieses Datum existiert kein Menü.', 'daily-menu-manager')]);
+                wp_send_json_error(['message' => __('No menu exists for this date.', 'daily-menu-manager')]);
                 exit();
             } 
 
@@ -214,14 +214,14 @@ class MenuController {
                 wp_send_json_error(['message' => $result->get_error_message()]);
             } else {
                 wp_send_json_success([
-                    'message' => __('Menü erfolgreich kopiert.', 'daily-menu-manager'),
+                    'message' => __('Menu copied successfully.', 'daily-menu-manager'),
                     'new_menu_id' => $result
                 ]);
             } 
         } else if ($type == "to") {
 
             if (!$currentDate || !$menu_id) {
-                wp_send_json_error(['message' => __('Ungültige Parameter, MenuID missing', 'daily-menu-manager')]);
+                wp_send_json_error(['message' => __('Invalid parameters, menu ID missing', 'daily-menu-manager')]);
             }
 
             $result = $menu->copyMenu(intval($menu_id), $selectedDate);
@@ -230,20 +230,20 @@ class MenuController {
                 wp_send_json_error(['message' => $result->get_error_message()]);
             } else {
                 wp_send_json_success([
-                    'message' => __('Menü erfolgreich kopiert.', 'daily-menu-manager'),
+                    'message' => __('Menu copied successfully.', 'daily-menu-manager'),
                     'new_menu_id' => $result
                 ]);
             } 
         } else {
-            wp_send_json_error(['message' => __('Ungültige Parameter.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('Invalid parameters.', 'daily-menu-manager')]);
         }
 
         $menu = new Menu();
         $items = $menu->getMenuForDate($selectedDate);
         
-        // Prüfe ob bereits ein Menü für das Zieldatum existiert
+        // Check if a menu already exists for the target date
         if ($menu->menuExists($currentDate)) {
-            wp_send_json_error(['message' => __('Für dieses Datum existiert bereits ein Menü.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('A menu already exists for this date.', 'daily-menu-manager')]);
         }
 
         $result = $menu->copyMenu($menu_id, $currentDate);
@@ -252,7 +252,7 @@ class MenuController {
             wp_send_json_error(['message' => $result->get_error_message()]);
         } else {
             wp_send_json_success([
-                'message' => __('Menü erfolgreich kopiert.', 'daily-menu-manager'),
+                'message' => __('Menu copied successfully.', 'daily-menu-manager'),
                 'new_menu_id' => $result
             ]);
         }

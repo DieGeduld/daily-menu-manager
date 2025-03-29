@@ -71,10 +71,10 @@ class ShortcodeController {
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('daily_menu_nonce'),
             'messages' => [
-                'orderSuccess' => __('Ihre Bestellung wurde erfolgreich aufgegeben!', 'daily-menu-manager'),
-                'orderError' => __('Es gab einen Fehler bei der Bestellung. Bitte versuchen Sie es erneut.', 'daily-menu-manager'),
-                'emptyOrder' => __('Bitte wählen Sie mindestens ein Gericht aus.', 'daily-menu-manager'),
-                'requiredFields' => __('Bitte füllen Sie alle Pflichtfelder aus.', 'daily-menu-manager')
+                'orderSuccess' => __('Your order has been successfully placed!', 'daily-menu-manager'),
+                'orderError' => __('There was an error placing your order. Please try again.', 'daily-menu-manager'),
+                'emptyOrder' => __('Please select at least one dish.', 'daily-menu-manager'),
+                'requiredFields' => __('Please fill out all required fields.', 'daily-menu-manager')
             ]
         ]);
     }
@@ -90,7 +90,7 @@ class ShortcodeController {
         $atts = shortcode_atts([
             'date' => current_time('Y-m-d'),
             'show_order_form' => true,
-            'title' => __('Heutiges Tagesmenü', 'daily-menu-manager')
+            'title' => __('Today\'s Menu', 'daily-menu-manager')
         ], $atts, 'daily_menu');
 
         // Hole das Menü
@@ -98,12 +98,12 @@ class ShortcodeController {
         $current_menu = $menu->getMenuForDate($atts['date']);
         
         if (!$current_menu) {
-            return '<p class="no-menu">' . __('Heute ist kein Tagesmenü verfügbar.', 'daily-menu-manager') . '</p>';
+            return '<p class="no-menu">' . __('No menu available for today.', 'daily-menu-manager') . '</p>';
         }
         
         $menu_items = $menu->getMenuItems($current_menu->id);
         if (empty($menu_items)) {
-            return '<p class="no-menu">' . __('Heute sind keine Menüeinträge verfügbar.', 'daily-menu-manager') . '</p>';
+            return '<p class="no-menu">' . __('No menu items available for today.', 'daily-menu-manager') . '</p>';
         }
 
         // Output Buffer starten
@@ -143,9 +143,9 @@ class ShortcodeController {
                                     <div class="menu-item" data-item-available_quantity="<?php echo esc_attr($item->available_quantity); ?>" data-item-id="<?php echo esc_attr($item->id); ?>">
                                         <div class="menu-item-header">
                                             <?php if ($item->available_quantity == 0): ?>
-                                                <span class="menu-item-title unavailable"><?php echo esc_html($item->title); ?> (ausverkauft)</span>
+                                                <span class="menu-item-title unavailable"><?php echo esc_html($item->title); ?> (out of stock)</span>
                                             <?php else: ?>
-                                                <span class="menu-item-title"><?php echo esc_html($item->title); ?> (<?php echo esc_html($item->available_quantity); ?>x verfügbar)</span>
+                                                <span class="menu-item-title"><?php echo esc_html($item->title); ?> (<?php echo esc_html($item->available_quantity); ?>x available)</span>
                                             <?php endif; ?>
                                             <span class="menu-item-price"><?php echo number_format($item->price, 2); ?> €</span>
                                         </div>
@@ -168,7 +168,7 @@ class ShortcodeController {
                                                 <div class="menu-item-order">
                                                     <div class="quantity-control">
                                                         <label for="quantity_<?php echo esc_attr($item->id); ?>">
-                                                            <?php _e('Anzahl:', 'daily-menu-manager'); ?>
+                                                            <?php _e('Quantity:', 'daily-menu-manager'); ?>
                                                         </label>
                                                         <button type="button" style="background: <?php echo SettingsController::getMainColor(); ?>" class="quantity-btn minus">-</button>
                                                         <input type="number" 
@@ -188,12 +188,12 @@ class ShortcodeController {
                                         </div>
                                         <div class="item-notes">
                                             <label for="notes_<?php echo esc_attr($item->id); ?>">
-                                                <?php _e('Anmerkungen:', 'daily-menu-manager'); ?>
+                                                <?php _e('Notes:', 'daily-menu-manager'); ?>
                                             </label>
                                             <input type="text" 
                                                 name="items[<?php echo esc_attr($item->id); ?>][notes]" 
                                                 id="notes_<?php echo esc_attr($item->id); ?>"
-                                                placeholder="<?php _e('z.B. ohne Zwiebeln', 'daily-menu-manager'); ?>">
+                                                placeholder="<?php _e('e.g. without onions', 'daily-menu-manager'); ?>">
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
@@ -204,9 +204,9 @@ class ShortcodeController {
                     <!-- Rechte Spalte: Bestellinfos -->
                     <div class="order-info-column">
                         <div class="order-summary">
-                            <h3><?php _e('Bestellübersicht', 'daily-menu-manager'); ?></h3>
+                            <h3><?php _e('Order Summary', 'daily-menu-manager'); ?></h3>
                             <div class="order-total">
-                                <?php _e('Gesamtbetrag:', 'daily-menu-manager'); ?> 
+                                <?php _e('Total:', 'daily-menu-manager'); ?> 
                                 <span id="total-amount">0,00&nbsp;€</span>
                             </div>
                         </div>
@@ -322,7 +322,7 @@ class ShortcodeController {
             $update = $menu->updateAvailableQuantities($_POST['items']);
             if (is_wp_error($update)) {
                 wp_send_json_error([
-                    'message' => __('Fehler beim Aktualisieren der verfügbaren Mengen: ', 'daily-menu-manager') . $update->get_error_message()
+                    'message' => __('Error updating available quantities: ', 'daily-menu-manager') . $update->get_error_message()
                 ]);
             }
             wp_send_json_success($result);
@@ -334,18 +334,18 @@ class ShortcodeController {
      */
     private static function getTypeLabel($type) {
         $types = [
-            'appetizer' => __('Vorspeise', 'daily-menu-manager'),
-            'main_course' => __('Hauptgang', 'daily-menu-manager'),
-            'dessert' => __('Nachspeise', 'daily-menu-manager')
+            'appetizer' => __('Appetizer', 'daily-menu-manager'),
+            'main_course' => __('Main Course', 'daily-menu-manager'),
+            'dessert' => __('Dessert', 'daily-menu-manager')
         ];
         
         return isset($types[$type]) ? $types[$type] : ucfirst($type);
     }
     private static function getTypeLabelPlural($type) {
         $types = [
-            'appetizer' => __('Vorspeisen', 'daily-menu-manager'),
-            'main_course' => __('Hauptgänge', 'daily-menu-manager'),
-            'dessert' => __('Nachspeisen', 'daily-menu-manager')
+            'appetizer' => __('Appetizers', 'daily-menu-manager'),
+            'main_course' => __('Main Courses', 'daily-menu-manager'),
+            'dessert' => __('Desserts', 'daily-menu-manager')
         ];
         
         return isset($types[$type]) ? $types[$type] : ucfirst($type);
