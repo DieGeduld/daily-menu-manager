@@ -75,6 +75,7 @@
                     <th><?php _e('Datum/Uhrzeit', 'daily-menu-manager'); ?></th>
                     <th><?php _e('Name', 'daily-menu-manager'); ?></th>
                     <th><?php _e('Telefon', 'daily-menu-manager'); ?></th>
+                    <th><?php _e('Art', 'daily-menu-manager'); ?></th>
                     <th><?php _e('Abholzeit', 'daily-menu-manager'); ?></th>
                     <th><?php _e('Bestellte Gerichte', 'daily-menu-manager'); ?></th>
                     <th><?php _e('Gesamtbetrag', 'daily-menu-manager'); ?></th>
@@ -102,9 +103,11 @@
                         
                         <tr class="order-header">
                             <td><strong><?php echo esc_html($order->order_number); ?></strong></td>
+                            <!-- TODO: Datum formatieren -->
                             <td><?php echo esc_html(date_i18n('d.m.Y H:i', strtotime($order->order_date))); ?></td>
                             <td><?php echo esc_html($order->customer_name); ?></td>
                             <td><?php echo esc_html($order->customer_phone); ?></td>
+                            <td><?php echo esc_html($order->consumption_type); ?></td>
                             <td><?php echo date('H:i', strtotime($order->pickup_time)); ?></td>
                             <td colspan="3">
                                 <?php if ($order->general_notes): ?>

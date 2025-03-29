@@ -102,34 +102,36 @@ class Menu {
                 $menu_id = $wpdb->insert_id;
             }
             
-            // Lösche existierende Menüeinträge
-            $wpdb->delete(
-                $wpdb->prefix . 'menu_items',
-                ['menu_id' => $menu_id],
-                ['%d']
-            );
-            
             // Füge neue Menüeinträge hinzu
             if (isset($menu_data['menu_items'])) {
                 $sort_order = 1;
                 foreach ($menu_data['menu_items'] as $item_data) {
                     $props = !empty($item_data["properties"]) ? wp_json_encode($item_data["properties"]) : null;
                     $allergens = !empty($item_data["allergens"]) ? sanitize_textarea_field($item_data["allergens"]) : null;
+                    
+                    $data = [
+                        'menu_id' => $menu_id,
+                        'item_type' => sanitize_text_field($item_data['type']),
+                        'title' => sanitize_text_field($item_data['title']),
+                        'description' => sanitize_textarea_field($item_data['description']),
+                        'price' => floatval($item_data['price']),
+                        'available_quantity' => intval($item_data['available_quantity']),
+                        'properties' => $props,
+                        'allergens' => $allergens,
+                        'sort_order' => $sort_order++
+                    ];
+                    
+                    $formats = ['%d', '%s', '%s', '%s', '%f', '%d', '%s', '%s', '%d'];
 
-                    $inserted = $wpdb->insert(
+                    if (isset($item_data['id']) && !empty($item_data['id'])) {
+                        $data = ['id' => intval($item_data['id'])] + $data; // ID an den Anfang stellen
+                        array_unshift($formats, '%d');
+                    }
+                    
+                    $inserted = $wpdb->replace(
                         $wpdb->prefix . 'menu_items',
-                        [
-                            'menu_id' => $menu_id,
-                            'item_type' => sanitize_text_field($item_data['type']),
-                            'title' => sanitize_text_field($item_data['title']),
-                            'description' => sanitize_textarea_field($item_data['description']),
-                            'price' => floatval($item_data['price']),
-                            'available_quantity' => intval($item_data['available_quantity']),
-                            'properties' => $props,
-                            'allergens' => $allergens,
-                            'sort_order' => $sort_order++
-                        ],
-                        ['%d', '%s', '%s', '%s', '%f', '%d', '%s', '%s', '%d']
+                        $data,
+                        $formats
                     );
                     
                     if ($inserted === false) {

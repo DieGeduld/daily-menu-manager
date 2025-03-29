@@ -27,8 +27,10 @@ abstract class Migration implements MigrationInterface
     public function up():void {
         if ($this->wpdb->last_error) {
             $this->logMigration("Failed to run migration {$this->getVersion()}: {$this->wpdb->last_error}");
+            throw new \Exception("Failed to run migration {$this->getVersion()}: {$this->wpdb->last_error}");
         } else {
             $this->logMigration("Successfully ran migration {$this->getVersion()}");
+            
         }
     }
     

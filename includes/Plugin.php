@@ -92,6 +92,7 @@ class Plugin {
         }
     }
 
+    // Function is a duplication of the checkForUpdates function in the Bootstrap class
     private function checkForUpdates(): void {
         $installed_version = get_option('daily_menu_manager_version');
         
@@ -99,7 +100,7 @@ class Plugin {
             try {
                 $migration_manager = new Database\MigrationManager();
                 $migration_manager->runMigrations();
-                update_option('daily_menu_manager_version', DMM_VERSION);
+                //update_option('daily_menu_manager_version', DMM_VERSION);
                 self::addAdminNotice(
                     sprintf(__('Daily Menu Manager updated to version %s', 'daily-menu-manager'), DMM_VERSION),
                     'success'

@@ -58,16 +58,18 @@ class Order {
                             'order_number' => $order_number,
                             'customer_name' => sanitize_text_field($data['customer_name']),
                             'customer_phone' => sanitize_text_field($data['customer_phone']),
+                            'consumption_type' => sanitize_text_field($data['consumption_type']),
                             'pickup_time' => sanitize_text_field($data['pickup_time']),
                             'quantity' => $quantity,
                             'notes' => sanitize_textarea_field($item_data['notes'] ?? ''),
                             'general_notes' => sanitize_textarea_field($data['general_notes'] ?? ''),
                             'order_date' => current_time('mysql')
                         ],
-                        ['%d', '%d', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s']
+                        ['%d', '%d', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s']
                     );
                     
                     if ($inserted === false) {
+                        error_log($wpdb->last_error); // TODO!
                         throw new \Exception('Fehler beim Speichern der Bestellung');
                     }
                     

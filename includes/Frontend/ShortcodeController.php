@@ -231,13 +231,14 @@ class ShortcodeController {
                             </div>
 
                             <div class="form-field">
-                                <label for="pickup_type">
+                                <label for="consumption_type">
                                     <?php _e('Abholen oder im Lokal essen', 'daily-menu-manager'); ?>*
                                 </label>
-                                <select name="pickup_type" id="pickup_type" required>
+                                <select name="consumption_type" id="consumption_type" required>
+                                    <!-- TODO: Let user choose -->
                                     <option value=""><?php _e('Bitte wählen', 'daily-menu-manager'); ?></option>
-                                    <option value="take_away"><?php _e('Abholen', 'daily-menu-manager'); ?></option>
-                                    <option value="eat_in"><?php _e('Im Lokal essen', 'daily-menu-manager'); ?></option>
+                                    <option value="<?php _e('Abholen', 'daily-menu-manager'); ?>"><?php _e('Abholen', 'daily-menu-manager'); ?></option>
+                                    <option value="<?php _e('Im Lokal essen', 'daily-menu-manager'); ?>"><?php _e('Im Lokal essen', 'daily-menu-manager'); ?></option>
                                 </select>
                             </div>
                             <div class="form-field">

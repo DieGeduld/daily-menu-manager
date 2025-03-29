@@ -248,7 +248,7 @@ class MigrationManager
                     $this->recordMigrationSuccess($version);
                     $this->log("Successfully completed migration $version");
                 } catch (Exception $e) {
-                    $this->log("Failed migration $version: " . $e->getMessage());
+                    $this->log($e->getMessage());
                     $this->recordMigrationError($version, $e->getMessage());
                     throw $e;
                 }

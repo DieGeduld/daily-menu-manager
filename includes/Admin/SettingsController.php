@@ -123,4 +123,15 @@ class SettingsController {
         
         return $main_color;
     }
+
+    // TODO: Let User Select Date Format
+    public static function getDatumFormat() {
+        Settings::init();
+        $settings_model = Settings::getInstance();
+        
+        // Get main color from database with default value
+        $darum_format = $settings_model->get('darum_format', '1');
+        
+        return $darum_format;
+    }
 }
