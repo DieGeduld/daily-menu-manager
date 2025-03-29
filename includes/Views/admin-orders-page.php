@@ -130,6 +130,7 @@
                         <td></td>
                         <td></td>
                         <td></td>
+                        <td></td>
                         <td>
                             <strong><?php echo esc_html($order->quantity); ?>x</strong> 
                             <?php echo esc_html($order->menu_item_title); ?>
