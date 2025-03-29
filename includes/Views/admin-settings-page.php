@@ -25,7 +25,7 @@ settings_errors('daily_menu_properties');
         
         <table class="form-table">
             <tr valign="top">
-                <th scope="row"><?php _e('Menü-Eigenschaften', 'daily-menu-manager'); ?></th>
+                <th scope="row"><?php _e('Menu properties', 'daily-menu-manager'); ?></th>
                 <td>
                     <div id="menu-properties-container">
                         <?php if (!empty($properties)) : ?>
@@ -35,7 +35,7 @@ settings_errors('daily_menu_properties');
                                            name="daily_menu_properties[]" 
                                            value="<?php echo esc_attr($property); ?>" 
                                            class="regular-text" />
-                                    <button type="button" class="button remove-property"><?php _e('Entfernen', 'daily-menu-manager'); ?></button>
+                                    <button type="button" class="button remove-property"><?php _e('Remove', 'daily-menu-manager'); ?></button>
                                 </div>
                             <?php endforeach; ?>
                         <?php else : ?>
@@ -44,29 +44,29 @@ settings_errors('daily_menu_properties');
                                        name="daily_menu_properties[]" 
                                        value="" 
                                        class="regular-text" />
-                                <button type="button" class="button remove-property"><?php _e('Entfernen', 'daily-menu-manager'); ?></button>
+                                <button type="button" class="button remove-property"><?php _e('Remove', 'daily-menu-manager'); ?></button>
                             </div>
                         <?php endif; ?>
                     </div>
-                    <button type="button" class="button add-property"><?php _e('Eigenschaft hinzufügen', 'daily-menu-manager'); ?></button>
-                    <p class="description"><?php _e('Definieren Sie hier die Eigenschaften, die für Menüs ausgewählt werden können.', 'daily-menu-manager'); ?></p>
+                    <button type="button" class="button add-property"><?php _e('Add property', 'daily-menu-manager'); ?></button>
+                    <p class="description"><?php _e('Define the properties that can be selected for menus here.', 'daily-menu-manager'); ?></p>
                 </td>
             </tr>
             
             <tr valign="top">
-                <th scope="row"><?php _e('Hauptfarbe', 'daily-menu-manager'); ?></th>
+                <th scope="row"><?php _e('Main color', 'daily-menu-manager'); ?></th>
                 <td>
                     <input type="color" 
                            name="daily_menu_main_color" 
                            value="<?php echo esc_attr($main_color); ?>" 
                            class="regular-text" />
-                    <p class="description"><?php _e('Wählen Sie eine Hauptfarbe.', 'daily-menu-manager'); ?></p>
+                    <p class="description"><?php _e('Select a main color.', 'daily-menu-manager'); ?></p>
                 </td>
             </tr>
         </table>
         
         <p class="submit">
-            <input type="submit" name="save_menu_settings" class="button-primary" value="<?php _e('Einstellungen speichern', 'daily-menu-manager'); ?>" />
+            <input type="submit" name="save_menu_settings" class="button-primary" value="<?php _e('Save settings', 'daily-menu-manager'); ?>" />
         </p>
     </form>
 </div>
@@ -77,7 +77,7 @@ jQuery(document).ready(function($) {
     $('.add-property').on('click', function() {
         var newRow = '<div class="property-row">' +
             '<input type="text" name="daily_menu_properties[]" value="" class="regular-text" />' +
-            '<button type="button" class="button remove-property"><?php _e('Entfernen', 'daily-menu-manager'); ?></button>' +
+            '<button type="button" class="button remove-property"><?php _e('Remove', 'daily-menu-manager'); ?></button>' +
             '</div>';
         $('#menu-properties-container').append(newRow);
     });

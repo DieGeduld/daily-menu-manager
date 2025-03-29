@@ -2,15 +2,15 @@
 <?php defined('ABSPATH') or die('Direct access not allowed!'); ?>
 
 <div class="wrap">
-    <h1><?php _e('Tagesmenü verwalten', 'daily-menu-manager'); ?></h1>
+    <h1><?php _e('Manage Daily Menu', 'daily-menu-manager'); ?></h1>
     
     <?php settings_errors('daily_menu_manager'); ?>
     
-    <!-- Datum-Auswahl -->
+    <!-- Date Selection -->
     <div class="date-selection">
         <form method="get" class="date-selector-form">
             <input type="hidden" name="page" value="daily-menu-manager">
-            <label for="menu_date"><?php _e('Datum auswählen:', 'daily-menu-manager'); ?></label>
+            <label for="menu_date"><?php _e('Select Date:', 'daily-menu-manager'); ?></label>
             
 
             <div class="flatpickr-wrapper">
@@ -19,7 +19,7 @@
                     name="menu_date" 
                     value="<?php echo esc_attr($selected_date); ?>"
                     onchange="this.form.submit()"
-                    data-input>  <!-- data-input hinzugefügt -->
+                    data-input>
 
                     <a class="input-button" title="toggle" data-toggle>
                         <span class="dashicons dashicons-calendar-alt"></span>
@@ -30,7 +30,7 @@
                 <button type="submit" 
                         class="button" 
                         onclick="document.getElementById('menu_date').value='<?php echo esc_attr(current_time('Y-m-d')); ?>'; return true;">
-                    <?php _e('Heute', 'daily-menu-manager'); ?>
+                    <?php _e('Today', 'daily-menu-manager'); ?>
                 </button>
             <?php endif; ?>
 
@@ -39,13 +39,13 @@
         <?php if ($current_menu): ?>
         <div class="menu-actions">
             <button type="button" class="button copy-menu" data-menu-id="<?php echo esc_attr($current_menu->id); ?>">
-                <?php _e('Menu Kopieren', 'daily-menu-manager'); ?>
+                <?php _e('Copy Menu', 'daily-menu-manager'); ?>
             </button>
         </div>
         <?php else: ?>
             <div class="menu-actions">
             <button type="button" class="button copy-menu" data-menu-id="0">
-                <?php _e('Menu importieren', 'daily-menu-manager'); ?>
+                <?php _e('Import Menu', 'daily-menu-manager'); ?>
             </button>
         </div>
         <?php endif; ?>
@@ -67,22 +67,22 @@
                     <input type="hidden" name="menu_items[new-{id}][sort_order]" value="0" class="sort-order">
                     
                     <div class="menu-item-field">
-                        <label><?php _e('Titel', 'daily-menu-manager'); ?></label>
+                        <label><?php _e('Title', 'daily-menu-manager'); ?></label>
                         <input type="text" name="menu_items[new-{id}][title]" required>
                     </div>
                     
                     <div class="menu-item-field">
-                        <label><?php _e('Beschreibung', 'daily-menu-manager'); ?></label>
+                        <label><?php _e('Description', 'daily-menu-manager'); ?></label>
                         <textarea name="menu_items[new-{id}][description]"></textarea>
                     </div>
                     
                     <div class="menu-item-field">
-                        <label><?php _e('Preis', 'daily-menu-manager'); ?> (€)</label>
+                        <label><?php _e('Price', 'daily-menu-manager'); ?> (€)</label>
                         <input type="number" step="0.01" name="menu_items[new-{id}][price]" required>
                     </div>
                     
                     <div class="menu-item-field">
-                        <label><?php _e('Anzahl', 'daily-menu-manager'); ?></label>
+                        <label><?php _e('Quantity', 'daily-menu-manager'); ?></label>
                         <input type="number" step="0.01" name="menu_items[new-{id}][available_quantity]" required>
                     </div>
 
@@ -119,8 +119,8 @@
 </div>
 
 <!-- Kopier-Dialog to -->
-<div id="copy-menu-dialog-to" style="display: none;" title="<?php _e('Menü kopieren', 'daily-menu-manager'); ?>">
-    <p><?php _e('Wählen Sie das Zieldatum für die Kopie:', 'daily-menu-manager'); ?></p>
+<div id="copy-menu-dialog-to" style="display: none;" title="<?php _e('Copy Menu', 'daily-menu-manager'); ?>">
+    <p><?php _e('Select the target date for copying:', 'daily-menu-manager'); ?></p>
 
     <div class="selectedDateTo">
         <input type="hidden" name="type" value="to">
@@ -137,8 +137,8 @@
 </div>
 
 <!-- Kopier-Dialog from -->
-<div id="copy-menu-dialog-from" style="display: none;" title="<?php _e('Importiere Menu', 'daily-menu-manager'); ?>">
-    <p><?php _e('Wählen Sie das Quelldatum:', 'daily-menu-manager'); ?></p>
+<div id="copy-menu-dialog-from" style="display: none;" title="<?php _e('Import Menu', 'daily-menu-manager'); ?>">
+    <p><?php _e('Select the source date:', 'daily-menu-manager'); ?></p>
     <div class="selectedDateFrom">
         <input type="hidden" name="type" value="from">
         <input type="date" 

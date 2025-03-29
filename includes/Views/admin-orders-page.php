@@ -1,21 +1,21 @@
 <?php defined('ABSPATH') or die('Direct access not allowed!'); ?>
 
 <div class="wrap">
-    <h1><?php _e('Bestellungen', 'daily-menu-manager'); ?></h1>
+    <h1><?php _e('Orders', 'daily-menu-manager'); ?></h1>
 
     <!-- Statistik-Boxen -->
     <div class="order-summary-table">
         <table class="summary-table">
             <tr>
-                <td><?php _e('Heutige Bestellungen', 'daily-menu-manager'); ?></td>
+                <td><?php _e('Today\'s orders', 'daily-menu-manager'); ?></td>
                 <td class="value"><?php echo esc_html($stats['total_orders']); ?></td>
             </tr>
             <tr>
-                <td><?php _e('Heutiger Umsatz', 'daily-menu-manager'); ?></td>
+                <td><?php _e('Today\'s revenue', 'daily-menu-manager'); ?></td>
                 <td class="value"><?php echo number_format($stats['total_revenue'], 2, ',', '.'); ?> €</td>
             </tr>
             <tr>
-                <td><?php _e('Bestellte Gerichte', 'daily-menu-manager'); ?></td>
+                <td><?php _e('Ordered items', 'daily-menu-manager'); ?></td>
                 <td class="value"><?php echo esc_html($stats['total_items']); ?></td>
             </tr>
         </table>
@@ -27,36 +27,36 @@
             <form method="get" class="filter-form">
                 <input type="hidden" name="page" value="<?php echo esc_attr($_REQUEST['page']); ?>">
                 
-                <label for="filter_date"><?php _e('Datum:', 'daily-menu-manager'); ?></label>
+                <label for="filter_date"><?php _e('Date:', 'daily-menu-manager'); ?></label>
                 <input type="date" 
                        id="filter_date" 
                        name="filter_date" 
                        value="<?php echo esc_attr($filters['date']); ?>">
                 
-                <label for="filter_order"><?php _e('Bestellnummer:', 'daily-menu-manager'); ?></label>
+                <label for="filter_order"><?php _e('Order Number:', 'daily-menu-manager'); ?></label>
                 <input type="text" 
                        id="filter_order" 
                        name="filter_order" 
                        value="<?php echo esc_attr($filters['order_number']); ?>" 
-                       placeholder="z.B. 20241110-001">
+                       placeholder="e.g. 20241110-001">
                 
                 <label for="filter_name"><?php _e('Name:', 'daily-menu-manager'); ?></label>
                 <input type="text" 
                        id="filter_name" 
                        name="filter_name" 
                        value="<?php echo esc_attr($filters['customer_name']); ?>" 
-                       placeholder="Kundenname">
+                       placeholder="Customer Name">
 
-                <label for="filter_phone"><?php _e('Telefon:', 'daily-menu-manager'); ?></label>
+                <label for="filter_phone"><?php _e('Phone:', 'daily-menu-manager'); ?></label>
                 <input type="text" 
                        id="filter_phone" 
                        name="filter_phone" 
                        value="<?php echo esc_attr($filters['customer_phone']); ?>" 
-                       placeholder="Telefonnummer">
+                       placeholder="Phone Number">
                 
-                <input type="submit" class="button" value="<?php _e('Filtern', 'daily-menu-manager'); ?>">
+                <input type="submit" class="button" value="<?php _e('Filter', 'daily-menu-manager'); ?>">
                 <a href="?page=<?php echo esc_attr($_REQUEST['page']); ?>" class="button">
-                    <?php _e('Filter zurücksetzen', 'daily-menu-manager'); ?>
+                    <?php _e('Reset Filter', 'daily-menu-manager'); ?>
                 </a>
             </form>
         </div>
@@ -65,21 +65,21 @@
     <!-- Bestellungen Tabelle -->
     <?php if (empty($orders)): ?>
         <div class="notice notice-info">
-            <p><?php _e('Keine Bestellungen gefunden.', 'daily-menu-manager'); ?></p>
+            <p><?php _e('No orders found.', 'daily-menu-manager'); ?></p>
         </div>
     <?php else: ?>
         <table class="wp-list-table widefat fixed striped">
             <thead>
                 <tr>
-                    <th><?php _e('Bestellnummer', 'daily-menu-manager'); ?></th>
-                    <th><?php _e('Datum/Uhrzeit', 'daily-menu-manager'); ?></th>
+                    <th><?php _e('Order Number', 'daily-menu-manager'); ?></th>
+                    <th><?php _e('Date/Time', 'daily-menu-manager'); ?></th>
                     <th><?php _e('Name', 'daily-menu-manager'); ?></th>
-                    <th><?php _e('Telefon', 'daily-menu-manager'); ?></th>
-                    <th><?php _e('Art', 'daily-menu-manager'); ?></th>
-                    <th><?php _e('Abholzeit', 'daily-menu-manager'); ?></th>
-                    <th><?php _e('Bestellte Gerichte', 'daily-menu-manager'); ?></th>
-                    <th><?php _e('Gesamtbetrag', 'daily-menu-manager'); ?></th>
-                    <th><?php _e('Aktionen', 'daily-menu-manager'); ?></th>
+                    <th><?php _e('Phone', 'daily-menu-manager'); ?></th>
+                    <th><?php _e('Type', 'daily-menu-manager'); ?></th>
+                    <th><?php _e('Pickup Time', 'daily-menu-manager'); ?></th>
+                    <th><?php _e('Ordered Items', 'daily-menu-manager'); ?></th>
+                    <th><?php _e('Total', 'daily-menu-manager'); ?></th>
+                    <th><?php _e('Actions', 'daily-menu-manager'); ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -92,7 +92,7 @@
                     if ($current_order !== $order->order_number): 
                         if ($current_order !== ''): // Vorherige Bestellung abschließen ?>
                             <tr class="order-total">
-                                <td colspan="6"><strong><?php _e('Gesamtbetrag:', 'daily-menu-manager'); ?></strong></td>
+                                <td colspan="6"><strong><?php _e('Total:', 'daily-menu-manager'); ?></strong></td>
                                 <td colspan="2"><strong><?php echo number_format($order_total, 2, ',', '.'); ?> €</strong></td>
                             </tr>
                         <?php endif;
@@ -112,7 +112,7 @@
                             <td colspan="3">
                                 <?php if ($order->general_notes): ?>
                                     <div class="general-notes">
-                                        <strong><?php _e('Anmerkungen:', 'daily-menu-manager'); ?></strong> 
+                                        <strong><?php _e('Notes:', 'daily-menu-manager'); ?></strong> 
                                         <?php echo esc_html($order->general_notes); ?>
                                     </div>
                                 <?php endif; ?>
@@ -135,7 +135,7 @@
                             <strong><?php echo esc_html($order->quantity); ?>x</strong> 
                             <?php echo esc_html($order->menu_item_title); ?>
                             <?php if ($order->notes): ?>
-                                <br><small><?php _e('Anmerkung:', 'daily-menu-manager'); ?> <?php echo esc_html($order->notes); ?></small>
+                                <br><small><?php _e('Notes:', 'daily-menu-manager'); ?> <?php echo esc_html($order->notes); ?></small>
                             <?php endif; ?>
                         </td>
                         <td><?php echo number_format($item_total, 2, ',', '.'); ?> €</td>
@@ -155,7 +155,7 @@
                 // Letzte Bestellung abschließen
                 if ($current_order !== ''): ?>
                     <tr class="order-total">
-                        <td colspan="6"><strong><?php _e('Gesamtbetrag:', 'daily-menu-manager'); ?></strong></td>
+                        <td colspan="6"><strong><?php _e('Total:', 'daily-menu-manager'); ?></strong></td>
                         <td colspan="2"><strong><?php echo number_format($order_total, 2, ',', '.'); ?> €</strong></td>
                     </tr>
                 <?php endif; ?>

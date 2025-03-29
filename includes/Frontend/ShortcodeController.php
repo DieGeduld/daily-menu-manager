@@ -220,8 +220,8 @@ class ShortcodeController {
                             </div>
                             <div class="form-field">
                                 <label for="customer_phone">
-                                    <?php _e('Telefonnummer', 'daily-menu-manager'); ?>
-                                    <?php _e('(für evtl. Rückfragen)', 'daily-menu-manager'); ?>
+                                    <?php _e('Phone Number', 'daily-menu-manager'); ?>
+                                    <?php _e('(for possible inquiries)', 'daily-menu-manager'); ?>
                                 </label>
                                 <input type="tel" 
                                     name="customer_phone" 
@@ -232,21 +232,20 @@ class ShortcodeController {
 
                             <div class="form-field">
                                 <label for="consumption_type">
-                                    <?php _e('Abholen oder im Lokal essen', 'daily-menu-manager'); ?>*
+                                    <?php _e('Pick up or eat in', 'daily-menu-manager'); ?>*
                                 </label>
                                 <select name="consumption_type" id="consumption_type" required>
                                     <!-- TODO: Let user choose -->
-                                    <option value=""><?php _e('Bitte wählen', 'daily-menu-manager'); ?></option>
-                                    <option value="<?php _e('Abholen', 'daily-menu-manager'); ?>"><?php _e('Abholen', 'daily-menu-manager'); ?></option>
-                                    <option value="<?php _e('Im Lokal essen', 'daily-menu-manager'); ?>"><?php _e('Im Lokal essen', 'daily-menu-manager'); ?></option>
+                                    <option value=""><?php _e('Please choose', 'daily-menu-manager'); ?></option>
+                                    <option value="<?php _e('Pick up', 'daily-menu-manager'); ?>"><?php _e('Pick up', 'daily-menu-manager'); ?></option>
+                                    <option value="<?php _e('Eat in', 'daily-menu-manager'); ?>"><?php _e('Eat in', 'daily-menu-manager'); ?></option>
                                 </select>
                             </div>
                             <div class="form-field">
                                 <label for="pickup_time">
-                                    <?php _e('Abholzeit', 'daily-menu-manager'); ?>*
-                                </label>
+                                    <?php _e('Pickup Time', 'daily-menu-manager'); ?>*
                                 <select name="pickup_time" id="pickup_time" required>
-                                    <option value=""><?php _e('Bitte wählen', 'daily-menu-manager'); ?></option>
+                                    <option value=""><?php _e('Please choose', 'daily-menu-manager'); ?></option>
                                     <?php
                                     $start = strtotime('11:00');
                                     $end = strtotime('16:00');
@@ -262,14 +261,14 @@ class ShortcodeController {
                             </div>
                             <div class="form-field">
                                 <label for="general_notes">
-                                    <?php _e('Anmerkungen zur Bestellung', 'daily-menu-manager'); ?>
+                                    <?php _e('Order notes', 'daily-menu-manager'); ?>
                                 </label>
                                 <textarea name="general_notes" id="general_notes"></textarea>
                             </div>
                         </div>
 
                         <button type="submit" class="submit-order">
-                            <?php _e('Bestellung aufgeben', 'daily-menu-manager'); ?>
+                            <?php _e('Place Order', 'daily-menu-manager'); ?>
                         </button>
                     </div>
                 </div>

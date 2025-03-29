@@ -392,7 +392,7 @@ class MenuController {
                             class="menu-item-price">
                     </div>
                     <span class="field-description">
-                        <?php _e('Enter the price in euros (e.g., 12,50)', 'daily-menu-manager'); ?>
+                        <?php _e('Enter the price for this item (e.g., 12,50)', 'daily-menu-manager'); ?>
                     </span>
                 </div>
 
