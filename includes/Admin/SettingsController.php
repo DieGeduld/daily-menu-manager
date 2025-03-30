@@ -71,7 +71,7 @@ class SettingsController {
             add_settings_error(
                 'daily_menu_properties',
                 'settings_updated',
-                __('Einstellungen gespeichert.', 'daily-menu-manager'),
+                __('Settings saved.', 'daily-menu-manager'),
                 'success'
             );
         }

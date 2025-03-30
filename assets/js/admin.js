@@ -1,6 +1,6 @@
 jQuery(document).ready(function($) {
     // Konfiguration
-    // TODO: Make dynamic
+    // TODO: Make dynamic / read from DB
     const MENU_TYPES = {
         appetizer: {
             label: 'Vorspeise',

@@ -138,7 +138,7 @@ class MenuController {
                 add_settings_error(
                     'daily_menu_manager',
                     'save_success',
-                    __('Menü erfolgreich gespeichert.', 'daily-menu-manager'),
+                    __('Menu saved successfully.', 'daily-menu-manager'),
                     'success'
                 );
             }

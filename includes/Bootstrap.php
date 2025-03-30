@@ -42,8 +42,15 @@ class Bootstrap {
                 false,
                 dirname(plugin_basename(DMM_PLUGIN_FILE)) . '/languages/'
             );
-        });
+            
+            $locale = determine_locale();
+            $mofile = plugin_dir_path(DMM_PLUGIN_FILE) . 'languages/' . $locale . '.mo';
+            
+            if (file_exists($mofile)) {
+                load_textdomain('daily-menu-manager', $mofile);
+            }
 
+        });
         // Initialize plugin after WordPress loads, but after translations
         add_action('init', function() {
             Plugin::getInstance();

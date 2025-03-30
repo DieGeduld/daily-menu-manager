@@ -227,7 +227,7 @@ class ShortcodeController {
                                     name="customer_phone" 
                                     id="customer_phone" 
                                     pattern="[0-9\s\+\-()]+"
-                                    placeholder="<?php _e('z.B. 0650 456789', 'daily-menu-manager'); ?>">
+                                    placeholder="<?php _e('e.g. (555) 123-4567', 'daily-menu-manager'); ?>">
                             </div>
 
                             <div class="form-field">
@@ -306,7 +306,7 @@ class ShortcodeController {
         check_ajax_referer('menu_order_nonce');
         
         if (empty($_POST['items'])) {
-            wp_send_json_error(['message' => __('Keine Gerichte ausgewählt.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('No dishes selected.', 'daily-menu-manager')]);
         }
 
         $order = new \DailyMenuManager\Models\Order();

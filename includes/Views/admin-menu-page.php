@@ -114,7 +114,7 @@
             ?>
         </div>
 
-        <?php submit_button(__('Menü speichern', 'daily-menu-manager'), 'primary', 'save_menu'); ?>
+        <?php submit_button(__('Save Menu', 'daily-menu-manager'), 'primary', 'save_menu'); ?>
     </form>
 </div>
 
@@ -157,6 +157,6 @@
 
 <?php if ($current_menu): ?>
     <button type="button" class="button copy-menu" data-menu-id="<?php echo esc_attr($current_menu->id); ?>">
-        <?php _e('Menü kopieren', 'daily-menu-manager'); ?>
+        <?php _e('Copy Menu', 'daily-menu-manager'); ?>
     </button>
 <?php endif; ?>
