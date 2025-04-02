@@ -36,7 +36,6 @@ class V140AddProperties extends Migration
             $column_name
         ));
     
-        // TODO: Hier gibt es die spalte available_quantity noch nicht ??
         if (empty($column_exists)) {
             $this->wpdb->query("ALTER TABLE `{$table_name}` ADD COLUMN `{$column_name}` VARCHAR(255) NULL AFTER `available_quantity`");
         }

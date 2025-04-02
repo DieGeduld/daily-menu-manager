@@ -77,6 +77,9 @@ class ShortcodeController {
                 'requiredFields' => __('Please fill out all required fields.', 'daily-menu-manager')
             ]
         ]);
+
+
+        
     }
 
     /**
@@ -237,8 +240,9 @@ class ShortcodeController {
                                 <select name="consumption_type" id="consumption_type" required>
                                     <!-- TODO: Let user choose -->
                                     <option value=""><?php _e('Please choose', 'daily-menu-manager'); ?></option>
-                                    <option value="<?php _e('Pick up', 'daily-menu-manager'); ?>"><?php _e('Pick up', 'daily-menu-manager'); ?></option>
-                                    <option value="<?php _e('Eat in', 'daily-menu-manager'); ?>"><?php _e('Eat in', 'daily-menu-manager'); ?></option>
+                                    <?php foreach (SettingsController::getConsumptionTypes() as $type): ?>
+                                        <option value="<?php echo esc_attr($type); ?>"><?php echo esc_html($type); ?></option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
                             <div class="form-field">

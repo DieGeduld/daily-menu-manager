@@ -196,6 +196,10 @@ jQuery(document).ready(function($) {
                 if (id) {
                     $(this).attr('id', id.replace(/\d+/, newItemCounter));
                 }
+
+                if ($(this).attr('name') && $(this).attr('name').indexOf('[id]') !== -1) {
+                    $(this).val('');
+                }
                 
                 // Werte zurücksetzen
                 if ($(this).is('input[type="text"], textarea')) {
@@ -575,6 +579,8 @@ jQuery(document).ready(function($) {
             }
         }
     });
+
+    
 
     const selectedDateTo = flatpickr(".selectedDateTo", {
         dateFormat: "Y-m-d",

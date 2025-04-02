@@ -67,6 +67,24 @@ class SettingsController {
                 }
             }
             
+            // Speichere das Datumsformat
+            if (isset($_POST['daily_menu_date_format'])) {
+                $date_format = sanitize_text_field($_POST['daily_menu_date_format']);
+                $settings_model->set('date_format', $date_format);
+            }
+            
+            // Speichere die Konsumtypen
+            $consumption_types = isset($_POST['daily_menu_consumption_types']) ? $_POST['daily_menu_consumption_types'] : [];
+            $sanitized_consumption_types = [];
+            
+            foreach ($consumption_types as $type) {
+                if (!empty($type)) {
+                    $sanitized_consumption_types[] = sanitize_text_field($type);
+                }
+            }
+            
+            $settings_model->set('consumption_types', $sanitized_consumption_types);
+            
             // Zeige eine Erfolgsmeldung an
             add_settings_error(
                 'daily_menu_properties',
@@ -124,14 +142,58 @@ class SettingsController {
         return $main_color;
     }
 
-    // TODO: Let User Select Date Format
-    public static function getDatumFormat() {
+    /**
+     * Get date format
+     * 
+     * @return string The date format
+     */
+    public static function getDateFormat(): string {
         Settings::init();
         $settings_model = Settings::getInstance();
         
-        // Get main color from database with default value
-        $darum_format = $settings_model->get('darum_format', '1');
+        // Get date format from database with default value
+        $date_format = $settings_model->get('date_format', 'd.m.Y');
         
-        return $darum_format;
+        return $date_format;
+    }
+    
+    /**
+     * Get available date formats
+     * 
+     * @return array The available date formats
+     */
+    public static function getAvailableDateFormats(): array {
+        return [
+            'd.m.Y' => __('DD.MM.YYYY (e.g. 31.03.2025)', 'daily-menu-manager'),
+            'Y-m-d' => __('YYYY-MM-DD (e.g. 2025-03-31)', 'daily-menu-manager'),
+            'm/d/Y' => __('MM/DD/YYYY (e.g. 03/31/2025)', 'daily-menu-manager'),
+            'd/m/Y' => __('DD/MM/YYYY (e.g. 31/03/2025)', 'daily-menu-manager'),
+            'j. F Y' => __('D. Month YYYY (e.g. 31. March 2025)', 'daily-menu-manager'),
+        ];
+    }
+    
+    /**
+     * Get consumption types
+     * 
+     * @return array The consumption types
+     */
+    public static function getConsumptionTypes(): array {
+        Settings::init();
+        $settings_model = Settings::getInstance();
+        
+        // Get consumption types from database with default values
+        $consumption_types = $settings_model->get('consumption_types');
+        
+        if (empty($consumption_types)) {
+            $consumption_types = [
+                __('Pick up', 'daily-menu-manager'),
+                __('Eat in', 'daily-menu-manager'),
+            ];
+            
+            // Store in the database for future use
+            $settings_model->set('consumption_types', $consumption_types);
+        }
+        
+        return $consumption_types;
     }
 }

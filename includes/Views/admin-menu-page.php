@@ -11,10 +11,9 @@
         <form method="get" class="date-selector-form">
             <input type="hidden" name="page" value="daily-menu-manager">
             <label for="menu_date"><?php _e('Select Date:', 'daily-menu-manager'); ?></label>
-            
 
             <div class="flatpickr-wrapper">
-                <input type="date" 
+                <input type="date"
                     id="menu_date" 
                     name="menu_date" 
                     value="<?php echo esc_attr($selected_date); ?>"
