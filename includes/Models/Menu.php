@@ -102,10 +102,26 @@ class Menu {
                 $menu_id = $wpdb->insert_id;
             }
             
-            // Füge neue Menüeinträge hinzu
-            if (isset($menu_data['menu_items'])) {
+            // Hole IDs der vorhandenen Menüeinträge für dieses Menü
+            $existing_items = $wpdb->get_col($wpdb->prepare(
+                "SELECT id FROM {$wpdb->prefix}menu_items WHERE menu_id = %d",
+                $menu_id
+            ));
+            
+            // Sammle IDs der übermittelten Menüeinträge
+            $updated_item_ids = [];
+            
+            // Füge neue Menüeinträge hinzu oder aktualisiere bestehende
+            if (isset($menu_data['menu_items']) && is_array($menu_data['menu_items'])) {
                 $sort_order = 1;
-                foreach ($menu_data['menu_items'] as $item_data) {
+                
+                // Gehe durch alle übermittelten Menüeinträge, unabhängig vom Schlüsselnamen
+                foreach ($menu_data['menu_items'] as $key => $item_data) {
+                    // Überspringe leere oder ungültige Einträge
+                    if (!is_array($item_data) || empty($item_data['title'])) {
+                        continue;
+                    }
+                    
                     $props = !empty($item_data["properties"]) ? wp_json_encode($item_data["properties"]) : null;
                     $allergens = !empty($item_data["allergens"]) ? sanitize_textarea_field($item_data["allergens"]) : null;
                     
@@ -113,30 +129,57 @@ class Menu {
                         'menu_id' => $menu_id,
                         'item_type' => sanitize_text_field($item_data['type']),
                         'title' => sanitize_text_field($item_data['title']),
-                        'description' => sanitize_textarea_field($item_data['description']),
+                        'description' => isset($item_data['description']) ? sanitize_textarea_field($item_data['description']) : '',
                         'price' => floatval($item_data['price']),
-                        'available_quantity' => intval($item_data['available_quantity']),
+                        'available_quantity' => isset($item_data['available_quantity']) ? intval($item_data['available_quantity']) : 0,
                         'properties' => $props,
                         'allergens' => $allergens,
                         'sort_order' => $sort_order++
                     ];
                     
                     $formats = ['%d', '%s', '%s', '%s', '%f', '%d', '%s', '%s', '%d'];
-
-                    if (isset($item_data['id']) && !empty($item_data['id'])) {
-                        $data = ['id' => intval($item_data['id'])] + $data; // ID an den Anfang stellen
-                        array_unshift($formats, '%d');
+                    
+                    // Prüfe, ob es sich um ein bestehendes Element handelt oder ein neues
+                    // Wenn der Schlüssel mit "new-" beginnt, ist es wahrscheinlich ein neues Element
+                    // Andernfalls prüfe auf die ID im Element selbst
+                    $existing_id = null;
+                    if (isset($item_data['id']) && !empty($item_data['id']) && is_numeric($item_data['id'])) {
+                        $existing_id = intval($item_data['id']);
+                    } elseif (is_numeric($key) && in_array($key, $existing_items)) {
+                        $existing_id = intval($key);
                     }
                     
-                    $inserted = $wpdb->replace(
+                    if ($existing_id) {
+                        // Aktualisiere vorhandenen Eintrag
+                        $updated_item_ids[] = $existing_id;
+                        
+                        $wpdb->update(
+                            $wpdb->prefix . 'menu_items',
+                            $data,
+                            ['id' => $existing_id],
+                            $formats,
+                            ['%d']
+                        );
+                    } else {
+                        // Füge neuen Eintrag hinzu
+                        $wpdb->insert(
+                            $wpdb->prefix . 'menu_items',
+                            $data,
+                            $formats
+                        );
+                        $updated_item_ids[] = $wpdb->insert_id;
+                    }
+                }
+            }
+            
+            // Lösche Menüeinträge, die nicht mehr in den übermittelten Daten enthalten sind
+            foreach ($existing_items as $item_id) {
+                if (!in_array($item_id, $updated_item_ids)) {
+                    $wpdb->delete(
                         $wpdb->prefix . 'menu_items',
-                        $data,
-                        $formats
+                        ['id' => $item_id],
+                        ['%d']
                     );
-                    
-                    if ($inserted === false) {
-                        throw new \Exception('Fehler beim Speichern der Menüeinträge');
-                    }
                 }
             }
             
