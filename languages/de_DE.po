@@ -615,26 +615,24 @@ msgstr "Wähle eine Hauptfarbe."
 #: includes/Views/admin-settings-page.php:115
 msgid "Save settings"
 msgstr "Einstellungen speichern"
-
-#: includes/Admin/SettingsController.php:167
 msgid "DD.MM.YYYY (e.g. 31.03.2025)"
-msgstr ""
+msgstr "DD.MM.YYYY (z.B. 31.03.2025)"
 
 #: includes/Admin/SettingsController.php:168
 msgid "YYYY-MM-DD (e.g. 2025-03-31)"
-msgstr ""
+msgstr "YYYY-MM-DD (z.B. 2025-03-31)"
 
 #: includes/Admin/SettingsController.php:169
 msgid "MM/DD/YYYY (e.g. 03/31/2025)"
-msgstr ""
+msgstr "MM/TT/JJJJ (z.B. 03/31/2025)"
 
 #: includes/Admin/SettingsController.php:170
 msgid "DD/MM/YYYY (e.g. 31/03/2025)"
-msgstr ""
+msgstr "TT/MM/JJJJ (z.B. 31/03/2025)"
 
 #: includes/Admin/SettingsController.php:171
 msgid "D. Month YYYY (e.g. 31. March 2025)"
-msgstr ""
+msgstr "D. Monat JJJJ (z.B. 31. März 2025)"
 
 #: includes/Frontend/ShortcodeController.php:149
 msgid "out of stock"
