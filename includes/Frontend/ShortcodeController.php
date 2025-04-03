@@ -272,7 +272,7 @@ class ShortcodeController {
                             </div>
                         </div>
 
-                        <button type="submit" class="submit-order">
+                        <button type="submit" class="submit-order" style="background-color: <?php echo SettingsController::getMainColor(); ?>;">
                             <?php _e('Place Order', 'daily-menu-manager'); ?>
                         </button>
                     </div>
