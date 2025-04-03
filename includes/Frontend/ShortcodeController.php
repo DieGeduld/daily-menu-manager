@@ -79,7 +79,7 @@ class ShortcodeController {
         ]);
 
 
-        
+
     }
 
     /**
@@ -146,9 +146,10 @@ class ShortcodeController {
                                     <div class="menu-item" data-item-available_quantity="<?php echo esc_attr($item->available_quantity); ?>" data-item-id="<?php echo esc_attr($item->id); ?>">
                                         <div class="menu-item-header">
                                             <?php if ($item->available_quantity == 0): ?>
-                                                <span class="menu-item-title unavailable"><?php echo esc_html($item->title); ?> (out of stock)</span>
+                                                <span class="menu-item-title unavailable"><?php echo esc_html($item->title); ?> (<?php esc_html_e('out of stock', 'daily-menu-manager'); ?>)</span>
                                             <?php else: ?>
-                                                <span class="menu-item-title"><?php echo esc_html($item->title); ?> (<?php echo esc_html($item->available_quantity); ?>x available)</span>
+
+                                                <span class="menu-item-title"><?php echo esc_html($item->title); ?> (<?php echo sprintf(__('%dx available', 'daily-menu-manager'), esc_html($item->available_quantity)); ?>)</span>
                                             <?php endif; ?>
                                             <span class="menu-item-price"><?php echo number_format($item->price, 2); ?> €</span>
                                         </div>

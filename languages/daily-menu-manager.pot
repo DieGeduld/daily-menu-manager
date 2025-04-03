@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-03-30T15:40:51+00:00\n"
+"POT-Creation-Date: 2025-04-03T06:38:47+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: daily-menu-manager\n"
@@ -84,159 +84,159 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: includes/Admin/MenuController.php:141
+#: includes/Admin/MenuController.php:145
 msgid "Menu saved successfully."
 msgstr ""
 
-#: includes/Admin/MenuController.php:165
-#: includes/Admin/MenuController.php:190
+#: includes/Admin/MenuController.php:169
+#: includes/Admin/MenuController.php:194
 #: includes/Admin/OrderController.php:136
 #: includes/Admin/OrderController.php:166
 msgid "No permission."
 msgstr ""
 
-#: includes/Admin/MenuController.php:170
+#: includes/Admin/MenuController.php:174
 msgid "No order information received."
 msgstr ""
 
-#: includes/Admin/MenuController.php:177
+#: includes/Admin/MenuController.php:181
 msgid "Order updated."
 msgstr ""
 
-#: includes/Admin/MenuController.php:179
+#: includes/Admin/MenuController.php:183
 msgid "Error updating order."
 msgstr ""
 
-#: includes/Admin/MenuController.php:199
-#: includes/Admin/MenuController.php:238
+#: includes/Admin/MenuController.php:203
+#: includes/Admin/MenuController.php:242
 msgid "Invalid parameters."
 msgstr ""
 
-#: includes/Admin/MenuController.php:207
+#: includes/Admin/MenuController.php:211
 msgid "No menu exists for this date."
 msgstr ""
 
-#: includes/Admin/MenuController.php:217
-#: includes/Admin/MenuController.php:233
-#: includes/Admin/MenuController.php:255
+#: includes/Admin/MenuController.php:221
+#: includes/Admin/MenuController.php:237
+#: includes/Admin/MenuController.php:259
 msgid "Menu copied successfully."
 msgstr ""
 
-#: includes/Admin/MenuController.php:224
+#: includes/Admin/MenuController.php:228
 msgid "Invalid parameters, menu ID missing"
 msgstr ""
 
-#: includes/Admin/MenuController.php:246
+#: includes/Admin/MenuController.php:250
 msgid "A menu already exists for this date."
 msgstr ""
 
-#: includes/Admin/MenuController.php:267
+#: includes/Admin/MenuController.php:271
 #: includes/Plugin.php:34
 msgid "Vorspeise"
 msgstr ""
 
-#: includes/Admin/MenuController.php:271
+#: includes/Admin/MenuController.php:275
 #: includes/Plugin.php:38
 msgid "Hauptgang"
 msgstr ""
 
-#: includes/Admin/MenuController.php:275
+#: includes/Admin/MenuController.php:279
 #: includes/Plugin.php:42
 msgid "Nachspeise"
 msgstr ""
 
-#: includes/Admin/MenuController.php:299
+#: includes/Admin/MenuController.php:303
 msgid "Drag to reorder"
 msgstr ""
 
-#: includes/Admin/MenuController.php:300
+#: includes/Admin/MenuController.php:304
 msgid "Drag handle"
 msgstr ""
 
-#: includes/Admin/MenuController.php:305
+#: includes/Admin/MenuController.php:309
 msgid "Toggle menu item"
 msgstr ""
 
-#: includes/Admin/MenuController.php:306
+#: includes/Admin/MenuController.php:310
 msgid "Click to expand/collapse"
 msgstr ""
 
-#: includes/Admin/MenuController.php:313
+#: includes/Admin/MenuController.php:317
 msgid "(No title)"
 msgstr ""
 
-#: includes/Admin/MenuController.php:320
+#: includes/Admin/MenuController.php:324
 msgid "Duplicate item"
 msgstr ""
 
-#: includes/Admin/MenuController.php:321
+#: includes/Admin/MenuController.php:325
 msgid "Duplicate this menu item"
 msgstr ""
 
-#: includes/Admin/MenuController.php:325
+#: includes/Admin/MenuController.php:329
 msgid "Delete item"
 msgstr ""
 
-#: includes/Admin/MenuController.php:326
+#: includes/Admin/MenuController.php:330
 msgid "Delete this menu item"
 msgstr ""
 
-#: includes/Admin/MenuController.php:345
-#: includes/Views/admin-menu-page.php:70
+#: includes/Admin/MenuController.php:349
+#: includes/Views/admin-menu-page.php:69
 msgid "Title"
 msgstr ""
 
-#: includes/Admin/MenuController.php:356
+#: includes/Admin/MenuController.php:360
 msgid "Enter the name of the dish or menu item"
 msgstr ""
 
-#: includes/Admin/MenuController.php:363
-#: includes/Views/admin-menu-page.php:75
+#: includes/Admin/MenuController.php:367
+#: includes/Views/admin-menu-page.php:74
 msgid "Description"
 msgstr ""
 
-#: includes/Admin/MenuController.php:373
+#: includes/Admin/MenuController.php:377
 msgid "Optional: Add ingredients or other details about this item"
 msgstr ""
 
-#: includes/Admin/MenuController.php:380
-#: includes/Views/admin-menu-page.php:80
+#: includes/Admin/MenuController.php:384
+#: includes/Views/admin-menu-page.php:79
 msgid "Price"
 msgstr ""
 
-#: includes/Admin/MenuController.php:395
+#: includes/Admin/MenuController.php:399
 msgid "Enter the price for this item (e.g., 12,50)"
 msgstr ""
 
-#: includes/Admin/MenuController.php:402
+#: includes/Admin/MenuController.php:406
 msgid "Available Quantity"
 msgstr ""
 
-#: includes/Admin/MenuController.php:411
+#: includes/Admin/MenuController.php:415
 msgid "Enter the available quantity for this item"
 msgstr ""
 
-#: includes/Admin/MenuController.php:418
+#: includes/Admin/MenuController.php:422
 msgid "Additional Options"
 msgstr ""
 
-#: includes/Admin/MenuController.php:419
+#: includes/Admin/MenuController.php:423
 msgid "Manage additional options"
 msgstr ""
 
-#: includes/Admin/MenuController.php:442
+#: includes/Admin/MenuController.php:446
 msgid "Allergen Information"
 msgstr ""
 
-#: includes/Admin/MenuController.php:451
+#: includes/Admin/MenuController.php:455
 msgid "List any allergens present in this dish"
 msgstr ""
 
-#: includes/Admin/MenuController.php:458
+#: includes/Admin/MenuController.php:462
 msgid "Advanced Settings"
 msgstr ""
 
-#: includes/Admin/MenuController.php:464
+#: includes/Admin/MenuController.php:468
 msgid "Availability Times"
 msgstr ""
 
@@ -280,30 +280,58 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: includes/Admin/SettingsController.php:74
+#: includes/Admin/SettingsController.php:92
 msgid "Settings saved."
 msgstr ""
 
-#: includes/Admin/SettingsController.php:98
+#: includes/Admin/SettingsController.php:116
 #: includes/Database/migrations/1.5.0_add_settings_table.php:61
 msgid "Vegetarian"
 msgstr ""
 
-#: includes/Admin/SettingsController.php:99
+#: includes/Admin/SettingsController.php:117
 #: includes/Database/migrations/1.5.0_add_settings_table.php:62
 msgid "Vegan"
 msgstr ""
 
-#: includes/Admin/SettingsController.php:100
+#: includes/Admin/SettingsController.php:118
 #: includes/Database/migrations/1.5.0_add_settings_table.php:63
 msgid "Glutenfree"
 msgstr ""
 
-#: includes/Bootstrap.php:71
+#: includes/Admin/SettingsController.php:167
+msgid "DD.MM.YYYY (e.g. 31.03.2025)"
+msgstr ""
+
+#: includes/Admin/SettingsController.php:168
+msgid "YYYY-MM-DD (e.g. 2025-03-31)"
+msgstr ""
+
+#: includes/Admin/SettingsController.php:169
+msgid "MM/DD/YYYY (e.g. 03/31/2025)"
+msgstr ""
+
+#: includes/Admin/SettingsController.php:170
+msgid "DD/MM/YYYY (e.g. 31/03/2025)"
+msgstr ""
+
+#: includes/Admin/SettingsController.php:171
+msgid "D. Month YYYY (e.g. 31. March 2025)"
+msgstr ""
+
+#: includes/Admin/SettingsController.php:189
+msgid "Pick up"
+msgstr ""
+
+#: includes/Admin/SettingsController.php:190
+msgid "Eat in"
+msgstr ""
+
+#: includes/Bootstrap.php:78
 msgid "Daily Menu Manager successfully updated to version %s"
 msgstr ""
 
-#: includes/Bootstrap.php:84
+#: includes/Bootstrap.php:91
 msgid "Daily Menu Manager update failed: %s"
 msgstr ""
 
@@ -323,124 +351,124 @@ msgstr ""
 msgid "Please fill out all required fields."
 msgstr ""
 
-#: includes/Frontend/ShortcodeController.php:93
+#: includes/Frontend/ShortcodeController.php:96
 msgid "Today's Menu"
 msgstr ""
 
-#: includes/Frontend/ShortcodeController.php:101
+#: includes/Frontend/ShortcodeController.php:104
 msgid "No menu available for today."
 msgstr ""
 
-#: includes/Frontend/ShortcodeController.php:106
+#: includes/Frontend/ShortcodeController.php:109
 msgid "No menu items available for today."
 msgstr ""
 
-#: includes/Frontend/ShortcodeController.php:171
+#: includes/Frontend/ShortcodeController.php:149
+msgid "out of stock"
+msgstr ""
+
+#: includes/Frontend/ShortcodeController.php:152
+msgid "%dx available"
+msgstr ""
+
+#: includes/Frontend/ShortcodeController.php:175
 msgid "Quantity:"
 msgstr ""
 
-#: includes/Frontend/ShortcodeController.php:191
+#: includes/Frontend/ShortcodeController.php:195
 #: includes/Views/admin-orders-page.php:115
 #: includes/Views/admin-orders-page.php:138
 msgid "Notes:"
 msgstr ""
 
-#: includes/Frontend/ShortcodeController.php:196
+#: includes/Frontend/ShortcodeController.php:200
 msgid "e.g. without onions"
 msgstr ""
 
-#: includes/Frontend/ShortcodeController.php:207
+#: includes/Frontend/ShortcodeController.php:211
 msgid "Order Summary"
 msgstr ""
 
-#: includes/Frontend/ShortcodeController.php:209
+#: includes/Frontend/ShortcodeController.php:213
 #: includes/Views/admin-orders-page.php:95
 #: includes/Views/admin-orders-page.php:158
 msgid "Total:"
 msgstr ""
 
-#: includes/Frontend/ShortcodeController.php:217
+#: includes/Frontend/ShortcodeController.php:221
 #: includes/Views/admin-orders-page.php:76
 msgid "Name"
 msgstr ""
 
-#: includes/Frontend/ShortcodeController.php:223
+#: includes/Frontend/ShortcodeController.php:227
 msgid "Phone Number"
 msgstr ""
 
-#: includes/Frontend/ShortcodeController.php:224
+#: includes/Frontend/ShortcodeController.php:228
 msgid "(for possible inquiries)"
 msgstr ""
 
-#: includes/Frontend/ShortcodeController.php:230
-msgid "e.g. 0650 456789"
-msgstr ""
-
-#: includes/Frontend/ShortcodeController.php:235
-msgid "Pick up or eat in"
+#: includes/Frontend/ShortcodeController.php:234
+msgid "e.g. (555) 123-4567"
 msgstr ""
 
 #: includes/Frontend/ShortcodeController.php:239
-#: includes/Frontend/ShortcodeController.php:248
+msgid "Pick up or eat in"
+msgstr ""
+
+#: includes/Frontend/ShortcodeController.php:243
+#: includes/Frontend/ShortcodeController.php:253
 msgid "Please choose"
 msgstr ""
 
-#: includes/Frontend/ShortcodeController.php:240
-msgid "Pick up"
-msgstr ""
-
-#: includes/Frontend/ShortcodeController.php:241
-msgid "Eat in"
-msgstr ""
-
-#: includes/Frontend/ShortcodeController.php:246
+#: includes/Frontend/ShortcodeController.php:251
 #: includes/Views/admin-orders-page.php:79
 msgid "Pickup Time"
 msgstr ""
 
-#: includes/Frontend/ShortcodeController.php:264
+#: includes/Frontend/ShortcodeController.php:269
 msgid "Order notes"
 msgstr ""
 
-#: includes/Frontend/ShortcodeController.php:271
+#: includes/Frontend/ShortcodeController.php:276
 msgid "Place Order"
 msgstr ""
 
-#: includes/Frontend/ShortcodeController.php:309
+#: includes/Frontend/ShortcodeController.php:314
 msgid "No dishes selected."
 msgstr ""
 
-#: includes/Frontend/ShortcodeController.php:324
+#: includes/Frontend/ShortcodeController.php:329
 msgid "Error updating available quantities: "
 msgstr ""
 
-#: includes/Frontend/ShortcodeController.php:336
+#: includes/Frontend/ShortcodeController.php:341
 #: includes/Installer.php:76
 #: includes/Plugin.php:33
 msgid "Appetizer"
 msgstr ""
 
-#: includes/Frontend/ShortcodeController.php:337
+#: includes/Frontend/ShortcodeController.php:342
 #: includes/Installer.php:80
 #: includes/Plugin.php:37
 msgid "Main Course"
 msgstr ""
 
-#: includes/Frontend/ShortcodeController.php:338
+#: includes/Frontend/ShortcodeController.php:343
 #: includes/Installer.php:84
 #: includes/Plugin.php:41
 msgid "Dessert"
 msgstr ""
 
-#: includes/Frontend/ShortcodeController.php:345
+#: includes/Frontend/ShortcodeController.php:350
 msgid "Appetizers"
 msgstr ""
 
-#: includes/Frontend/ShortcodeController.php:346
+#: includes/Frontend/ShortcodeController.php:351
 msgid "Main Courses"
 msgstr ""
 
-#: includes/Frontend/ShortcodeController.php:347
+#: includes/Frontend/ShortcodeController.php:352
 msgid "Desserts"
 msgstr ""
 
@@ -484,34 +512,34 @@ msgstr ""
 msgid "Select Date:"
 msgstr ""
 
-#: includes/Views/admin-menu-page.php:33
+#: includes/Views/admin-menu-page.php:32
 msgid "Today"
 msgstr ""
 
-#: includes/Views/admin-menu-page.php:42
-#: includes/Views/admin-menu-page.php:122
-#: includes/Views/admin-menu-page.php:160
+#: includes/Views/admin-menu-page.php:41
+#: includes/Views/admin-menu-page.php:121
+#: includes/Views/admin-menu-page.php:159
 msgid "Copy Menu"
 msgstr ""
 
-#: includes/Views/admin-menu-page.php:48
-#: includes/Views/admin-menu-page.php:140
+#: includes/Views/admin-menu-page.php:47
+#: includes/Views/admin-menu-page.php:139
 msgid "Import Menu"
 msgstr ""
 
-#: includes/Views/admin-menu-page.php:85
+#: includes/Views/admin-menu-page.php:84
 msgid "Quantity"
 msgstr ""
 
-#: includes/Views/admin-menu-page.php:117
+#: includes/Views/admin-menu-page.php:116
 msgid "Save Menu"
 msgstr ""
 
-#: includes/Views/admin-menu-page.php:123
+#: includes/Views/admin-menu-page.php:122
 msgid "Select the target date for copying:"
 msgstr ""
 
-#: includes/Views/admin-menu-page.php:141
+#: includes/Views/admin-menu-page.php:140
 msgid "Select the source date:"
 msgstr ""
 
@@ -583,32 +611,55 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
-#: includes/Views/admin-settings-page.php:28
+#: includes/Views/admin-settings-page.php:31
 msgid "Menu properties"
 msgstr ""
 
-#: includes/Views/admin-settings-page.php:38
-#: includes/Views/admin-settings-page.php:47
-#: includes/Views/admin-settings-page.php:80
+#: includes/Views/admin-settings-page.php:41
+#: includes/Views/admin-settings-page.php:50
+#: includes/Views/admin-settings-page.php:95
+#: includes/Views/admin-settings-page.php:104
+#: includes/Views/admin-settings-page.php:126
+#: includes/Views/admin-settings-page.php:144
 msgid "Remove"
 msgstr ""
 
-#: includes/Views/admin-settings-page.php:51
+#: includes/Views/admin-settings-page.php:54
 msgid "Add property"
 msgstr ""
 
-#: includes/Views/admin-settings-page.php:52
+#: includes/Views/admin-settings-page.php:55
 msgid "Define the properties that can be selected for menus here."
 msgstr ""
 
-#: includes/Views/admin-settings-page.php:57
+#: includes/Views/admin-settings-page.php:60
 msgid "Main color"
 msgstr ""
 
-#: includes/Views/admin-settings-page.php:63
+#: includes/Views/admin-settings-page.php:66
 msgid "Select a main color."
 msgstr ""
 
-#: includes/Views/admin-settings-page.php:69
+#: includes/Views/admin-settings-page.php:71
+msgid "Date format"
+msgstr ""
+
+#: includes/Views/admin-settings-page.php:80
+msgid "Choose how dates should be displayed in the menu."
+msgstr ""
+
+#: includes/Views/admin-settings-page.php:85
+msgid "Consumption types"
+msgstr ""
+
+#: includes/Views/admin-settings-page.php:108
+msgid "Add consumption type"
+msgstr ""
+
+#: includes/Views/admin-settings-page.php:109
+msgid "Define the consumption types for orders (e.g., Pick up, Eat in)."
+msgstr ""
+
+#: includes/Views/admin-settings-page.php:115
 msgid "Save settings"
 msgstr ""
