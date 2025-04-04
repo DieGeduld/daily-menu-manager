@@ -6,6 +6,19 @@ use DailyMenuManager\Models\Settings;
 class SettingsController {
     private static $instance = null;
     
+    // Globale Definition der Währungssymbole
+    private static $currencySymbols = [
+        'EUR' => '€',
+        'USD' => '$',
+        'GBP' => '£',
+        'CHF' => 'CHF',
+        'JPY' => '¥',
+        'CAD' => 'C$',
+        'AUD' => 'A$',
+        'PLN' => 'zł',
+        'custom' => '', // Wird dynamisch aus den Einstellungen geladen
+    ];
+    
     public static function init() {
         if (self::$instance === null) {
             self::$instance = new self();
@@ -67,10 +80,22 @@ class SettingsController {
                 }
             }
             
-            // Speichere das Datumsformat
-            if (isset($_POST['daily_menu_date_format'])) {
-                $date_format = sanitize_text_field($_POST['daily_menu_date_format']);
-                $settings_model->set('date_format', $date_format);
+            // Speichere die Währung
+            if (isset($_POST['daily_menu_currency'])) {
+                $currency = sanitize_text_field($_POST['daily_menu_currency']);
+                $settings_model->set('currency', $currency);
+                
+                // Speichere benutzerdefiniertes Währungssymbol wenn "custom" ausgewählt wurde
+                if ($currency === 'custom' && isset($_POST['daily_menu_custom_currency_symbol'])) {
+                    $custom_currency_symbol = sanitize_text_field($_POST['daily_menu_custom_currency_symbol']);
+                    $settings_model->set('custom_currency_symbol', $custom_currency_symbol);
+                }
+            }
+            
+            // Speichere das Preisformat
+            if (isset($_POST['daily_menu_price_format'])) {
+                $price_format = sanitize_text_field($_POST['daily_menu_price_format']);
+                $settings_model->set('price_format', $price_format);
             }
             
             // Speichere die Konsumtypen
@@ -143,33 +168,168 @@ class SettingsController {
     }
 
     /**
-     * Get date format
+     * Get currency
      * 
-     * @return string The date format
+     * @return string The selected currency
      */
-    public static function getDateFormat(): string {
+    public static function getCurrency(): string {
         Settings::init();
         $settings_model = Settings::getInstance();
         
-        // Get date format from database with default value
-        $date_format = $settings_model->get('date_format', 'd.m.Y');
+        // Get currency from database with default value
+        $currency = $settings_model->get('currency', 'EUR');
         
-        return $date_format;
+        return $currency;
+    }
+
+    /**
+     * Get available currencies
+     * 
+     * @return array The available currencies
+     */
+    public static function getAvailableCurrencies(): array {
+        return [
+            'EUR' => __('Euro (€)', 'daily-menu-manager'),
+            'USD' => __('US Dollar ($)', 'daily-menu-manager'),
+            'GBP' => __('British Pound (£)', 'daily-menu-manager'),
+            'CHF' => __('Swiss Franc (CHF)', 'daily-menu-manager'),
+            'JPY' => __('Japanese Yen (¥)', 'daily-menu-manager'),
+            'CAD' => __('Canadian Dollar (C$)', 'daily-menu-manager'),
+            'AUD' => __('Australian Dollar (A$)', 'daily-menu-manager'),
+            'PLN' => __('Polish Złoty (zł)', 'daily-menu-manager'),
+            'custom' => __('Custom currency', 'daily-menu-manager'),
+        ];
     }
     
     /**
-     * Get available date formats
+     * Get custom currency symbol
      * 
-     * @return array The available date formats
+     * @return string The custom currency symbol
      */
-    public static function getAvailableDateFormats(): array {
+    public static function getCustomCurrencySymbol(): string {
+        Settings::init();
+        $settings_model = Settings::getInstance();
+        
+        // Get custom currency symbol from database with default value
+        $custom_currency_symbol = $settings_model->get('custom_currency_symbol', '€');
+        
+        return $custom_currency_symbol;
+    }
+
+    /**
+     * Get the current currency symbol
+     * 
+     * @return string The currency symbol
+     */
+    public static function getCurrencySymbol(): string {
+        $currency = self::getCurrency();
+        
+        // Wenn es sich um eine benutzerdefinierte Währung handelt, aktualisiere den Wert
+        if ($currency === 'custom') {
+            self::$currencySymbols['custom'] = self::getCustomCurrencySymbol();
+        }
+        
+        return self::$currencySymbols[$currency] ?? $currency;
+    }
+
+    /**
+     * Get price format
+     * 
+     * @return string The selected price format
+     */
+    public static function getPriceFormat(): string {
+        Settings::init();
+        $settings_model = Settings::getInstance();
+        
+        // Get price format from database with default value
+        $price_format = $settings_model->get('price_format', 'symbol_comma_right');
+        
+        return $price_format;
+    }
+
+    /**
+     * Get available price formats
+     * 
+     * @return array The available price formats
+     */
+    public static function getAvailablePriceFormats(): array {
         return [
-            'd.m.Y' => __('DD.MM.YYYY (e.g. 31.03.2025)', 'daily-menu-manager'),
-            'Y-m-d' => __('YYYY-MM-DD (e.g. 2025-03-31)', 'daily-menu-manager'),
-            'm/d/Y' => __('MM/DD/YYYY (e.g. 03/31/2025)', 'daily-menu-manager'),
-            'd/m/Y' => __('DD/MM/YYYY (e.g. 31/03/2025)', 'daily-menu-manager'),
-            'j. F Y' => __('D. Month YYYY (e.g. 31. March 2025)', 'daily-menu-manager'),
+            'symbol_comma_right' => __('European format (9,99 €)', 'daily-menu-manager'),
+            'symbol_dot_right' => __('Anglo-American format (9.99 €)', 'daily-menu-manager'),
+            'symbol_comma_left' => __('European format, symbol first (€ 9,99)', 'daily-menu-manager'),
+            'symbol_dot_left' => __('Anglo-American format, symbol first (€ 9.99)', 'daily-menu-manager'),
+            'symbol_comma_attached' => __('Compact European format (9,99€)', 'daily-menu-manager'),
+            'symbol_dot_attached' => __('Compact Anglo-American format (9.99$)', 'daily-menu-manager'),
         ];
+    }
+    
+    /**
+     * Get example for price format
+     * 
+     * @param string $format The price format
+     * @param string $currency The currency code
+     * @return string Example for the price format
+     */
+    public static function getPriceFormatExample(string $format, string $currency): string {
+        // Wenn es sich um eine benutzerdefinierte Währung handelt, aktualisiere den Wert
+        if ($currency === 'custom') {
+            self::$currencySymbols['custom'] = self::getCustomCurrencySymbol();
+        }
+        
+        $symbol = self::$currencySymbols[$currency] ?? $currency;
+        $price = 9.99;
+        
+        switch ($format) {
+            case 'symbol_comma_right':
+                return '9,99 ' . $symbol;
+            case 'symbol_dot_right':
+                return '9.99 ' . $symbol;
+            case 'symbol_comma_left':
+                return $symbol . ' 9,99';
+            case 'symbol_dot_left':
+                return $symbol . ' 9.99';
+            case 'symbol_comma_attached':
+                return '9,99' . $symbol;
+            case 'symbol_dot_attached':
+                return '9.99' . $symbol;
+            default:
+                return '9,99 ' . $symbol;
+        }
+    }
+    
+    /**
+     * Format price according to settings
+     *
+     * @param float $price The price to format
+     * @return string The formatted price
+     */
+    public static function formatPrice(float $price): string {
+        $format = self::getPriceFormat();
+        $currency = self::getCurrency();
+        
+        // Wenn es sich um eine benutzerdefinierte Währung handelt, aktualisiere den Wert
+        if ($currency === 'custom') {
+            self::$currencySymbols['custom'] = self::getCustomCurrencySymbol();
+        }
+        
+        $symbol = self::$currencySymbols[$currency] ?? $currency;
+        
+        switch ($format) {
+            case 'symbol_comma_right':
+                return number_format($price, 2, ',', '.') . ' ' . $symbol;
+            case 'symbol_dot_right':
+                return number_format($price, 2, '.', ',') . ' ' . $symbol;
+            case 'symbol_comma_left':
+                return $symbol . ' ' . number_format($price, 2, ',', '.');
+            case 'symbol_dot_left':
+                return $symbol . ' ' . number_format($price, 2, '.', ',');
+            case 'symbol_comma_attached':
+                return number_format($price, 2, ',', '.') . $symbol;
+            case 'symbol_dot_attached':
+                return number_format($price, 2, '.', ',') . $symbol;
+            default:
+                return number_format($price, 2, ',', '.') . ' ' . $symbol;
+        }
     }
     
     /**

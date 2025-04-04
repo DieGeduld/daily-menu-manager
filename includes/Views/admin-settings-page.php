@@ -5,6 +5,8 @@
  * @package DailyMenuManager
  */
 
+use DailyMenuManager\Admin\SettingsController;
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -12,8 +14,11 @@ if (!defined('ABSPATH')) {
 // Get current settings
 $properties = self::getMenuProperties();
 $main_color = self::getMainColor();
-$date_format = self::getDateFormat();
-$available_date_formats = self::getAvailableDateFormats();
+$currency = self::getCurrency();
+$available_currencies = self::getAvailableCurrencies();
+$custom_currency_symbol = self::getCustomCurrencySymbol();
+$price_format = self::getPriceFormat();
+$available_price_formats = self::getAvailablePriceFormats();
 $consumption_types = self::getConsumptionTypes();
 
 // Display any settings errors
@@ -66,18 +71,48 @@ settings_errors('daily_menu_properties');
                     <p class="description"><?php _e('Select a main color.', 'daily-menu-manager'); ?></p>
                 </td>
             </tr>
-            
+
             <tr valign="top">
-                <th scope="row"><?php _e('Date format', 'daily-menu-manager'); ?></th>
+                <th scope="row"><?php _e('Currency', 'daily-menu-manager'); ?></th>
                 <td>
-                    <select name="daily_menu_date_format" class="regular-text">
-                        <?php foreach ($available_date_formats as $format_key => $format_description) : ?>
-                            <option value="<?php echo esc_attr($format_key); ?>" <?php selected($date_format, $format_key); ?>>
-                                <?php echo esc_html($format_description); ?>
+                    <select name="daily_menu_currency" id="daily_menu_currency" class="regular-text">
+                        <?php foreach ($available_currencies as $currency_code => $currency_name) : ?>
+                            <option value="<?php echo esc_attr($currency_code); ?>" <?php selected($currency, $currency_code); ?>>
+                                <?php echo esc_html($currency_name); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
-                    <p class="description"><?php _e('Choose how dates should be displayed in the menu.', 'daily-menu-manager'); ?></p>
+                    <div id="custom_currency_container" style="margin-top: 10px; <?php echo ($currency !== 'custom') ? 'display: none;' : ''; ?>">
+                        <label for="daily_menu_custom_currency_symbol"><?php _e('Custom currency symbol:', 'daily-menu-manager'); ?></label>
+                        <input type="text" 
+                               name="daily_menu_custom_currency_symbol" 
+                               id="daily_menu_custom_currency_symbol"
+                               value="<?php echo esc_attr($custom_currency_symbol); ?>" 
+                               class="regular-text" 
+                               placeholder="<?php echo SettingsController::getCurrencySymbol(); ?>" />
+                        <p class="description"><?php _e('Enter your custom currency symbol (e.g. €, $, £).', 'daily-menu-manager'); ?></p>
+                    </div>
+                    <p class="description"><?php _e('Select the currency for displaying prices.', 'daily-menu-manager'); ?></p>
+                </td>
+            </tr>
+
+            <tr valign="top">
+                <th scope="row"><?php _e('Price format', 'daily-menu-manager'); ?></th>
+                <td>
+                    <select name="daily_menu_price_format" class="regular-text">
+                        <?php foreach ($available_price_formats as $format_key => $format_name) : ?>
+                            <option value="<?php echo esc_attr($format_key); ?>" <?php selected($price_format, $format_key); ?>>
+                                <?php 
+                                    echo esc_html($format_name); 
+                                ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <p class="description"><?php _e('Choose how prices should be displayed in the menu.', 'daily-menu-manager'); ?></p>
+                    <p class="description">
+                        <?php _e('Current price format example:', 'daily-menu-manager'); ?> 
+                        <strong><?php echo self::formatPrice(9.99); ?></strong>
+                    </p>
                 </td>
             </tr>
             
@@ -119,6 +154,33 @@ settings_errors('daily_menu_properties');
 
 <script type="text/javascript">
 jQuery(document).ready(function($) {
+    // Show/hide custom currency input based on selection
+    $('#daily_menu_currency').on('change', function() {
+        if ($(this).val() === 'custom') {
+            $('#custom_currency_container').show();
+        } else {
+            $('#custom_currency_container').hide();
+        }
+    });
+    
+    // Live update price format example when currency or format changes
+    $('#daily_menu_currency, select[name="daily_menu_price_format"], #daily_menu_custom_currency_symbol').on('change keyup', function() {
+        updatePriceFormatExamples();
+    });
+    
+    function updatePriceFormatExamples() {
+        const currencySelect = $('#daily_menu_currency');
+        const selectedCurrency = currencySelect.val();
+        const customSymbol = $('#daily_menu_custom_currency_symbol').val();
+        
+        // Update the examples in the dropdown options
+        // This would ideally be done with AJAX, but for simplicity,
+        // we're just showing the user that they need to save to see updates
+        $('p.description strong').text(function() {
+            return '<?php _e("Save settings to update example", "daily-menu-manager"); ?>';
+        });
+    }
+    
     // Add property
     $('.add-property').on('click', function() {
         var newRow = '<div class="property-row">' +

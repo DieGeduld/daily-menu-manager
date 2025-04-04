@@ -1,5 +1,7 @@
-
-<?php defined('ABSPATH') or die('Direct access not allowed!'); ?>
+<?php
+    defined('ABSPATH') or die('Direct access not allowed!');
+    use DailyMenuManager\Admin\SettingsController;
+?>
 
 <div class="wrap">
     <h1><?php _e('Manage Daily Menu', 'daily-menu-manager'); ?></h1>
@@ -76,7 +78,7 @@
                     </div>
                     
                     <div class="menu-item-field">
-                        <label><?php _e('Price', 'daily-menu-manager'); ?> (€)</label>
+                        <label><?php _e('Price', 'daily-menu-manager'); ?> (<?php echo SettingsController::getCurrencySymbol(); ?>)</label>
                         <input type="number" step="0.01" name="menu_items[new-{id}][price]" required>
                     </div>
                     

@@ -385,7 +385,7 @@ class MenuController {
                         <span class="required">*</span>
                     </label>
                     <div class="price-input-wrapper">
-                        <span class="currency-symbol">€</span>
+                        <span class="currency-symbol"><?php echo esc_html(SettingsController::getCurrencySymbol()); ?></span>
                         <input type="number" 
                             id="price_<?php echo esc_attr($item->id); ?>"
                             name="menu_items[<?php echo esc_attr($item->id); ?>][price]"

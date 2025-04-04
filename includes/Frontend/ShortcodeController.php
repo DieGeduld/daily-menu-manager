@@ -148,10 +148,9 @@ class ShortcodeController {
                                             <?php if ($item->available_quantity == 0): ?>
                                                 <span class="menu-item-title unavailable"><?php echo esc_html($item->title); ?> (<?php esc_html_e('out of stock', 'daily-menu-manager'); ?>)</span>
                                             <?php else: ?>
-
                                                 <span class="menu-item-title"><?php echo esc_html($item->title); ?> (<?php echo sprintf(__('%dx available', 'daily-menu-manager'), esc_html($item->available_quantity)); ?>)</span>
                                             <?php endif; ?>
-                                            <span class="menu-item-price"><?php echo number_format($item->price, 2); ?> €</span>
+                                            <span class="menu-item-price"><?php echo SettingsController::formatPrice($item->price); ?></span>
                                         </div>
                                         <?php
                                             $main_color = SettingsController::getMainColor();
@@ -211,7 +210,7 @@ class ShortcodeController {
                             <h3><?php _e('Order Summary', 'daily-menu-manager'); ?></h3>
                             <div class="order-total">
                                 <?php _e('Total:', 'daily-menu-manager'); ?> 
-                                <span id="total-amount">0,00&nbsp;€</span>
+                                <span id="total-amount"><?php echo SettingsController::formatPrice(0); ?></span>
                             </div>
                         </div>
 

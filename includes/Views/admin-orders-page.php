@@ -1,4 +1,8 @@
-<?php defined('ABSPATH') or die('Direct access not allowed!'); ?>
+<?php
+
+defined('ABSPATH') or die('Direct access not allowed!');
+use \DailyMenuManager\Admin\SettingsController;
+?>
 
 <div class="wrap">
     <h1><?php _e('Orders', 'daily-menu-manager'); ?></h1>
@@ -12,7 +16,7 @@
             </tr>
             <tr>
                 <td><?php _e('Today\'s revenue', 'daily-menu-manager'); ?></td>
-                <td class="value"><?php echo number_format($stats['total_revenue'], 2, ',', '.'); ?> €</td>
+                <td class="value"><?php echo SettingsController::formatPrice($stats['total_revenue']); ?></td>
             </tr>
             <tr>
                 <td><?php _e('Ordered items', 'daily-menu-manager'); ?></td>
@@ -93,7 +97,7 @@
                         if ($current_order !== ''): // Vorherige Bestellung abschließen ?>
                             <tr class="order-total">
                                 <td colspan="6"><strong><?php _e('Total:', 'daily-menu-manager'); ?></strong></td>
-                                <td colspan="2"><strong><?php echo number_format($order_total, 2, ',', '.'); ?> €</strong></td>
+                                <td colspan="2"><strong><?php echo SettingsController::formatPrice($order_total); ?></strong></td>
                             </tr>
                         <?php endif;
                         
@@ -138,7 +142,7 @@
                                 <br><small><?php _e('Notes:', 'daily-menu-manager'); ?> <?php echo esc_html($order->notes); ?></small>
                             <?php endif; ?>
                         </td>
-                        <td><?php echo number_format($item_total, 2, ',', '.'); ?> €</td>
+                        <td><?php echo SettingsController::formatPrice($item_total); ?></td>
                         <td>
                             <?php if ($order->id === $order->first_item_in_order): ?>
                                 <button class="button print-order" data-order="<?php echo esc_attr($order->order_number); ?>">
@@ -156,7 +160,7 @@
                 if ($current_order !== ''): ?>
                     <tr class="order-total">
                         <td colspan="6"><strong><?php _e('Total:', 'daily-menu-manager'); ?></strong></td>
-                        <td colspan="2"><strong><?php echo number_format($order_total, 2, ',', '.'); ?> €</strong></td>
+                        <td colspan="2"><strong><?php echo SettingsController::formatPrice($order_total); ?></strong></td>
                     </tr>
                 <?php endif; ?>
             </tbody>
