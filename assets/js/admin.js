@@ -564,7 +564,7 @@ jQuery(document).ready(function($) {
     const mainPickr = flatpickr(".flatpickr-wrapper", {
         dateFormat: "Y-m-d",
         altInput: true,
-        altFormat: "d.m.Y",
+        altFormat: window.dailyMenuAdmin ? window.dailyMenuAdmin.dateFormat : "d.m.Y",
         weekNumbers: true,
         wrap: true,
         onDayCreate: function(dObj, dStr, fp, dayElem) {
@@ -585,7 +585,7 @@ jQuery(document).ready(function($) {
     const selectedDateTo = flatpickr(".selectedDateTo", {
         dateFormat: "Y-m-d",
         altInput: true,
-        altFormat: "d.m.Y",
+        altFormat: window.dailyMenuAdmin ? window.dailyMenuAdmin.dateFormat : "d.m.Y",
         weekNumbers: true,
         wrap: true,
         disable: window.dailyMenuAdmin.menus ?? [],
@@ -593,7 +593,7 @@ jQuery(document).ready(function($) {
     const selectedDateFrom = flatpickr(".selectedDateFrom", {
         dateFormat: "Y-m-d",
         altInput: true,
-        altFormat: "d.m.Y",
+        altFormat: window.dailyMenuAdmin ? window.dailyMenuAdmin.dateFormat : "d.m.Y",
         weekNumbers: true,
         wrap: true,
         enable: window.dailyMenuAdmin.menus ?? [],
