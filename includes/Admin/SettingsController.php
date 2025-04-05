@@ -135,18 +135,16 @@ class SettingsController {
         // Try to get from database first
         $properties = $settings_model->get('menu_properties');
         
-        // Fallback to WordPress options if not found
+        // Set default values if empty
         if (empty($properties)) {
-            $properties = get_option('daily_menu_properties', [
+            $properties = [
                 __("Vegetarian", "daily-menu-manager"),
                 __("Vegan", "daily-menu-manager"),
                 __("Glutenfree", "daily-menu-manager"),
-            ]);
+            ];
             
             // Store in the database for future use
-            if (!empty($properties)) {
-                $settings_model->set('menu_properties', $properties);
-            }
+            $settings_model->set('menu_properties', $properties);
         }
         
         return $properties;
@@ -161,11 +159,86 @@ class SettingsController {
         Settings::init();
         $settings_model = Settings::getInstance();
         
-        // Get main color from database with default value
-        $main_color = $settings_model->get('main_color', '#3498db');
+        // Get main color from database
+        $main_color = $settings_model->get('main_color');
+        
+        // Set default value if empty
+        if (empty($main_color)) {
+            $main_color = '#2271b1';
+            
+            // Store in the database for future use
+            $settings_model->set('main_color', $main_color);
+        }
         
         return $main_color;
     }
+
+    /**
+     * Get default currency based on WordPress locale
+     * 
+     * @return string The default currency code
+     */
+    private static function getDefaultCurrencyByLocale(): string {
+        $locale = get_locale();
+        
+        // Mapping von Locales zu Währungen
+        $locale_currency_map = [
+            'de_DE' => 'EUR',
+            'de_AT' => 'EUR',
+            'de_CH' => 'CHF',
+            'de_LU' => 'EUR',
+            'en_US' => 'USD',
+            'en_GB' => 'GBP',
+            'en_CA' => 'CAD',
+            'en_AU' => 'AUD',
+            'fr_FR' => 'EUR',
+            'fr_CA' => 'CAD',
+            'fr_CH' => 'CHF',
+            'it_IT' => 'EUR',
+            'ja' => 'JPY',
+            'pl_PL' => 'PLN',
+            'es_ES' => 'EUR',
+            // Weitere Locales hinzufügen
+        ];
+        
+        return $locale_currency_map[$locale] ?? 'EUR'; // Standard-Fallback auf EUR
+    }
+
+    /**
+     * Get default price format based on WordPress locale
+     * 
+     * @return string The default price format
+     */
+    private static function getDefaultPriceFormatByLocale(): string {
+        $locale = get_locale();
+        
+        // Mapping von Locales zu Preisformaten
+        $locale_format_map = [
+            // Europäische Länder verwenden meist Komma als Dezimaltrennzeichen und Symbol rechts
+            'de_DE' => 'symbol_comma_right',
+            'de_AT' => 'symbol_comma_right',
+            'fr_FR' => 'symbol_comma_right',
+            'it_IT' => 'symbol_comma_right',
+            'es_ES' => 'symbol_comma_right',
+            'pl_PL' => 'symbol_comma_right',
+            
+            // Englischsprachige Länder verwenden meist Punkt als Dezimaltrennzeichen
+            'en_US' => 'symbol_dot_left', // $ vor dem Betrag
+            'en_GB' => 'symbol_dot_right', // £ nach dem Betrag
+            'en_CA' => 'symbol_dot_left',
+            'en_AU' => 'symbol_dot_left',
+            
+            // Schweiz hat oft eigene Regeln
+            'de_CH' => 'symbol_dot_right',
+            'fr_CH' => 'symbol_dot_right',
+            
+            // Japan
+            'ja' => 'symbol_dot_right',
+        ];
+        
+        return $locale_format_map[$locale] ?? 'symbol_comma_right'; // Standard-Fallback
+    }
+
 
     /**
      * Get currency
@@ -176,8 +249,16 @@ class SettingsController {
         Settings::init();
         $settings_model = Settings::getInstance();
         
-        // Get currency from database with default value
-        $currency = $settings_model->get('currency', 'EUR');
+        // Get currency from database
+        $currency = $settings_model->get('currency');
+        
+        // Set default value based on WordPress locale if empty
+        if (empty($currency)) {
+            $currency = self::getDefaultCurrencyByLocale();
+            
+            // Store in the database for future use
+            $settings_model->set('currency', $currency);
+        }
         
         return $currency;
     }
@@ -241,8 +322,16 @@ class SettingsController {
         Settings::init();
         $settings_model = Settings::getInstance();
         
-        // Get price format from database with default value
-        $price_format = $settings_model->get('price_format', 'symbol_comma_right');
+        // Get price format from database
+        $price_format = $settings_model->get('price_format');
+        
+        // Set default value based on WordPress locale if empty
+        if (empty($price_format)) {
+            $price_format = self::getDefaultPriceFormatByLocale();
+            
+            // Store in the database for future use
+            $settings_model->set('price_format', $price_format);
+        }
         
         return $price_format;
     }
@@ -253,13 +342,14 @@ class SettingsController {
      * @return array The available price formats
      */
     public static function getAvailablePriceFormats(): array {
+        $symbol = SettingsController::getCurrencySymbol();
         return [
-            'symbol_comma_right' => __('European format (9,99 €)', 'daily-menu-manager'),
-            'symbol_dot_right' => __('Anglo-American format (9.99 €)', 'daily-menu-manager'),
-            'symbol_comma_left' => __('European format, symbol first (€ 9,99)', 'daily-menu-manager'),
-            'symbol_dot_left' => __('Anglo-American format, symbol first (€ 9.99)', 'daily-menu-manager'),
-            'symbol_comma_attached' => __('Compact European format (9,99€)', 'daily-menu-manager'),
-            'symbol_dot_attached' => __('Compact Anglo-American format (9.99$)', 'daily-menu-manager'),
+            'symbol_comma_right' => sprintf(__('European format (9,99 %s)', 'daily-menu-manager'), $symbol),
+            'symbol_dot_right' => sprintf(__('Anglo-American format (9.99 %s)', 'daily-menu-manager'), $symbol),
+            'symbol_comma_left' => sprintf(__('European format, symbol first (%s 9,99)', 'daily-menu-manager'), $symbol),
+            'symbol_dot_left' => sprintf(__('Anglo-American format, symbol first (%s 9.99)', 'daily-menu-manager'), $symbol),
+            'symbol_comma_attached' => sprintf(__('Compact European format (9,99%s)', 'daily-menu-manager'), $symbol),
+            'symbol_dot_attached' => sprintf(__('Compact Anglo-American format (9.99%s)', 'daily-menu-manager'), $symbol),
         ];
     }
     
