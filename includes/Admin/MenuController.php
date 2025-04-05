@@ -36,7 +36,8 @@ class MenuController {
      * Lädt Admin Assets
      */
     public static function enqueueAdminScripts($hook) {
-        if ('daily-menu_page_daily-menu-orders' !== $hook && 'toplevel_page_daily-menu-manager' !== $hook) {
+        // TODO: Check
+        if ('daily-menu_page_daily-menu-orders' !== $hook && 'toplevel_page_daily-menu-manager' !== $hook && "tagesmenue_page_daily-menu-settings" != $hook) {
             return;
         }
     
@@ -44,18 +45,26 @@ class MenuController {
         wp_enqueue_script('jquery-ui-core');
         wp_enqueue_script('jquery-ui-sortable');
         wp_enqueue_script('jquery-ui-dialog');
+        wp_enqueue_script('jquery-ui-tabs');
         
         // jQuery UI Styles
         wp_enqueue_style(
             'jquery-ui-style',
             '//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css'
         );
-    
+        
+        wp_enqueue_style(
+            'jquery-ui-styles',
+            'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css',
+            [],
+            '1.12.1'
+        );
+
         // Plugin Admin Scripts
         wp_enqueue_script(
             'daily-menu-admin',
             plugins_url('assets/js/admin.js', dirname(__DIR__)),
-            ['jquery', 'jquery-ui-core', 'jquery-ui-sortable', 'jquery-ui-dialog'],
+            ['jquery', 'jquery-ui-core', 'jquery-ui-sortable', 'jquery-ui-dialog', 'jquery-ui-tabs'],
             DMM_VERSION,
             true
         );

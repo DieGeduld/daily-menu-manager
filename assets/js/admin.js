@@ -1,4 +1,5 @@
 jQuery(document).ready(function($) {
+
     // Konfiguration
     // TODO: Make dynamic / read from DB
     const MENU_TYPES = {
@@ -599,6 +600,6 @@ jQuery(document).ready(function($) {
         enable: window.dailyMenuAdmin.menus ?? [],
     });
 
-
+    jQuery("#settings-tabs").tabs();
 
 });
