@@ -75,7 +75,8 @@ class ShortcodeController {
                 'orderError' => __('There was an error placing your order. Please try again.', 'daily-menu-manager'),
                 'emptyOrder' => __('Please select at least one dish.', 'daily-menu-manager'),
                 'requiredFields' => __('Please fill out all required fields.', 'daily-menu-manager')
-            ]
+            ], 
+            'currency' => SettingsController::getCurrencySymbol()
         ]);
 
 
