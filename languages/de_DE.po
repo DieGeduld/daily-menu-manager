@@ -329,7 +329,7 @@ msgstr "Heutiges Menü"
 
 #: includes/Frontend/ShortcodeController.php:104
 msgid "No menu available for today."
-msgstr "Kein Menü für heute verfügbar."
+msgstr "Heute kein Menü verfügbar."
 
 #: includes/Frontend/ShortcodeController.php:109
 msgid "No menu items available for today."
