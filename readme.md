@@ -1,4 +1,5 @@
 Feature Request:
 
-- User can select properties (vegan, glutenfree, etc...)
-- User can select data format
+- Uploading Fotos
+- Run Migrations on click, not automatically
+- User can define Headline Texts and "no menu" - text
