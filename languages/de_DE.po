@@ -325,7 +325,7 @@ msgstr "Bitte fülle alle erforderlichen Felder aus."
 
 #: includes/Frontend/ShortcodeController.php:96
 msgid "Today's Menu"
-msgstr "Heutiges Menü"
+msgstr "Heutiges Angebot"
 
 #: includes/Frontend/ShortcodeController.php:104
 msgid "No menu available for today."
