@@ -635,34 +635,36 @@ msgstr "Definiere die Verzehrarten für Bestellungen (z.B. Abholen, Vor Ort esse
 #: includes/Views/admin-settings-page.php:172
 msgid "Save settings"
 msgstr "Einstellungen speichern"
+
+#: includes/Admin/SettingsController.php:274
 msgid "Euro (€)"
 msgstr "Euro (€)"
 
-#: includes/Admin/SettingsController.php:274
+#: includes/Admin/SettingsController.php:275
 msgid "US Dollar ($)"
 msgstr "US-Dollar ($)"
 
-#: includes/Admin/SettingsController.php:275
+#: includes/Admin/SettingsController.php:276
 msgid "British Pound (£)"
 msgstr "Britisches Pfund (£)"
 
-#: includes/Admin/SettingsController.php:276
+#: includes/Admin/SettingsController.php:277
 msgid "Swiss Franc (CHF)"
 msgstr "Schweizer Franken (CHF)"
 
-#: includes/Admin/SettingsController.php:277
+#: includes/Admin/SettingsController.php:278
 msgid "Japanese Yen (¥)"
 msgstr "Japanischer Yen (¥)"
 
-#: includes/Admin/SettingsController.php:278
+#: includes/Admin/SettingsController.php:279
 msgid "Canadian Dollar (C$)"
 msgstr "Kanadischer Dollar (C$)"
 
-#: includes/Admin/SettingsController.php:279
+#: includes/Admin/SettingsController.php:280
 msgid "Australian Dollar (A$)"
 msgstr "Australischer Dollar (A$)"
 
-#: includes/Admin/SettingsController.php:280
+#: includes/Admin/SettingsController.php:281
 msgid "Polish Złoty (zł)"
 msgstr "Polnischer Złoty (zł)"
 
@@ -741,4 +743,28 @@ msgstr "Aktuelles Preisformat-Beispiel:"
 #: includes/Views/admin-settings-page.php:206
 msgid "Save settings to update example"
 msgstr "Einstellungen speichern, um Beispiel zu aktualisieren"
+
+#: includes/Database/DatabaseController.php:10
+msgid "Database"
+msgstr "Datenbank"
+
+#: includes/Database/DatabaseController.php:20
+msgid "Database Management"
+msgstr "Datenbank-Verwaltung"
+
+#: includes/Database/DatabaseController.php:30
+msgid "Database Update Required"
+msgstr "Datenbank-Aktualisierung erforderlich"
+
+#: includes/Database/DatabaseController.php:40
+msgid "The database needs to be updated from version %s to %s. Please back up your database before proceeding with the update."
+msgstr "Die Datenbank muss von Version %s auf %s aktualisiert werden. Bitte erstellen Sie ein Backup Ihrer Datenbank, bevor Sie mit der Aktualisierung fortfahren."
+
+#: includes/Database/DatabaseController.php:50
+msgid "Update Database"
+msgstr "Datenbank aktualisieren"
+
+#: includes/Database/DatabaseController.php:60
+msgid "Database is up to date (Version %s)"
+msgstr "Datenbank ist aktuell (Version %s)"
 
