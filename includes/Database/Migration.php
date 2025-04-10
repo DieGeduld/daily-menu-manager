@@ -18,10 +18,17 @@ abstract class Migration implements MigrationInterface
 
     protected $wpdb;
 
+    protected bool $autorun = true;
+
     public function __construct() {
         global $wpdb;
         $this->wpdb = $wpdb;
         $this->logMigration("Running migration {$this->getVersion()}");
+    }
+
+    public function canAutorun(): bool
+    {
+        return $this->autorun;
     }
 
     public function up():void {
@@ -81,7 +88,7 @@ abstract class Migration implements MigrationInterface
         )));
     }
 
-    protected function logMigration(string $message): void
+    public function logMigration(string $message): void
     {
         $logFile = DMM_PLUGIN_DIR . 'logs/errors.log';
 

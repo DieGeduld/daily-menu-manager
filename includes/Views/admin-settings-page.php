@@ -21,6 +21,10 @@ $price_format = self::getPriceFormat();
 $available_price_formats = self::getAvailablePriceFormats();
 $consumption_types = self::getConsumptionTypes();
 
+// Get database version info
+$current_version = get_option('daily_menu_manager_version', '0.0.0');
+$needs_update = version_compare($current_version, DMM_VERSION, '<');
+
 // Display any settings errors
 settings_errors('daily_menu_properties');
 ?>
@@ -34,6 +38,7 @@ settings_errors('daily_menu_properties');
             <li><a href="#tab-menu-properties"><?php _e('Menu Properties', 'daily-menu-manager'); ?></a></li>
             <li><a href="#tab-appearance"><?php _e('Appearance', 'daily-menu-manager'); ?></a></li>
             <li><a href="#tab-consumption-types"><?php _e('Consumption Types', 'daily-menu-manager'); ?></a></li>
+            <li><a href="#tab-database"><?php _e('Database', 'daily-menu-manager'); ?></a></li>
         </ul>
         
         <form method="post" action="">
@@ -166,6 +171,35 @@ settings_errors('daily_menu_properties');
                         </td>
                     </tr>
                 </table>
+            </div>
+
+            <div id="tab-database">
+                <h2><?php _e('Database Management', 'daily-menu-manager'); ?></h2>
+                
+                <?php if ($needs_update): ?>
+                    <div class="dmm-migration-notice">
+                        <p><strong><?php _e('Database Update Required', 'daily-menu-manager'); ?></strong></p>
+                        <p>
+                            <?php printf(
+                                esc_html__('The database needs to be updated from version %s to %s. Please back up your database before proceeding with the update.', 'daily-menu-manager'),
+                                esc_html($current_version),
+                                esc_html(DMM_VERSION)
+                            ); ?>
+                        </p>
+                        <!-- Single button within the same form -->
+                        <input type="submit" name="run_migrations" class="button button-primary" 
+                            value="<?php _e('Update Database', 'daily-menu-manager'); ?>" />
+                    </div>
+                <?php else: ?>
+                    <div class="notice notice-success inline">
+                        <p>
+                            <?php printf(
+                                esc_html__('Database is up to date (Version %s)', 'daily-menu-manager'),
+                                esc_html($current_version)
+                            ); ?>
+                        </p>
+                    </div>
+                <?php endif; ?>
             </div>
             
             <p class="submit">

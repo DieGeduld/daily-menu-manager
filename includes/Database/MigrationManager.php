@@ -38,7 +38,7 @@ class MigrationManager
     public function __construct(array $config = [])
     {
         $this->migrationsPath = DMM_PLUGIN_DIR . 'includes/Database/migrations/';
-        $this->currentVersion = get_option('daily_menu_manager_db_version', '0.0.0');
+        $this->currentVersion = get_option('daily_menu_manager_version', '0.0.0');
         $this->config = array_merge([
             'batchSize' => 1000,
             'debug' => defined('WP_DEBUG') && WP_DEBUG,
@@ -68,13 +68,16 @@ class MigrationManager
             dependencies text DEFAULT NULL,
             is_dry_run tinyint(1) DEFAULT 0,
             PRIMARY KEY  (id),
-            UNIQUE KEY version (version),
             KEY batch (batch),
             KEY status (status)
         ) $charsetCollate;";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql);
+    }
+
+    public function hasOpenMigrations():bool {
+        return $this->currentVersion !== '0.0.0' && $this->currentVersion !== DMM_VERSION;
     }
 
     /**
@@ -88,12 +91,12 @@ class MigrationManager
     /**
      * Set the current database version.
      */
-    public function setCurrentVersion($version)
-    {
-        $this->validateMigrationVersion($version);
-        $this->currentVersion = $version;
-        update_option('daily_menu_manager_db_version', $version);
-    }
+    // public function setCurrentVersion($version)
+    // {
+    //     $this->validateMigrationVersion($version);
+    //     $this->currentVersion = $version;
+    //     update_option('daily_menu_manager_db_version', $version);
+    // }
 
     /**
      * Discover migration files.
@@ -180,10 +183,16 @@ class MigrationManager
     /**
      * Execute a migration
      */
-    private function executeMigration($file)
+    private function executeMigration($file, $manualExecution):bool
     {
         $migration = $this->getMigrationInstance($file);
+
+        if (!$migration->canAutorun() && !$manualExecution) {
+            $migration->logMigration("Autorun is disabled for automatic migration {$migration->getVersion()}");
+            return false;
+        }
         $migration->up();
+        return true;
     }
 
     /**
@@ -197,64 +206,64 @@ class MigrationManager
     }
 
     /**
-     * Perform a dry run of migrations
-     */
-    public function dryRun()
-    {
-        global $wpdb;
-        $wpdb->query('START TRANSACTION');
-        
-        try {
-            $this->runMigrations(true);
-            $wpdb->query('ROLLBACK');
-            return true;
-        } catch (Exception $e) {
-            $wpdb->query('ROLLBACK');
-            throw $e;
-        }
-    }
-
-    /**
      * Run migrations
      */
-    public function runMigrations($isDryRun = false)
+    public function runMigrations($manualExecution = false)
     {
         global $wpdb;
         $migrations = $this->discoverMigrations();
         $batch = $this->getNextBatchNumber();
         $this->log("Starting migrations batch #$batch");
 
-        // Erstelle einen Abhängigkeitsgraphen
-        $dependencyGraph = [];
-        foreach ($migrations as $file) {
-            $version = $this->extractVersion(basename($file, '.php'));
-            $migration = $this->getMigrationInstance($file);
-            $dependencyGraph[$version] = $migration->getDependencies();
-        }
+        // Start transaction
+        $wpdb->query('START TRANSACTION');
 
-        // Sortiere Migrationen nach Abhängigkeiten
-        $sortedVersions = $this->topologicalSort($dependencyGraph);
-        
-        // Führe Migrationen in sortierter Reihenfolge aus
-        foreach ($sortedVersions as $version) {
-            $file = $this->findMigrationFile($version);
-            
-            if ($this->shouldRunMigration($version)) {
-                $this->log("Running migration $version");
-                $this->recordMigrationStart($version, $batch, $isDryRun);
-                
-                try {
-                    $this->executeMigration($file);
-                    $this->recordMigrationSuccess($version);
-                    $this->log("Successfully completed migration $version");
-                } catch (Exception $e) {
-                    $this->log($e->getMessage());
-                    $this->recordMigrationError($version, $e->getMessage());
-                    throw $e;
-                }
-            } else {
-                $this->log("Skipping migration $version - already executed");
+        try {
+            // Erstelle einen Abhängigkeitsgraphen
+            $dependencyGraph = [];
+            foreach ($migrations as $file) {
+                $version = $this->extractVersion(basename($file, '.php'));
+                $migration = $this->getMigrationInstance($file);
+                $dependencyGraph[$version] = $migration->getDependencies();
             }
+
+            // Sortiere Migrationen nach Abhängigkeiten
+            $sortedVersions = $this->topologicalSort($dependencyGraph);
+            
+            // Führe Migrationen in sortierter Reihenfolge aus
+            foreach ($sortedVersions as $version) {
+                $file = $this->findMigrationFile($version);
+                
+                if ($this->shouldRunMigration($version)) {
+                    $this->log("Running migration $version");
+                    $this->recordMigrationStart($version, $batch);
+                    
+                    try {
+                        if ($this->executeMigration($file, $manualExecution)) {
+                            $this->recordMigrationSuccess($version);
+                            $this->log("Successfully completed migration $version");
+                        } else {
+                            $this->log("Skipping migration $version - autorun disabled");
+                            $this->recordMigrationSkip($version, $batch);
+                            break;
+                        }
+                    } catch (\Exception $e) {
+                        $this->log($e->getMessage());
+                        $this->recordMigrationError($version, $e->getMessage());
+                        throw $e;
+                    }
+                } else {
+                    $this->log("Skipping migration $version - already executed");
+                }
+            }
+
+            $wpdb->query('COMMIT');
+            $this->log("All migrations completed successfully");
+
+        } catch (\Exception $e) {
+            $wpdb->query('ROLLBACK');
+            $this->log("Migration failed, rolling back changes: " . $e->getMessage());
+            throw $e;
         }
     }
 
@@ -327,20 +336,40 @@ class MigrationManager
         return (int)$lastBatch + 1;
     }
 
-    private function recordMigrationStart($version, $batch, $isDryRun)
+    private function recordMigrationStart($version, $batch)
     {
         global $wpdb;
-        
-        $wpdb->insert(
-            $wpdb->prefix . 'dmm_migration_status',
-            [
-                'version' => $version,
-                'batch' => $batch,
-                'status' => 'running',
-                'started_at' => current_time('mysql'),
-                'is_dry_run' => $isDryRun ? 1 : 0
-            ]
-        );
+
+        $versionExists = $wpdb->get_var($wpdb->prepare(
+            "SELECT COUNT(*) FROM {$wpdb->prefix}dmm_migration_status WHERE version = %s",
+            $version
+        ));
+   
+        if (!$versionExists) {
+
+            $wpdb->insert(
+                $wpdb->prefix . 'dmm_migration_status',
+                [
+                    'version' => $version,
+                    'batch' => $batch,
+                    'status' => 'running',
+                    'started_at' => current_time('mysql'),
+                    'is_dry_run' => 0
+                ]
+            );
+
+        } else {
+
+            $wpdb->update(
+                $wpdb->prefix . 'dmm_migration_status',
+                [
+                    'status' => 'skipped',
+                    'error_message' => 'Skipped due to autorun disabled',
+                    'completed_at' => current_time('mysql')
+                ],
+                ['version' => $version]
+            );  
+        }
     }
 
     private function recordMigrationSuccess($version)
@@ -351,6 +380,7 @@ class MigrationManager
             $wpdb->prefix . 'dmm_migration_status',
             [
                 'status' => 'completed',
+                'error_message' => null,
                 'completed_at' => current_time('mysql')
             ],
             ['version' => $version]
@@ -372,6 +402,21 @@ class MigrationManager
         );
     }
 
+    private function recordMigrationSkip($version, $errorMessage)
+    {
+        global $wpdb;
+        
+        $wpdb->update(
+            $wpdb->prefix . 'dmm_migration_status',
+            [
+                'status' => 'skipped',
+                'error_message' => 'Skipped due to autorun disabled',
+                'completed_at' => current_time('mysql')
+            ],
+            ['version' => $version]
+        );
+    }
+
     private function shouldRunMigration($version)
     {
         global $wpdb;
@@ -381,7 +426,7 @@ class MigrationManager
             $version
         ));
 
-        return !$status || $status === 'failed';
+        return !$status || $status === 'failed' || $status === 'skipped';   
     }
 
     private function checkDependencies($version)

@@ -60,8 +60,6 @@ class Bootstrap {
         add_action('init', [self::class, 'checkForUpdates'], 12);
     }
 
-
-    // Function is a duplication of the checkForUpdates function in the Plugin class
     public static function checkForUpdates(): void {
         $installed_version = get_option('daily_menu_manager_version');
         
@@ -69,18 +67,35 @@ class Bootstrap {
             try {
                 $migration_manager = new Database\MigrationManager();
                 $migration_manager->runMigrations();
-                update_option('daily_menu_manager_version', DMM_VERSION);
-                add_action('admin_notices', function() {
-                    printf(
-                        '<div class="error"><p>%s</p></div>',
-                        esc_html(
-                            sprintf(
-                                __('Daily Menu Manager successfully updated to version %s', 'daily-menu-manager'),
-                                DMM_VERSION
+                if ($migration_manager->hasOpenMigrations()) {
+                    add_action('admin_notices', function() use ($installed_version) {
+                        printf(
+                            '<div class="notice notice-warning"><p>%s</p></div>',
+                            esc_html(
+                                sprintf(
+                                    __('Daily Menu Manager needs database update from version %s to %s. Please visit the settings page to run the update.', 'daily-menu-manager'),
+                                    $installed_version,
+                                    DMM_VERSION
+                                )
                             )
-                        )
-                    );
-                });
+                        );
+                    });
+
+                } else {
+                    add_action('admin_notices', function() {
+                        printf(
+                            '<div class="error"><p>%s</p></div>',
+                            esc_html(
+                                sprintf(
+                                    __('Daily Menu Manager successfully updated to version %s', 'daily-menu-manager'),
+                                    DMM_VERSION
+                                )
+                            )
+                        );
+                    });
+                    update_option('daily_menu_manager_version', DMM_VERSION);
+                }
+                
             } catch (\Exception $e) {
                 error_log('Daily Menu Manager update failed: ' . $e->getMessage());
                 add_action('admin_notices', function() use ($e) {

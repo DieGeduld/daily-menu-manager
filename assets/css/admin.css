@@ -424,3 +424,20 @@ input[type="date"] {
 .flatpickr-day.today, .flatpickr-day.today:hover, .flatpickr-day.today:focus {
     border: red 1px solid!important;
 }
+
+.dmm-migration-notice {
+    padding: 20px;
+    margin: 20px 0;
+    background: #fff;
+    border-left: 4px solid #dc3232;
+    box-shadow: 0 1px 1px rgba(0,0,0,.04);
+}
+
+.dmm-migration-notice p {
+    margin: 0 0 15px;
+    font-size: 14px;
+}
+
+.dmm-migration-notice .button {
+    margin-right: 10px;
+}

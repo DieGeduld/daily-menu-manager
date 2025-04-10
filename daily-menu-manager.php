@@ -5,7 +5,7 @@ namespace DailyMenuManager;
  * Plugin Name: Daily Menu Manager
  * Plugin URI: https://yourwebsite.com/daily-menu-manager
  * Description: Manage daily menus and their orders efficiently.
- * Version: 1.6.0
+ * Version: 1.7.0
  * Author: Fabian Wolf
  * Author URI: https://yourwebsite.com
  * Text Domain: daily-menu-manager
@@ -21,7 +21,7 @@ if (!defined('ABSPATH')) {
 }
 
 if (!defined('DMM_VERSION')) {
-    define('DMM_VERSION', '1.6.0');
+    define('DMM_VERSION', '1.7.0');
 }
 if (!defined('DMM_PLUGIN_DIR')) {
     define('DMM_PLUGIN_DIR', plugin_dir_path(__FILE__));
@@ -32,7 +32,6 @@ if (!defined('DMM_PLUGIN_FILE')) {
 if (!defined('DMM_PLUGIN_BASENAME')) {
     define('DMM_PLUGIN_BASENAME', plugin_basename(__FILE__));
 }
-
 
 // Load Bootstrap
 require_once __DIR__ . '/includes/Bootstrap.php';

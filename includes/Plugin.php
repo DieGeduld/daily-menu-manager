@@ -93,26 +93,18 @@ class Plugin {
         }
     }
 
-    // Function is a duplication of the checkForUpdates function in the Bootstrap class
     private function checkForUpdates(): void {
         $installed_version = get_option('daily_menu_manager_version');
         
         if ($installed_version !== DMM_VERSION) {
-            try {
-                $migration_manager = new Database\MigrationManager();
-                $migration_manager->runMigrations();
-                //update_option('daily_menu_manager_version', DMM_VERSION);
-                self::addAdminNotice(
-                    sprintf(__('Daily Menu Manager updated to version %s', 'daily-menu-manager'), DMM_VERSION),
-                    'success'
-                );
-            } catch (\Exception $e) {
-                self::log('Update failed: ' . $e->getMessage());
-                self::addAdminNotice(
-                    __('Update failed. Please check the error log.', 'daily-menu-manager'),
-                    'error'
-                );
-            }
+            self::addAdminNotice(
+                sprintf(
+                    __('Daily Menu Manager needs database update from version %s to %s. Please visit the settings page to run the update.', 'daily-menu-manager'),
+                    $installed_version,
+                    DMM_VERSION
+                ),
+                'warning'
+            );
         }
     }
 

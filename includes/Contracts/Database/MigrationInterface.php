@@ -14,6 +14,16 @@ namespace DailyMenuManager\Contracts\Database;
 interface MigrationInterface
 {
     /**
+     * Gibt an, ob die Migration automatisch ausgeführt werden kann.
+     * 
+     * Bestimmt, ob die Migration im Rahmen automatischer Updates ohne
+     * Benutzerinteraktion ausgeführt werden soll.
+     *
+     * @return bool True wenn die Migration automatisch ausgeführt werden kann, sonst false
+     */
+    public function canAutorun(): bool;
+
+    /**
      * Führt die Migration aus.
      * 
      * Diese Methode enthält die Logik für die Vorwärts-Migration,

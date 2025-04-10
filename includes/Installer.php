@@ -167,7 +167,7 @@ class Installer {
      * Entfernt alle Plugin-Optionen
      */
     private static function removeOptions() {
-        delete_option('daily_menu_manager_db_version');
+        delete_option('daily_menu_manager_version');
         delete_option('daily_menu_manager_settings');
         delete_option('daily_menu_manager_notices');
         
@@ -266,7 +266,7 @@ class Installer {
      * @return bool True bei Erfolg
      */
     public static function updateDatabase() {
-        $installed_version = get_option('daily_menu_manager_db_version');
+        $installed_version = get_option('daily_menu_manager_version');
         
         if ($installed_version !== DMM_VERSION) {
             self::createTables();
@@ -288,7 +288,7 @@ class Installer {
             $migrationManager->runMigrations();
 
             // Aktualisiere die gespeicherte Datenbankversion
-            update_option('daily_menu_manager_db_version', DMM_VERSION);
+            update_option('daily_menu_manager_version', DMM_VERSION);
             
             return true;
         } catch (\Exception $e) {

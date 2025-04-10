@@ -19,7 +19,7 @@ class SettingsController {
         'custom' => '', // Wird dynamisch aus den Einstellungen geladen
     ];
     
-    public static function init() {
+    public static function init(): void {
         if (self::$instance === null) {
             self::$instance = new self();
         }
@@ -40,7 +40,7 @@ class SettingsController {
             [self::class, 'displaySettingsPage']
         );
     }
-    
+
     /**
      * Zeigt die Einstellungsseite an und verarbeitet das Formular
      */
@@ -117,6 +117,29 @@ class SettingsController {
                 __('Settings saved.', 'daily-menu-manager'),
                 'success'
             );
+        }
+
+        // Check if the migration button was pressed
+        if (isset($_POST['run_migrations']) && check_admin_referer('daily_menu_settings_nonce')) {
+            try {
+                $migration_manager = new \DailyMenuManager\Database\MigrationManager();
+                $migration_manager->runMigrations(true);
+                
+                update_option('daily_menu_manager_version', DMM_VERSION);
+                
+                \DailyMenuManager\Plugin::addAdminNotice(
+                    __('Database update completed successfully.', 'daily-menu-manager'),
+                    'success'
+                );
+            } catch (\Exception $e) {
+                \DailyMenuManager\Plugin::addAdminNotice(
+                    sprintf(
+                        __('Database update failed: %s', 'daily-menu-manager'),
+                        $e->getMessage()
+                    ),
+                    'error'
+                );
+            }
         }
         
         // Lade das Template
