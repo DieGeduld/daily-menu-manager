@@ -1,0 +1,26 @@
+{
+    "name": "wibug/daily-menu-manager",
+    "description": "WordPress plugin for managing daily menus",
+    "type": "wordpress-plugin",
+    "require": {
+        "php": ">=7.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.0",
+        "brain/monkey": "^2.6",
+        "mockery/mockery": "^1.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "DailyMenuManager\\": "includes/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "DailyMenuManager\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    }
+}

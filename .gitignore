@@ -1,3 +1,5 @@
 .DS_Store
 /logs
 .vscode
+/node_modules
+/vendor
