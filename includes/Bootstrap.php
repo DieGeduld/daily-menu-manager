@@ -38,13 +38,13 @@ class Bootstrap {
         // Load translations at init hook
         add_action('init', function() {
             load_plugin_textdomain(
-                'daily-menu-manager',
+                DMM_TEXT_DOMAIN,
                 false,
                 dirname(plugin_basename(DMM_PLUGIN_FILE)) . '/languages/'
             );
             
             $locale = determine_locale();
-            $mofile = plugin_dir_path(DMM_PLUGIN_FILE) . 'languages/' . $locale . '.mo';
+            $mofile = plugin_dir_path(DMM_PLUGIN_FILE) . 'languages/' . DMM_TEXT_DOMAIN . '-' . $locale . '.mo';
             
             if (file_exists($mofile)) {
                 load_textdomain('daily-menu-manager', $mofile);

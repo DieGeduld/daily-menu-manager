@@ -8,15 +8,15 @@ import { loadTranslations as poTranslations } from './utils/po-parser';
 //     await page.goto('/wp-admin/admin.php?page=daily-menu-manager');
 //   });
 
-//   test('should display the menu management page', async ({ page }) => {
-//     await expect(
-//       page.getByRole('heading', {
-//         name: /Tagesmenü verwalten|Manage Daily Menu/i,
-//       }),
-//     ).toBeVisible();
+  // test('should display the menu management page', async ({ page }) => {
+  //   await expect(
+  //     page.getByRole('heading', {
+  //       name: /Tagesmenü verwalten|Manage Daily Menu/i,
+  //     }),
+  //   ).toBeVisible();
 
-//     await expect(page.getByText(/Datum auswählen:|Select Date:/i)).toBeVisible();
-//   });
+  //   await expect(page.getByText(/Datum auswählen:|Select Date:/i)).toBeVisible();
+  // });
 
 //   test('should display the orders page', async ({ page }) => {
 //     await page.goto('/wp-admin/admin.php?page=daily-menu-orders');
@@ -59,15 +59,38 @@ for (const locale of locales) {
       }
       await page.locator('#submit').click();
 
-      await page.goto(`/wp-admin/admin.php?page=daily-menu-manager&locale=${locale}`);
     });
 
     test(`should display the menu management page in ${locale}`, async ({ page }) => {
-
       await page.goto("/wp-admin/admin.php?page=daily-menu-manager");
 
       const menuTitle = translations['Manage Daily Menu'] || 'Manage Daily Menu';
       await expect(page.getByRole('heading', { name: menuTitle })).toBeVisible();
     });
+
+    test('should display the orders page', async ({ page }) => {
+      await page.goto('/wp-admin/admin.php?page=daily-menu-orders');
+
+      let translation = translations['Orders'] || 'Orders';
+      await expect(page.getByRole('heading', { name: translation })).toBeVisible();
+
+      translation = translations["Today's orders"] || "Today's orders";
+      await expect(page.getByText( translation )).toBeVisible();
+
+      translation = translations["Today's revenue"] || "Today's revenue";
+      await expect(page.getByText( translation )).toBeVisible();
+
+      translation = translations["Ordered items"] || "Ordered items";
+      await expect(page.getByText( translation )).toBeVisible();
+
+    });
+
+    test('should be able to access settings page', async ({ page }) => {
+      await page.goto('/wp-admin/admin.php?page=daily-menu-manager-settings');
+      let translation = translations['Settings'] || 'Settings';
+      await expect(page.getByRole('heading', { name: translation })).toBeVisible();
+    });
+
+
   });
 }
