@@ -32,6 +32,9 @@ if (!defined('DMM_PLUGIN_FILE')) {
 if (!defined('DMM_PLUGIN_BASENAME')) {
     define('DMM_PLUGIN_BASENAME', plugin_basename(__FILE__));
 }
+if (!defined('DMM_TEXT_DOMAIN')) {
+    define('DMM_TEXT_DOMAIN', 'daily-menu-manager');
+}
 
 // Load Bootstrap
 require_once __DIR__ . '/includes/Bootstrap.php';

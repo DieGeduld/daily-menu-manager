@@ -6,12 +6,12 @@ dotenv.config();
 
 export default defineConfig({
   testDir: './e2e',
-  fullyParallel: true,
+  fullyParallel: false,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  // retries: process.env.CI ? 2 : 0,
+  // workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
-  
+
   projects: [
     {
       name: 'setup',
@@ -19,7 +19,7 @@ export default defineConfig({
     },
     {
       name: 'chromium',
-      use: { 
+      use: {
         ...devices['Desktop Chrome'],
         // Store authentication state between tests
         storageState: 'playwright/.auth/admin.json',
@@ -28,7 +28,7 @@ export default defineConfig({
       dependencies: ['setup'],
     },
   ],
-  
+
   use: {
     baseURL: process.env.WP_BASE_URL || 'http://localhost:8080',
     trace: 'on-first-retry',

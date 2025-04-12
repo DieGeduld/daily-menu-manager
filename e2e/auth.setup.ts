@@ -3,7 +3,7 @@ import { test as setup, expect } from '@playwright/test';
 setup('authenticate as admin', async ({ page }) => {
   // Ensure we start with a fresh session
   await page.context().clearCookies();
-  
+
   await page.goto('/wp-login.php');
 
   await page.locator('#user_login').fill(process.env.WP_ADMIN_USER || 'admin');
@@ -15,6 +15,6 @@ setup('authenticate as admin', async ({ page }) => {
 
   // Store signed-in state
   await page.context().storageState({
-    path: 'playwright/.auth/admin.json'
+    path: 'playwright/.auth/admin.json',
   });
 });
