@@ -3,3 +3,15 @@
 .vscode
 /node_modules
 /vendor
+.phpunit.result.cache
+/.idea
+/.vscode
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+.env

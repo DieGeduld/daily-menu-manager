@@ -1,0 +1,22 @@
+{
+  "name": "daily-menu-manager",
+  "version": "1.0.0",
+  "description": "Feature Request:",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.51.1",
+    "@types/node": "^22.14.1",
+    "dotenv": "^16.5.0"
+  }
+}
