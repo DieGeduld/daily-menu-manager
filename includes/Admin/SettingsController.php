@@ -36,7 +36,7 @@ class SettingsController {
             __('Settings', 'daily-menu-manager'),
             __('Settings', 'daily-menu-manager'),
             'manage_options',
-            'daily-menu-settings',
+            'daily-menu-manager-settings',
             [self::class, 'displaySettingsPage']
         );
     }
