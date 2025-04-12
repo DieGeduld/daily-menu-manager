@@ -15,6 +15,7 @@ class MenuController {
         add_action('admin_enqueue_scripts', [self::class, 'enqueueAdminScripts']);
         add_action('wp_ajax_save_menu_order', [self::class, 'handleSaveMenuOrder']);
         add_action('wp_ajax_copy_menu', [self::class, 'handleCopyMenu']);
+        add_action('wp_ajax_delete_menu_item', [self::class, 'handleDeleteMenuItem']);
     }
 
     /**
@@ -268,6 +269,35 @@ class MenuController {
                 'message' => __('Menu copied successfully.', 'daily-menu-manager'),
                 'new_menu_id' => $result
             ]);
+        }
+    }
+
+    /**
+     * AJAX Handler für das Löschen eines Menüeintrags
+     */
+    public static function handleDeleteMenuItem() {
+        check_ajax_referer('daily_menu_admin_nonce');
+        
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);
+        }
+
+        $item_id = intval($_POST['item_id']);
+        if (!$item_id) {
+            wp_send_json_error(['message' => __('Invalid menu item ID.', 'daily-menu-manager')]);
+        }
+
+        global $wpdb;
+        $result = $wpdb->delete(
+            $wpdb->prefix . 'menu_items',
+            ['id' => $item_id],
+            ['%d']
+        );
+
+        if ($result === false) {
+            wp_send_json_error(['message' => __('Error deleting menu item.', 'daily-menu-manager')]);
+        } else {
+            wp_send_json_success(['message' => __('Menu item deleted successfully.', 'daily-menu-manager')]);
         }
     }
 

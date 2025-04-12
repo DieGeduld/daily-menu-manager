@@ -260,16 +260,48 @@ jQuery(document).ready(function($) {
     $('.menu-items')
         .on('click', '.remove-menu-item', function() {
             const $item = $(this).closest('.menu-item');
+            const itemId = $item.find('input[name*="[id]"]').val();
+            
             if (confirm(window.dailyMenuAdmin.messages.deleteConfirm)) {
-                $item.fadeOut(300, function() {
-                    const itemId = $(this).find('input[name*="[id]"]').val();
-                    if (itemId) {
-                        localStorage.removeItem('menuItem_' + itemId + '_collapsed');
-                    }
-                    $(this).remove();
-                    updateSortOrder();
-                    showFeedback('Menü-Item entfernt');
-                });
+                // Only make AJAX call if we have an item ID (existing item)
+                if (itemId && !itemId.startsWith('new-')) {
+                    $.ajax({
+                        url: window.dailyMenuAdmin.ajaxurl,
+                        type: 'POST',
+                        data: {
+                            action: 'delete_menu_item',
+                            item_id: itemId,
+                            _ajax_nonce: window.dailyMenuAdmin.nonce
+                        },
+                        beforeSend: function() {
+                            $item.addClass('deleting');
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                $item.fadeOut(300, function() {
+                                    localStorage.removeItem('menuItem_' + itemId + '_collapsed');
+                                    $(this).remove();
+                                    updateSortOrder();
+                                    showFeedback(response.data.message || 'Menü-Item entfernt');
+                                });
+                            } else {
+                                $item.removeClass('deleting');
+                                showFeedback(response.data.message || 'Fehler beim Löschen', 'error');
+                            }
+                        },
+                        error: function() {
+                            $item.removeClass('deleting');
+                            showFeedback('Fehler beim Löschen', 'error');
+                        }
+                    });
+                } else {
+                    // For new items that haven't been saved yet, just remove from DOM
+                    $item.fadeOut(300, function() {
+                        $(this).remove();
+                        updateSortOrder();
+                        showFeedback('Menü-Item entfernt');
+                    });
+                }
             }
         })
         .on('click', '.toggle-menu-item', function(e) {
