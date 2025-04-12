@@ -99,7 +99,7 @@
         
         <div class="menu-controls">
             <?php foreach (self::getMenuTypes() as $type => $labels): ?>
-                <button type="button" class="button add-menu-item" data-type="<?php echo esc_attr($type); ?>">
+                <button type="button" class="button add-menu-item <?php echo sanitize_title($labels['label']); ?>" data-type="<?php echo esc_attr($type); ?>">
                     + <?php echo esc_html($labels['label']); ?>
                 </button>
             <?php endforeach; ?>
