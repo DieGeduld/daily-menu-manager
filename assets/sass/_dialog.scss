@@ -1,0 +1,74 @@
+@use 'colors' as *;
+
+.ui-dialog {
+	background: #fff;
+	padding: 20px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+	
+	.ui-dialog-buttonpane {
+		margin-top: 15px;
+		padding-top: 15px;
+		border-top: 1px solid #eee;
+		text-align: right;
+		
+		button {
+			margin-left: 10px;
+		}
+	}
+}
+
+.ui-dialog-titlebar {
+	font-size: 1.2em;
+	font-weight: bold;
+	margin-bottom: 15px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #eee;
+}
+
+.ui-dialog-titlebar-close {
+	float: right;
+	cursor: pointer;
+	background: none;
+	border: none;
+	font-size: 1.5em;
+	line-height: 1;
+}
+
+#copy-menu-dialog-from {
+	input[type="date"] {
+		width: 100%;
+		padding: 5px;
+		margin: 10px 0;
+	}
+}
+
+#copy-menu-dialog-to {
+	input[type="date"] {
+		width: 100%;
+		padding: 5px;
+		margin: 10px 0;
+	}
+}
+
+.ui-tooltip {
+	padding: 8px;
+	max-width: 300px;
+	background: #333;
+	color: $color_3;
+	border-radius: 4px;
+	font-size: 12px;
+	box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+	
+	&:after {
+		content: '';
+		position: absolute;
+		left: -6px;
+		top: 50%;
+		transform: translateY(-50%);
+		border-right: 6px solid #333;
+		border-top: 6px solid transparent;
+		border-bottom: 6px solid transparent;
+	}
+}

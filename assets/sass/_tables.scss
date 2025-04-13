@@ -1,0 +1,37 @@
+@use 'colors' as *;
+
+table {
+	border-collapse: collapse;
+}
+
+.order-total {
+	border-bottom: 2px solid black;
+}
+
+.order-summary-table {
+	margin: 20px 0;
+}
+
+.summary-table {
+	border-collapse: collapse;
+	background: #fff;
+	
+	th {
+		padding: 12px;
+		border: 1px solid #ddd;
+		text-align: left;
+		background-color: $background-color_2;
+		font-weight: bold;
+	}
+	
+	td {
+		padding: 12px;
+		border: 1px solid #ddd;
+		text-align: left;
+	}
+	
+	td.value {
+		font-size: 1.2em;
+		font-weight: bold;
+	}
+}

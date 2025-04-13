@@ -1,0 +1,23 @@
+@use 'colors' as *;
+
+.price-input-wrapper {
+	position: relative;
+	display: flex;
+	
+	input {
+		border-radius: 0 4px 4px 0;
+		flex: 1;
+	}
+}
+
+.currency-symbol {
+	padding: 0.375rem 0.75rem;
+	font-size: 1rem;
+	color: $color_6;
+	background-color: $background-color_1;
+	border: 1px solid #ced4da;
+	border-radius: 4px 0 0 4px;
+	display: flex;
+	align-items: center;
+	border-right: 0;
+}
