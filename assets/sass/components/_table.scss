@@ -1,0 +1,76 @@
+@use 'sass:color';
+@use '../base/variables' as *;
+
+table {
+    border-collapse: collapse;
+}
+
+.summary-table {
+    border-collapse: collapse;
+    background: $color-primary;
+    
+    th,
+    td {
+        padding: $spacing-md;
+        border: 1px solid $color-border;
+        text-align: left;
+    }
+    
+    th {
+        background-color: $color-background;
+        font-weight: bold;
+    }
+    
+    td.value {
+        font-size: 1.2em;
+        font-weight: bold;
+    }
+}
+
+.order-total {
+    border-bottom: 2px solid black;
+}
+
+.order-summary-table {
+    margin: $spacing-xl 0;
+}
+
+.menu-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: $spacing-lg 0;
+    background: $color-primary;
+    box-shadow: $shadow-default;
+    
+    th, td {
+        padding: $spacing-md;
+        text-align: left;
+        border: 1px solid $color-border;
+    }
+    
+    th {
+        background: $color-background;
+        font-weight: 600;
+    }
+    
+    tr {
+        &:nth-child(even) {
+            background-color: $color-background;
+        }
+        
+        &:hover {
+            background-color: color.adjust($color-background, $lightness: -2%);
+        }
+    }
+    
+    .actions {
+        display: flex;
+        gap: $spacing-sm;
+        justify-content: flex-end;
+        
+        .button {
+            padding: $spacing-xs $spacing-sm;
+            min-height: auto;
+        }
+    }
+}

@@ -1,0 +1,63 @@
+// Import base styles and variables
+@use 'base/variables' as *;
+@use 'sass:color';
+
+// Import components
+@use 'components/menu-item';
+@use 'components/dialog';
+@use 'components/date-selection';
+@use 'components/table';
+
+// Base styles
+body.wp-admin {
+    background: $color-background;
+}
+
+.wrap {
+    margin: $spacing-xl;
+    
+    h1 {
+        margin-bottom: $spacing-xl;
+    }
+}
+
+// Utility classes
+.hidden {
+    display: none !important;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-danger {
+    color: $color-danger;
+}
+
+// Button styles
+.button {
+    &-danger {
+        background: $color-danger !important;
+        border-color: color.adjust($color-danger, $lightness: -10%) !important;
+        color: white !important;
+        
+        &:hover {
+            background: color.adjust($color-danger, $lightness: -5%) !important;
+        }
+    }
+}
+
+// Link styles
+a {
+    color: $color-link;
+    text-decoration: none;
+    
+    &:hover {
+        color: color.adjust($color-link, $lightness: -10%);
+        text-decoration: underline;
+    }
+}

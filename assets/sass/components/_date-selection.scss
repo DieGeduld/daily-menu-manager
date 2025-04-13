@@ -1,0 +1,73 @@
+@use '../base/variables' as *;
+
+.date-selection {
+    margin: $spacing-xl 0;
+    padding: $spacing-lg;
+    background: $color-primary;
+    border: 1px solid $color-border;
+    border-radius: $border-radius;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.date-selector-form {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    
+    label {
+        font-weight: 500;
+    }
+    
+    input[type="date"] {
+        padding: $spacing-xs $spacing-md;
+        border: 1px solid $color-border;
+        border-radius: $border-radius;
+        
+        &::-webkit-calendar-picker-indicator {
+            display: none;
+        }
+        
+        appearance: textfield;
+        -webkit-appearance: textfield;
+    }
+}
+
+.flatpickr-day {
+    &.has-event {
+        background-color: #569ff730;
+        font-weight: bold;
+    }
+    
+    &.today {
+        border: red 1px solid !important;
+        
+        &:hover,
+        &:focus {
+            border: red 1px solid !important;
+        }
+    }
+}
+
+.flatpickr-wrapper,
+.selectedDateFrom,
+.selectedDateTo {
+    border: 1px grey solid;
+    border-radius: $border-radius;
+    display: flex !important;
+    justify-content: space-between;
+    
+    input[type="text"] {
+        background: none;
+        border: none !important;
+        width: 100px;
+        box-shadow: none;
+    }
+    
+    .dashicons {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+    }
+}

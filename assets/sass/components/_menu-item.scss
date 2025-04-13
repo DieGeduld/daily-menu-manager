@@ -1,0 +1,94 @@
+@use 'sass:color';
+@use '../base/variables' as *;
+
+.menu-item {
+    margin-bottom: $spacing-lg;
+    background: $color-primary;
+    border: 1px solid $color-border;
+    box-shadow: $shadow-default;
+    
+    &-header {
+        padding: $spacing-md $spacing-lg;
+        background: $color-background;
+        border-bottom: 1px solid $color-border;
+        display: flex;
+        align-items: center;
+        cursor: move;
+        user-select: none;
+        border-radius: $border-radius $border-radius 0 0;
+        
+        &:hover {
+            background: color.adjust($color-background, $lightness: -3%);
+        }
+        
+        &.ui-sortable-helper {
+            background: color.adjust($color-background, $lightness: -5%);
+            box-shadow: $shadow-dialog;
+        }
+    }
+    
+    &-title-area {
+        flex-grow: 1;
+        margin-right: $spacing-md;
+    }
+    
+    &-actions {
+        display: flex;
+        gap: $spacing-sm;
+        padding: 0 $spacing-xs;
+    }
+    
+    &-content {
+        padding: $spacing-lg;
+        border: 1px solid $color-border;
+        border-top: none;
+        background: $color-primary;
+        border-radius: 0 0 $border-radius $border-radius;
+        transition: height $transition-default;
+    }
+    
+    &-field {
+        margin-bottom: $spacing-md;
+        
+        label {
+            display: block;
+            margin-bottom: $spacing-xs;
+            font-weight: 500;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: $spacing-sm;
+            border: 1px solid $color-border;
+            border-radius: $border-radius;
+        }
+        
+        textarea {
+            height: 100px;
+        }
+    }
+}
+
+.price-input-wrapper {
+    position: relative;
+    display: flex;
+    
+    .currency-symbol {
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        color: #212529;
+        background-color: #e9ecef;
+        border: 1px solid $color-border;
+        border-radius: $border-radius 0 0 $border-radius;
+        display: flex;
+        align-items: center;
+        border-right: 0;
+    }
+    
+    input {
+        border-radius: 0 $border-radius $border-radius 0;
+        flex: 1;
+    }
+}

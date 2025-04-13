@@ -9,7 +9,10 @@
   "scripts": {
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "test:e2e:debug": "playwright test --debug"
+    "test:e2e:debug": "playwright test --debug",
+    "sass": "sass assets/sass/admin.scss:assets/css/admin.css && sass --style compressed assets/sass/admin.scss:assets/css/admin.min.css",
+    "sass:watch": "sass --watch assets/sass/admin.scss:assets/css/admin.css & sass --watch assets/sass/admin.scss:assets/css/admin.min.css --style compressed",
+    "dev": "concurrently \"npm run sass:watch\""
   },
   "keywords": [],
   "author": "",
@@ -17,7 +20,11 @@
   "devDependencies": {
     "@playwright/test": "^1.51.1",
     "@types/node": "^22.14.1",
-    "dotenv": "^16.5.0"
+    "concurrently": "^9.1.2",
+    "dotenv": "^16.5.0",
+    "node-sass": "^9.0.0",
+    "nodemon": "^3.1.9",
+    "sass": "^1.86.3"
   },
   "dependencies": {
     "gettext-parser": "^8.0.0"
