@@ -46,7 +46,20 @@ test.describe(`Daily Menu Manager Make A Order`, () => {
     // Navigiere zur Frontend-Order-Seite
     await page.goto(frontEndOrderUrl);
 
-    await expect(page.locator('.menu-item .menu-item-title')).toContainText(dishName);    
+    await expect(page.locator('.menu-item .menu-item-title')).toContainText(dishName);
+    
+    await page.locator('.menu-item input[name*="quantity"]').fill('3');
+    
+    
+    await page.locator('.order-info-column input[name="customer_name"]').fill('Max Mustermann');
+    await page.locator('.order-info-column input[name="customer_phone"]').fill('123456789');
+    await page.locator('.order-info-column select[name="consumption_type"]').selectOption('Abholen');
+    await page.locator('.order-info-column select[name="pickup_time"]').selectOption('12:00');
+    await page.locator('.order-info-column textarea[name="general_notes"]').fill('Testnotiz');
+    
+    await page.locator('.order-info-column .submit-order').click();
+
+
     
   });
 });
