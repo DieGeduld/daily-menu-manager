@@ -145,9 +145,6 @@ use \DailyMenuManager\Admin\SettingsController;
                         <td><?php echo SettingsController::formatPrice($item_total); ?></td>
                         <td>
                             <?php if ($order->id === $order->first_item_in_order): ?>
-                                <button class="button print-order" data-order="<?php echo esc_attr($order->order_number); ?>">
-                                    <span class="dashicons dashicons-print"></span>
-                                </button>
                                 <button class="button delete-order" data-order="<?php echo esc_attr($order->order_number); ?>">
                                     <span class="dashicons dashicons-trash"></span>
                                 </button>
