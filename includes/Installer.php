@@ -74,14 +74,17 @@ class Installer {
                 'menu_types' => [
                     'appetizer' => [
                         'label' => __('Appetizer', 'daily-menu-manager'),
+                        'plural' => __('Appetizers', 'daily-menu-manager'),
                         'enabled' => true
                     ],
                     'main_course' => [
                         'label' => __('Main Course', 'daily-menu-manager'),
+                        'plural' => __('Main Course', 'daily-menu-manager'),
                         'enabled' => true
                     ],
                     'dessert' => [
                         'label' => __('Dessert', 'daily-menu-manager'),
+                        'plural' => __('Dessert', 'daily-menu-manager'),
                         'enabled' => true
                     ]
                 ],

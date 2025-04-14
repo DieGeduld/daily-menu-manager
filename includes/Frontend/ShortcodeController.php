@@ -14,10 +14,7 @@ class ShortcodeController {
         
         add_shortcode('daily_menu', [self::class, 'renderMenu']);
         add_action('wp_enqueue_scripts', [self::class, 'enqueueAssets']);
-        add_action('wp_ajax_submit_order', [self::class, 'handleOrder']);
-        add_action('wp_ajax_nopriv_submit_order', [self::class, 'handleOrder']);
-        add_action('wp_ajax_get_available_quantities', [self::class, 'getAvailableQuantities']);
-        add_action('wp_ajax_nopriv_get_available_quantities', [self::class, 'getAvailableQuantities']);        
+        
     }
 
     /**

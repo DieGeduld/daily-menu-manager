@@ -13,9 +13,7 @@ class MenuController {
         
         add_action('admin_menu', [self::class, 'addAdminMenu']);
         add_action('admin_enqueue_scripts', [self::class, 'enqueueAdminScripts']);
-        add_action('wp_ajax_save_menu_order', [self::class, 'handleSaveMenuOrder']);
-        add_action('wp_ajax_copy_menu', [self::class, 'handleCopyMenu']);
-        add_action('wp_ajax_delete_menu_item', [self::class, 'handleDeleteMenuItem']);
+
     }
 
     /**

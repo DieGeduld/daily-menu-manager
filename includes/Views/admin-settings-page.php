@@ -137,36 +137,36 @@ settings_errors('daily_menu_properties');
                                     <?php foreach ($menu_types as $type_key => $type_data) : ?>
                                         <div class="menu-type-row">
                                             <input type="text" 
-                                                name="daily_menu_types_keys[]" 
-                                                value="<?php echo esc_attr($type_key); ?>" 
-                                                class="regular-text menu-type-key" 
-                                                placeholder="<?php _e('Type key (e.g. appetizer)', 'daily-menu-manager'); ?>" />
-                                            <input type="text" 
                                                 name="daily_menu_types_labels[]" 
                                                 value="<?php echo esc_attr($type_data['label']); ?>" 
                                                 class="regular-text menu-type-label" 
-                                                placeholder="<?php _e('Display name', 'daily-menu-manager'); ?>" />
+                                                placeholder="<?php _e('Menu Type Name (Singular)', 'daily-menu-manager'); ?>" />
+                                            <input type="text" 
+                                                name="daily_menu_types_plurals[]" 
+                                                value="<?php echo esc_attr($type_data['plural'] ?? ''); ?>" 
+                                                class="regular-text menu-type-plural" 
+                                                placeholder="<?php _e('Menu Type Name (Plural)', 'daily-menu-manager'); ?>" />
                                             <button type="button" class="button remove-menu-type"><?php _e('Remove', 'daily-menu-manager'); ?></button>
                                         </div>
                                     <?php endforeach; ?>
                                 <?php else : ?>
                                     <div class="menu-type-row">
                                         <input type="text" 
-                                            name="daily_menu_types_keys[]" 
-                                            value="" 
-                                            class="regular-text menu-type-key" 
-                                            placeholder="<?php _e('Type key (e.g. appetizer)', 'daily-menu-manager'); ?>" />
-                                        <input type="text" 
                                             name="daily_menu_types_labels[]" 
                                             value="" 
                                             class="regular-text menu-type-label" 
-                                            placeholder="<?php _e('Display name', 'daily-menu-manager'); ?>" />
+                                            placeholder="<?php _e('Menu Type Name (Singular)', 'daily-menu-manager'); ?>" />
+                                        <input type="text" 
+                                            name="daily_menu_types_plurals[]" 
+                                            value="" 
+                                            class="regular-text menu-type-plural" 
+                                            placeholder="<?php _e('Menu Type Name (Plural)', 'daily-menu-manager'); ?>" />
                                         <button type="button" class="button remove-menu-type"><?php _e('Remove', 'daily-menu-manager'); ?></button>
                                     </div>
                                 <?php endif; ?>
                             </div>
                             <button type="button" class="button add-menu-type"><?php _e('Add menu type', 'daily-menu-manager'); ?></button>
-                            <p class="description"><?php _e('Define the types of menu items (e.g., Appetizer, Main Course, Dessert).', 'daily-menu-manager'); ?></p>
+                            <p class="description"><?php _e('Define the types of menu items (e.g., Appetizer/Appetizers, Main Course/Main Courses, Dessert/Desserts).', 'daily-menu-manager'); ?></p>
                         </td>
                     </tr>
                 </table>
@@ -327,8 +327,8 @@ jQuery(document).ready(function($) {
     // Add menu type
     $('.add-menu-type').on('click', function() {
         var newRow = '<div class="menu-type-row">' +
-            '<input type="text" name="daily_menu_types_keys[]" value="" class="regular-text menu-type-key" placeholder="<?php _e('Type key (e.g. appetizer)', 'daily-menu-manager'); ?>" />' +
-            '<input type="text" name="daily_menu_types_labels[]" value="" class="regular-text menu-type-label" placeholder="<?php _e('Display name', 'daily-menu-manager'); ?>" />' +
+            '<input type="text" name="daily_menu_types_labels[]" value="" class="regular-text menu-type-label" placeholder="<?php _e('Menu Type Name (Singular)', 'daily-menu-manager'); ?>" />' +
+            '<input type="text" name="daily_menu_types_plurals[]" value="" class="regular-text menu-type-plural" placeholder="<?php _e('Menu Type Name (Plural)', 'daily-menu-manager'); ?>" />' +
             '<button type="button" class="button remove-menu-type"><?php _e('Remove', 'daily-menu-manager'); ?></button>' +
             '</div>';
         $('#menu-types-container').append(newRow);

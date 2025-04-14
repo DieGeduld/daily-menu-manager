@@ -13,3 +13,9 @@ Feature Request:
 - speisen, die es jeden Tag gibt
 - Amount: infinite 
 - Ab wann (noch Ax verfügbar) anzeigen?
+- email notification
+- define order states (pending, complete, etc...)
+
+
+todo:
+clean up handles, all in plugin.php

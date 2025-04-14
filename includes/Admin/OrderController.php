@@ -27,8 +27,7 @@ class OrderController {
         
         add_action('admin_menu', [self::class, 'addAdminMenu']);
         add_action('admin_enqueue_scripts', [self::class, 'enqueueAdminScripts']);
-        add_action('wp_ajax_print_order', [self::class, 'handlePrintOrder']);
-        add_action('wp_ajax_delete_order', [self::class, 'handleDeleteOrder']);
+        
     }
 
     /**

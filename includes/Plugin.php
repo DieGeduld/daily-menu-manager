@@ -3,7 +3,6 @@ namespace DailyMenuManager;
 
 class Plugin {
     private static ?self $instance = null;
-    private array $menu_types;
     private bool $initialized = false;
 
     public static function getInstance(): self {
@@ -20,28 +19,9 @@ class Plugin {
     }
 
     private function initializePlugin(): void {
-        $this->setupMenuTypes();
         $this->initializeComponents();
         $this->checkForUpdates();
         $this->initialized = true;
-    }
-
-    // Todo: 
-    private function setupMenuTypes(): void {
-        $this->menu_types = [
-            'appetizer' => [
-                'label' => __('Appetizer', 'daily-menu-manager'),
-                'label_de' => __('Vorspeise', 'daily-menu-manager')
-            ],
-            'main_course' => [
-                'label' => __('Main Course', 'daily-menu-manager'),
-                'label_de' => __('Hauptgang', 'daily-menu-manager')
-            ],
-            'dessert' => [
-                'label' => __('Dessert', 'daily-menu-manager'),
-                'label_de' => __('Nachspeise', 'daily-menu-manager')
-            ]
-        ];
     }
 
     private function initializeComponents(): void {
@@ -76,16 +56,21 @@ class Plugin {
     }
 
     private function registerPublicAjaxHandlers(): void {
-        add_action('wp_ajax_submit_order', [Admin\OrderController::class, 'handleOrder']);
         add_action('wp_ajax_nopriv_submit_order', [Admin\OrderController::class, 'handleOrder']);
+        add_action('wp_ajax_nopriv_get_available_quantities', [Admin\SettingsController::class, 'getAvailableQuantities']);        
+
+        add_action('wp_ajax_submit_order', [Admin\OrderController::class, 'handleOrder']);
+        add_action('wp_ajax_get_available_quantities', [Admin\SettingsController::class, 'getAvailableQuantities']);
     }
 
     private function registerAdminAjaxHandlers(): void {
+        
         $admin_handlers = [
+            'delete_menu_item', [Admin\MenuController::class, 'handleDeleteMenuItem'],
             'save_menu_order' => [Admin\MenuController::class, 'handleSaveMenuOrder'],
             'copy_menu' => [Admin\MenuController::class, 'handleCopyMenu'],
             'print_order' => [Admin\OrderController::class, 'handlePrintOrder'],
-            'delete_order' => [Admin\OrderController::class, 'handleDeleteOrder']
+            'delete_order' => [Admin\OrderController::class, 'handleDeleteOrder'],
         ];
 
         foreach ($admin_handlers as $action => $callback) {
@@ -106,10 +91,6 @@ class Plugin {
                 'warning'
             );
         }
-    }
-
-    public function getMenuTypes(): array {
-        return apply_filters('daily_menu_manager_menu_types', $this->menu_types);
     }
 
     public static function addAdminNotice(string $message, string $type = 'success'): void {

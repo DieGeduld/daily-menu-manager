@@ -111,18 +111,32 @@ class SettingsController {
             $settings_model->set('consumption_types', $sanitized_consumption_types);
             
             // Speichere die Menütypen
-            $menu_types_keys = isset($_POST['daily_menu_types_keys']) ? $_POST['daily_menu_types_keys'] : [];
             $menu_types_labels = isset($_POST['daily_menu_types_labels']) ? $_POST['daily_menu_types_labels'] : [];
+            $menu_types_plurals = isset($_POST['daily_menu_types_plurals']) ? $_POST['daily_menu_types_plurals'] : [];
             $menu_types = [];
             
-            for ($i = 0; $i < count($menu_types_keys); $i++) {
-                $key = sanitize_key($menu_types_keys[$i]);
-                $label = sanitize_text_field($menu_types_labels[$i]);
+            // Use StringUtils to generate keys from labels
+            foreach ($menu_types_labels as $index => $label) {
+                $label = sanitize_text_field($label);
                 
-                if (!empty($key) && !empty($label)) {
+                if (!empty($label)) {
+                    // Generate key from label using StringUtils
+                    $key = \DailyMenuManager\Helper\StringUtils::hard_sanitize($label);
+                    
+                    // Ensure key is unique by adding a suffix if needed
+                    $original_key = $key;
+                    $counter = 1;
+                    while (isset($menu_types[$key])) {
+                        $key = $original_key . '_' . $counter;
+                        $counter++;
+                    }
+                    
+                    // Get the plural form if available
+                    $plural = isset($menu_types_plurals[$index]) ? sanitize_text_field($menu_types_plurals[$index]) : '';
+                    
                     $menu_types[$key] = [
                         'label' => $label,
-                        'label_de' => $label // For backward compatibility
+                        'plural' => $plural
                     ];
                 }
             }
@@ -508,15 +522,15 @@ class SettingsController {
             $menu_types = [
                 'appetizer' => [
                     'label' => __('Vorspeise', 'daily-menu-manager'),
-                    'label_de' => 'Vorspeise'
+                    'plural' => __('Vorspeisen', 'daily-menu-manager')
                 ],
                 'main_course' => [
                     'label' => __('Hauptgang', 'daily-menu-manager'),
-                    'label_de' => 'Hauptgang'
+                    'plural' => __('Hauptgänge', 'daily-menu-manager')
                 ],
                 'dessert' => [
                     'label' => __('Nachspeise', 'daily-menu-manager'),
-                    'label_de' => 'Nachspeise'
+                    'plural' => __('Nachspeisen', 'daily-menu-manager')
                 ]
             ];
             
