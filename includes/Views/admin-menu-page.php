@@ -53,7 +53,7 @@
     </div>
 
     <!-- Menü-Item Templates -->
-    <?php foreach (self::getMenuTypes() as $type => $labels): ?>
+    <?php foreach (SettingsController::getMenuTypes() as $type => $labels): ?>
         <script type="text/template" id="menu-item-template-<?php echo esc_attr($type); ?>">
             <div class="menu-item" data-type="<?php echo esc_attr($type); ?>">
                 <div class="menu-item-header">
@@ -98,7 +98,7 @@
         <input type="hidden" name="menu_date" value="<?php echo esc_attr($selected_date); ?>">
         
         <div class="menu-controls">
-            <?php foreach (self::getMenuTypes() as $type => $labels): ?>
+            <?php foreach (SettingsController::getMenuTypes() as $type => $labels): ?>
                 <button type="button" class="button add-menu-item <?php echo sanitize_title($labels['label']); ?>" data-type="<?php echo esc_attr($type); ?>">
                     + <?php echo esc_html($labels['label']); ?>
                 </button>

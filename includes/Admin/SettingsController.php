@@ -110,6 +110,27 @@ class SettingsController {
             
             $settings_model->set('consumption_types', $sanitized_consumption_types);
             
+            // Speichere die Menütypen
+            $menu_types_keys = isset($_POST['daily_menu_types_keys']) ? $_POST['daily_menu_types_keys'] : [];
+            $menu_types_labels = isset($_POST['daily_menu_types_labels']) ? $_POST['daily_menu_types_labels'] : [];
+            $menu_types = [];
+            
+            for ($i = 0; $i < count($menu_types_keys); $i++) {
+                $key = sanitize_key($menu_types_keys[$i]);
+                $label = sanitize_text_field($menu_types_labels[$i]);
+                
+                if (!empty($key) && !empty($label)) {
+                    $menu_types[$key] = [
+                        'label' => $label,
+                        'label_de' => $label // For backward compatibility
+                    ];
+                }
+            }
+            
+            if (!empty($menu_types)) {
+                $settings_model->set('menu_types', $menu_types);
+            }
+            
             // Zeige eine Erfolgsmeldung an
             add_settings_error(
                 'daily_menu_properties',
@@ -469,4 +490,40 @@ class SettingsController {
         
         return $consumption_types;
     }
-}
+
+    /**
+     * Get menu types
+     * 
+     * @return array The menu types
+     */
+    public static function getMenuTypes(): array {
+        Settings::init();
+        $settings_model = Settings::getInstance();
+        
+        // Get menu types from database
+        $menu_types = $settings_model->get('menu_types');
+        
+        // Set default values if empty
+        if (empty($menu_types)) {
+            $menu_types = [
+                'appetizer' => [
+                    'label' => __('Vorspeise', 'daily-menu-manager'),
+                    'label_de' => 'Vorspeise'
+                ],
+                'main_course' => [
+                    'label' => __('Hauptgang', 'daily-menu-manager'),
+                    'label_de' => 'Hauptgang'
+                ],
+                'dessert' => [
+                    'label' => __('Nachspeise', 'daily-menu-manager'),
+                    'label_de' => 'Nachspeise'
+                ]
+            ];
+            
+            // Store in the database for future use
+            $settings_model->set('menu_types', $menu_types);
+        }
+        
+        return $menu_types;
+    }
+}  // This closing bracket was likely missing

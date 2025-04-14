@@ -20,6 +20,7 @@ $custom_currency_symbol = self::getCustomCurrencySymbol();
 $price_format = self::getPriceFormat();
 $available_price_formats = self::getAvailablePriceFormats();
 $consumption_types = self::getConsumptionTypes();
+$menu_types = self::getMenuTypes();
 
 // Get database version info
 $current_version = get_option('daily_menu_manager_version', '0.0.0');
@@ -36,6 +37,7 @@ settings_errors('daily_menu_properties');
         <ul>
             <li><a href="#tab-general"><?php _e('General Settings', 'daily-menu-manager'); ?></a></li>
             <li><a href="#tab-menu-properties"><?php _e('Menu Properties', 'daily-menu-manager'); ?></a></li>
+            <li><a href="#tab-menu-types"><?php _e('Menu Types', 'daily-menu-manager'); ?></a></li>
             <li><a href="#tab-appearance"><?php _e('Appearance', 'daily-menu-manager'); ?></a></li>
             <li><a href="#tab-consumption-types"><?php _e('Consumption Types', 'daily-menu-manager'); ?></a></li>
             <li><a href="#tab-database"><?php _e('Database', 'daily-menu-manager'); ?></a></li>
@@ -120,6 +122,51 @@ settings_errors('daily_menu_properties');
                             </div>
                             <button type="button" class="button add-property"><?php _e('Add property', 'daily-menu-manager'); ?></button>
                             <p class="description"><?php _e('Define the properties that can be selected for menus here.', 'daily-menu-manager'); ?></p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div id="tab-menu-types">
+                <table class="form-table">
+                    <tr valign="top">
+                        <th scope="row"><?php _e('Menu types', 'daily-menu-manager'); ?></th>
+                        <td>
+                            <div id="menu-types-container">
+                                <?php if (!empty($menu_types)) : ?>
+                                    <?php foreach ($menu_types as $type_key => $type_data) : ?>
+                                        <div class="menu-type-row">
+                                            <input type="text" 
+                                                name="daily_menu_types_keys[]" 
+                                                value="<?php echo esc_attr($type_key); ?>" 
+                                                class="regular-text menu-type-key" 
+                                                placeholder="<?php _e('Type key (e.g. appetizer)', 'daily-menu-manager'); ?>" />
+                                            <input type="text" 
+                                                name="daily_menu_types_labels[]" 
+                                                value="<?php echo esc_attr($type_data['label']); ?>" 
+                                                class="regular-text menu-type-label" 
+                                                placeholder="<?php _e('Display name', 'daily-menu-manager'); ?>" />
+                                            <button type="button" class="button remove-menu-type"><?php _e('Remove', 'daily-menu-manager'); ?></button>
+                                        </div>
+                                    <?php endforeach; ?>
+                                <?php else : ?>
+                                    <div class="menu-type-row">
+                                        <input type="text" 
+                                            name="daily_menu_types_keys[]" 
+                                            value="" 
+                                            class="regular-text menu-type-key" 
+                                            placeholder="<?php _e('Type key (e.g. appetizer)', 'daily-menu-manager'); ?>" />
+                                        <input type="text" 
+                                            name="daily_menu_types_labels[]" 
+                                            value="" 
+                                            class="regular-text menu-type-label" 
+                                            placeholder="<?php _e('Display name', 'daily-menu-manager'); ?>" />
+                                        <button type="button" class="button remove-menu-type"><?php _e('Remove', 'daily-menu-manager'); ?></button>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                            <button type="button" class="button add-menu-type"><?php _e('Add menu type', 'daily-menu-manager'); ?></button>
+                            <p class="description"><?php _e('Define the types of menu items (e.g., Appetizer, Main Course, Dessert).', 'daily-menu-manager'); ?></p>
                         </td>
                     </tr>
                 </table>
@@ -274,6 +321,25 @@ jQuery(document).ready(function($) {
             $(this).parent().remove();
         } else {
             $(this).prev('input').val('');
+        }
+    });
+    
+    // Add menu type
+    $('.add-menu-type').on('click', function() {
+        var newRow = '<div class="menu-type-row">' +
+            '<input type="text" name="daily_menu_types_keys[]" value="" class="regular-text menu-type-key" placeholder="<?php _e('Type key (e.g. appetizer)', 'daily-menu-manager'); ?>" />' +
+            '<input type="text" name="daily_menu_types_labels[]" value="" class="regular-text menu-type-label" placeholder="<?php _e('Display name', 'daily-menu-manager'); ?>" />' +
+            '<button type="button" class="button remove-menu-type"><?php _e('Remove', 'daily-menu-manager'); ?></button>' +
+            '</div>';
+        $('#menu-types-container').append(newRow);
+    });
+    
+    // Remove menu type
+    $('#menu-types-container').on('click', '.remove-menu-type', function() {
+        if ($('.menu-type-row').length > 1) {
+            $(this).parent().remove();
+        } else {
+            $(this).siblings('input').val('');
         }
     });
 });
