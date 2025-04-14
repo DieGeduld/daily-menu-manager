@@ -263,7 +263,7 @@ jQuery(document).ready(function($) {
                 }
             }
         })
-        .on('click', '.toggle-menu-item', function(e) {
+        .on('click', '.menu-item-header', function(e) {
             e.preventDefault();
             const $menuItem = $(this).closest('.menu-item');
             const $content = $menuItem.find('.menu-item-content');
