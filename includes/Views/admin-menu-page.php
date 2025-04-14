@@ -1,6 +1,8 @@
 <?php
     defined('ABSPATH') or die('Direct access not allowed!');
-    use DailyMenuManager\Admin\SettingsController;
+
+use DailyMenuManager\Admin\MenuController;
+use DailyMenuManager\Admin\SettingsController;
 ?>
 
 <div class="wrap">
@@ -54,8 +56,11 @@
 
     <!-- Menü-Item Templates -->
     <?php foreach (SettingsController::getMenuTypes() as $type => $labels): ?>
+        
         <script type="text/template" id="menu-item-template-<?php echo esc_attr($type); ?>">
-            <div class="menu-item" data-type="<?php echo esc_attr($type); ?>">
+            <p>was ist das?</p>
+            <?php MenuController::renderMenuItem(); ?>
+            <!-- <div class="menu-item" data-type="<?php echo esc_attr($type); ?>">
                 <div class="menu-item-header">
                     <span class="move-handle dashicons dashicons-move"></span>
                     <span class="menu-item-title"><?php echo esc_html($labels['label']); ?></span>
@@ -88,7 +93,7 @@
                     </div>
 
                 </div>
-            </div>
+            </div> -->
         </script>
     <?php endforeach; ?>
 

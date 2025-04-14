@@ -2,6 +2,7 @@
 namespace DailyMenuManager\Admin;
 
 use DailyMenuManager\Models\Menu;
+use DailyMenuManager\Models\Settings;
 
 class MenuController {
     private static $instance = null;
@@ -300,29 +301,28 @@ class MenuController {
     }
 
     /**
-     * Hilfsmethode: Holt die verfügbaren Menütypen
-     */
-    private static function getMenuTypes() {
-        return [
-            'appetizer' => [
-                'label' => __('Vorspeise', 'daily-menu-manager'),
-                'label_de' => 'Vorspeise'
-            ],
-            'main_course' => [
-                'label' => __('Hauptgang', 'daily-menu-manager'),
-                'label_de' => 'Hauptgang'
-            ],
-            'dessert' => [
-                'label' => __('Nachspeise', 'daily-menu-manager'),
-                'label_de' => 'Nachspeise'
-            ]
-        ];
-    }
-
-    /**
      * Rendert ein einzelnes Menü-Item im Admin-Bereich
      */
-    private static function renderMenuItem($item) {
+    public static function renderMenuItem($item = null) {
+
+        // Hier sollten wir auch die Möglichkeit haben, neue Items zu rendern,
+        // die also noch leer sind.
+
+        if ($item === null) {
+            $item = new \stdClass();
+            $item->id = 0;
+            $item->item_type = '';
+            $item->title = '';
+            $item->description = '';
+            $item->price = 0;
+            $item->available_quantity = 0;
+            $item->properties = [];
+            $item->allergens = '';
+            $item->sort_order = 0;
+            $item->image_id = null;
+            $item->image_url = null;
+        }
+
         // Hole die Item-Konfiguration basierend auf dem Typ
         $item_config = self::getMenuTypeConfig($item->item_type);
         $is_collapsed = isset($_COOKIE['menu_item_' . $item->id . '_collapsed']) && $_COOKIE['menu_item_' . $item->id . '_collapsed'] === 'true';
@@ -423,6 +423,7 @@ class MenuController {
                     </label>
                     <div class="price-input-wrapper">
                         <span class="currency-symbol"><?php echo esc_html(SettingsController::getCurrencySymbol()); ?></span>
+                        <!-- Todo: Format price in selected format -->
                         <input type="number" 
                             id="price_<?php echo esc_attr($item->id); ?>"
                             name="menu_items[<?php echo esc_attr($item->id); ?>][price]"
@@ -528,7 +529,7 @@ class MenuController {
      * @return array Die Konfiguration für den Menütyp
      */
     private static function getMenuTypeConfig($type) {
-        $menu_types = self::getMenuTypes();
+        $menu_types = SettingsController::getMenuTypes();
         
         // Wenn der Typ existiert, gib seine Konfiguration zurück
         if (isset($menu_types[$type])) {
@@ -538,7 +539,8 @@ class MenuController {
         // Fallback für unbekannte Typen
         return [
             'label' => ucfirst(str_replace('_', ' ', $type)),
-            'label_de' => ucfirst(str_replace('_', ' ', $type))
+            'plural' => ucfirst(str_replace('_', ' ', $type)),
+            'enabled' => false
         ];
     }
 

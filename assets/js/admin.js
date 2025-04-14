@@ -181,52 +181,11 @@ jQuery(document).ready(function($) {
         }
 
         newItemCounter++;
-        let $newItem;
-        
-        if (templateItem) {
-            $newItem = templateItem.clone();
-            
-            // IDs und Namen aktualisieren
-            $newItem.find('input, textarea').each(function() {
-                const name = $(this).attr('name');
-                if (name) {
-                    $(this).attr('name', name.replace(/\[\d+\]/g, '[new-' + newItemCounter + ']'));
-                }
-                
-                const id = $(this).attr('id');
-                if (id) {
-                    $(this).attr('id', id.replace(/\d+/, newItemCounter));
-                }
 
-                if ($(this).attr('name') && $(this).attr('name').indexOf('[id]') !== -1) {
-                    $(this).val('');
-                }
-                
-                // Werte zurücksetzen
-                if ($(this).is('input[type="text"], textarea')) {
-                    $(this).val('');
-                } else if ($(this).is('input[type="number"]')) {
-                    $(this).val($(this).attr('min') || 0);
-                } else if ($(this).is('input[type="checkbox"]')) {
-                    $(this).prop('checked', false);
-                }
-            });
-        } else {
-            let template = $('#menu-item-template-' + type).html();
-            template = template.replace(/\{id\}/g, newItemCounter);
-            $newItem = $(template);
-            
-            const $header = $newItem.find('.menu-item-header');
-            const $controls = $('<div class="menu-item-controls"></div>');
-            
-            $controls.append(`
-                <span class="move-handle dashicons dashicons-move"></span>
-                <button type="button" class="toggle-menu-item dashicons dashicons-arrow-down" aria-expanded="true"></button>
-            `);
-            
-            $header.find('.move-handle').remove();
-            $header.prepend($controls);
-        }
+
+        let template = $('#menu-item-template-' + type).html();
+        template = template.replace(/\{id\}/g, newItemCounter);
+        let $newItem = $(template);
         
         // Type aktualisieren
         $newItem.attr('data-type', type)
@@ -631,6 +590,19 @@ jQuery(document).ready(function($) {
         wrap: true,
         enable: window.dailyMenuAdmin.menus ?? [],
     });
+
+
+    $(document).on('input', '.menu-item input[name*="[title]"]').on('keydown', function() {
+        const $field = $(this).closest('.menu-item');
+        const $input = $(this);
+        const $label = $field.find('label');
+        const labelText = $label.text();
+
+        $field.find('.menu-item-type-label').text(labelText);
+        console.log("???");
+    });
+
+
 
     jQuery("#settings-tabs").tabs();
 

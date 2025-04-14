@@ -513,7 +513,7 @@ class SettingsController {
     public static function getMenuTypes(): array {
         Settings::init();
         $settings_model = Settings::getInstance();
-        
+
         // Get menu types from database
         $menu_types = $settings_model->get('menu_types');
         
@@ -521,16 +521,19 @@ class SettingsController {
         if (empty($menu_types)) {
             $menu_types = [
                 'appetizer' => [
-                    'label' => __('Vorspeise', 'daily-menu-manager'),
-                    'plural' => __('Vorspeisen', 'daily-menu-manager')
+                    'label' => __('Appetizer', 'daily-menu-manager'),
+                    'plural' => __('Appetizers', 'daily-menu-manager'),
+                    'enabled' => true
                 ],
                 'main_course' => [
-                    'label' => __('Hauptgang', 'daily-menu-manager'),
-                    'plural' => __('Hauptgänge', 'daily-menu-manager')
+                    'label' => __('Main Course', 'daily-menu-manager'),
+                    'plural' => __('Main Courses', 'daily-menu-manager'),
+                    'enabled' => true
                 ],
                 'dessert' => [
-                    'label' => __('Nachspeise', 'daily-menu-manager'),
-                    'plural' => __('Nachspeisen', 'daily-menu-manager')
+                    'label' => __('Dessert', 'daily-menu-manager'),
+                    'plural' => __('Desserts', 'daily-menu-manager'),
+                    'enabled' => true
                 ]
             ];
             
