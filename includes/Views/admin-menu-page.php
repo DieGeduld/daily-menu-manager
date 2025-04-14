@@ -58,42 +58,7 @@ use DailyMenuManager\Admin\SettingsController;
     <?php foreach (SettingsController::getMenuTypes() as $type => $labels): ?>
         
         <script type="text/template" id="menu-item-template-<?php echo esc_attr($type); ?>">
-            <p>was ist das?</p>
             <?php MenuController::renderMenuItem(); ?>
-            <!-- <div class="menu-item" data-type="<?php echo esc_attr($type); ?>">
-                <div class="menu-item-header">
-                    <span class="move-handle dashicons dashicons-move"></span>
-                    <span class="menu-item-title"><?php echo esc_html($labels['label']); ?></span>
-                    <button type="button" class="remove-menu-item button-link">
-                        <span class="dashicons dashicons-trash"></span>
-                    </button>
-                </div>
-                <div class="menu-item-content">
-                    <input type="hidden" name="menu_items[new-{id}][type]" value="<?php echo esc_attr($type); ?>">
-                    <input type="hidden" name="menu_items[new-{id}][sort_order]" value="0" class="sort-order">
-                    
-                    <div class="menu-item-field">
-                        <label><?php _e('Title', 'daily-menu-manager'); ?></label>
-                        <input type="text" name="menu_items[new-{id}][title]" required>
-                    </div>
-                    
-                    <div class="menu-item-field">
-                        <label><?php _e('Description', 'daily-menu-manager'); ?></label>
-                        <textarea name="menu_items[new-{id}][description]"></textarea>
-                    </div>
-                    
-                    <div class="menu-item-field">
-                        <label><?php _e('Price', 'daily-menu-manager'); ?> (<?php echo SettingsController::getCurrencySymbol(); ?>)</label>
-                        <input type="number" step="0.01" name="menu_items[new-{id}][price]" required>
-                    </div>
-                    
-                    <div class="menu-item-field">
-                        <label><?php _e('Quantity', 'daily-menu-manager'); ?></label>
-                        <input type="number" step="0.01" name="menu_items[new-{id}][available_quantity]" required>
-                    </div>
-
-                </div>
-            </div> -->
         </script>
     <?php endforeach; ?>
 
