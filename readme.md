@@ -10,3 +10,6 @@ Feature Request:
 - besser filter möglichkeiten
 - auto refresh auch im BE
 - vue.js
+- speisen, die es jeden Tag gibt
+- Amount: infinite 
+- Ab wann (noch Ax verfügbar) anzeigen?
