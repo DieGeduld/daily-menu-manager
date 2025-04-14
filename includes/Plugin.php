@@ -1,6 +1,11 @@
 <?php
 namespace DailyMenuManager;
 
+use DailyMenuManager\Admin\MenuController;
+use DailyMenuManager\Admin\OrderController;
+use DailyMenuManager\Admin\SettingsController;
+use DailyMenuManager\Frontend\ShortcodeController;
+
 class Plugin {
     private static ?self $instance = null;
     private bool $initialized = false;
@@ -65,12 +70,15 @@ class Plugin {
 
     private function registerAdminAjaxHandlers(): void {
         
+        
         $admin_handlers = [
-            'delete_menu_item', [Admin\MenuController::class, 'handleDeleteMenuItem'],
-            'save_menu_order' => [Admin\MenuController::class, 'handleSaveMenuOrder'],
-            'copy_menu' => [Admin\MenuController::class, 'handleCopyMenu'],
-            'print_order' => [Admin\OrderController::class, 'handlePrintOrder'],
-            'delete_order' => [Admin\OrderController::class, 'handleDeleteOrder'],
+            'delete_menu_item', [MenuController::class, 'handleDeleteMenuItem'],
+            'save_menu_order' => [MenuController::class, 'handleSaveMenuOrder'],
+            'get_menu_data', [MenuController::class, 'handleGetMenuData'],
+            'save_menu_data', [MenuController::class, 'handleSaveMenuData'],
+            'copy_menu' => [MenuController::class, 'handleCopyMenu'],
+            'print_order' => [OrderController::class, 'handlePrintOrder'],
+            'delete_order' => [OrderController::class, 'handleDeleteOrder'],
         ];
 
         foreach ($admin_handlers as $action => $callback) {

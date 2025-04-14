@@ -68,6 +68,15 @@ class MenuController {
             DMM_VERSION,
             true
         );
+
+        // Vue.js Admin App
+        wp_enqueue_script(
+            'daily-menu-vue-admin',
+            plugins_url('assets/dist/admin.js', dirname(__DIR__)),
+            [],
+            DMM_VERSION,
+            true
+        );
     
         // Admin Styles
         wp_enqueue_style(
@@ -297,6 +306,59 @@ class MenuController {
             wp_send_json_error(['message' => __('Error deleting menu item.', 'daily-menu-manager')]);
         } else {
             wp_send_json_success(['message' => __('Menu item deleted successfully.', 'daily-menu-manager')]);
+        }
+    }
+
+    /**
+     * AJAX Handler for getting menu data
+     */
+    public static function handleGetMenuData() {
+        check_ajax_referer('daily-menu-manager');
+        
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);
+        }
+
+        $date = isset($_GET['date']) ? sanitize_text_field($_GET['date']) : current_time('Y-m-d');
+        
+        $menu = new \DailyMenuManager\Models\Menu();
+        $current_menu = $menu->getMenuForDate($date);
+        $menu_items = $current_menu ? $menu->getMenuItems($current_menu->id) : [];
+        
+        wp_send_json_success([
+            'menu' => $current_menu,
+            'items' => $menu_items
+        ]);
+    }
+
+    /**
+     * AJAX Handler for saving menu data
+     */
+    public static function handleSaveMenuData() {
+        check_ajax_referer('daily-menu-manager');
+        
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);
+        }
+
+        $data = json_decode(file_get_contents('php://input'), true);
+        if (!$data) {
+            wp_send_json_error(['message' => __('Invalid data received.', 'daily-menu-manager')]);
+        }
+
+        $menu = new \DailyMenuManager\Models\Menu();
+        try {
+            $result = $menu->saveMenu($data);
+            if (is_wp_error($result)) {
+                wp_send_json_error(['message' => $result->get_error_message()]);
+            } else {
+                wp_send_json_success([
+                    'message' => __('Menu saved successfully.', 'daily-menu-manager'),
+                    'menu_id' => $result
+                ]);
+            }
+        } catch (\Exception $e) {
+            wp_send_json_error(['message' => $e->getMessage()]);
         }
     }
 
