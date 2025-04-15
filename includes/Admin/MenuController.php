@@ -136,6 +136,7 @@ class MenuController {
                 'timeFormat' => get_option('time_format'),
                 'locale' => get_locale(),
                 'weekStart' => get_option('start_of_week'),
+                'menuTypes' => SettingsController::getMenuTypes(),
             ]
         );
     }

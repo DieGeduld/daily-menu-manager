@@ -1,28 +1,5 @@
 jQuery(document).ready(function($) {
 
-    // Konfiguration
-    // TODO: Make dynamic / read from DB
-    const MENU_TYPES = {
-        appetizer: {
-            label: 'Vorspeise',
-            labelPlural: 'Vorspeisen',
-            defaultPrice: 0.00,
-            maxQuantity: 999
-        },
-        main_course: {
-            label: 'Hauptgang',
-            labelPlural: 'Hauptgänge',
-            defaultPrice: 0.00,
-            maxQuantity: 999
-        },
-        dessert: {
-            label: 'Nachspeise',
-            labelPlural: 'Nachspeisen',
-            defaultPrice: 0.00,
-            maxQuantity: 999
-        }
-    };
-
     // Template Management
     let templateItem;
     const $existingItem = $('.menu-item').first();
@@ -192,7 +169,7 @@ jQuery(document).ready(function($) {
                 .find('input[name*="[type]"]').val(type);
         
         // Label aktualisieren
-        $newItem.find('.menu-item-type-label').text(MENU_TYPES[type]?.label || type);
+        $newItem.find('.menu-item-type-label').text(window.dailyMenuAdmin.menuTypes[type]?.label || type);
         
         // Events initialisieren
         initializeMenuItemEvents($newItem);
@@ -263,7 +240,7 @@ jQuery(document).ready(function($) {
                 }
             }
         })
-        .on('click', '.menu-item-header', function(e) {
+        .on('click', '.menu-item-header:not(.menu-item-header *)', function(e) {
             e.preventDefault();
             const $menuItem = $(this).closest('.menu-item');
             const $content = $menuItem.find('.menu-item-content');
@@ -559,6 +536,7 @@ jQuery(document).ready(function($) {
         altFormat: window.dailyMenuAdmin ? window.dailyMenuAdmin.dateFormat : "d.m.Y",
         weekNumbers: true,
         wrap: true,
+
         onDayCreate: function(dObj, dStr, fp, dayElem) {
             try {
                 const dateStr = flatpickr.formatDate(dayElem.dateObj, "Y-m-d");
@@ -592,14 +570,14 @@ jQuery(document).ready(function($) {
     });
 
 
-    $(document).on('input', '.menu-item input[name*="[title]"]').on('keydown', function() {
+  $(document).on('input keydown', '.menu-item input[name*="[title]"]', function() {
         const $field = $(this).closest('.menu-item');
-        const $input = $(this);
-        const $label = $field.find('label');
-        const labelText = $label.text();
+        const type = $field.data('type');
+        const menuType = window.dailyMenuAdmin.menuTypes[type];
+        //if (!menuType) return;
+        const text = $field.find('input[name*="[title]"]').text();
 
-        $field.find('.menu-item-type-label').text(labelText);
-        console.log("???");
+        $field.find('.menu-item-type-label').text(menuType.label + ': ' + text);
     });
 
 
