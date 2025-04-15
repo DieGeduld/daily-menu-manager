@@ -70,12 +70,11 @@ class Plugin {
 
     private function registerAdminAjaxHandlers(): void {
         
-        
         $admin_handlers = [
-            'delete_menu_item', [MenuController::class, 'handleDeleteMenuItem'],
+            'delete_menu_item' => [MenuController::class, 'handleDeleteMenuItem'],
             'save_menu_order' => [MenuController::class, 'handleSaveMenuOrder'],
-            'get_menu_data', [MenuController::class, 'handleGetMenuData'],
-            'save_menu_data', [MenuController::class, 'handleSaveMenuData'],
+            'get_menu_data' => [MenuController::class, 'handleGetMenuData'],
+            'save_menu_data'=> [MenuController::class, 'handleSaveMenuData'],
             'copy_menu' => [MenuController::class, 'handleCopyMenu'],
             'print_order' => [OrderController::class, 'handlePrintOrder'],
             'delete_order' => [OrderController::class, 'handleDeleteOrder'],
