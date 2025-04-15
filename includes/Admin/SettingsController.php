@@ -2,6 +2,7 @@
 namespace DailyMenuManager\Admin;
 
 use DailyMenuManager\Models\Settings;
+use DailyMenuManager\Helper\StringUtils;
 
 class SettingsController {
     private static $instance = null;
@@ -18,10 +19,38 @@ class SettingsController {
         'PLN' => 'zł',
         'custom' => '', // Wird dynamisch aus den Einstellungen geladen
     ];
+
+    private static $deafults = [];
     
     public static function init(): void {
         if (self::$instance === null) {
             self::$instance = new self();
+
+            self::$deafults = [
+                "menu_properties" => [
+                    __("Vegetarian", "daily-menu-manager"),
+                    __("Vegan", "daily-menu-manager"),
+                    __("Glutenfree", "daily-menu-manager"),
+                ],
+                "menu_types" => [
+                    'appetizer' => [
+                        'label' => __('Appetizer', 'daily-menu-manager'),
+                        'plural' => __('Appetizers', 'daily-menu-manager'),
+                        'enabled' => true
+                    ],
+                    'main_course' => [
+                        'label' => __('Main Course', 'daily-menu-manager'),
+                        'plural' => __('Main Course', 'daily-menu-manager'),
+                        'enabled' => true
+                    ],
+                    'dessert' => [
+                        'label' => __('Dessert', 'daily-menu-manager'),
+                        'plural' => __('Dessert', 'daily-menu-manager'),
+                        'enabled' => true
+                    ]
+                ],
+            ];
+
         }
         
         add_action('admin_menu', [self::class, 'addAdminMenu']);
@@ -45,12 +74,12 @@ class SettingsController {
      * Zeigt die Einstellungsseite an und verarbeitet das Formular
      */
     public static function displaySettingsPage() {
-        // Ensure Settings model is initialized
-        Settings::init();
         $settings_model = Settings::getInstance();
         
-        // Verarbeite das Formular, wenn es abgesendet wurde
+        // Process the form if it was submitted
         if (isset($_POST['save_menu_settings']) && check_admin_referer('daily_menu_settings_nonce')) {
+            
+            /* Properties */
             $properties = isset($_POST['daily_menu_properties']) ? $_POST['daily_menu_properties'] : [];
             $sanitized_properties = [];
             
@@ -59,16 +88,11 @@ class SettingsController {
                     $sanitized_properties[] = sanitize_text_field($property);
                 }
             }
-            
-            // Store in database
             $settings_model->set('menu_properties', $sanitized_properties);
+
             
-            // Also update in WordPress options for backward compatibility
-            update_option('daily_menu_properties', $sanitized_properties);
-            
-            // Speichere die Hauptfarbe
+            /* Main Color */
             if (isset($_POST['daily_menu_main_color'])) {
-                // Verwende unsere eigene Funktion, falls WordPress-Funktion nicht verfügbar
                 if (function_exists('sanitize_hex_color')) {
                     $main_color = sanitize_hex_color($_POST['daily_menu_main_color']);
                 } else {
@@ -80,64 +104,66 @@ class SettingsController {
                 }
             }
             
-            // Speichere die Währung
+            /* Currency */
             if (isset($_POST['daily_menu_currency'])) {
                 $currency = sanitize_text_field($_POST['daily_menu_currency']);
                 $settings_model->set('currency', $currency);
                 
-                // Speichere benutzerdefiniertes Währungssymbol wenn "custom" ausgewählt wurde
                 if ($currency === 'custom' && isset($_POST['daily_menu_custom_currency_symbol'])) {
                     $custom_currency_symbol = sanitize_text_field($_POST['daily_menu_custom_currency_symbol']);
                     $settings_model->set('custom_currency_symbol', $custom_currency_symbol);
                 }
             }
             
-            // Speichere das Preisformat
+            /* Price Format */
             if (isset($_POST['daily_menu_price_format'])) {
                 $price_format = sanitize_text_field($_POST['daily_menu_price_format']);
                 $settings_model->set('price_format', $price_format);
             }
             
-            // Speichere die Konsumtypen
+            /* Order Prefix */
             $consumption_types = isset($_POST['daily_menu_consumption_types']) ? $_POST['daily_menu_consumption_types'] : [];
             $sanitized_consumption_types = [];
-            
             foreach ($consumption_types as $type) {
                 if (!empty($type)) {
                     $sanitized_consumption_types[] = sanitize_text_field($type);
                 }
             }
-            
             $settings_model->set('consumption_types', $sanitized_consumption_types);
             
-            // Speichere die Menütypen
+            /* Order Prefix */
             $menu_types_labels = isset($_POST['daily_menu_types_labels']) ? $_POST['daily_menu_types_labels'] : [];
             $menu_types_plurals = isset($_POST['daily_menu_types_plurals']) ? $_POST['daily_menu_types_plurals'] : [];
+            $current_menu_types = $settings_model->get('menu_types') ?? [];
+            
             $menu_types = [];
             
             // Use StringUtils to generate keys from labels
             foreach ($menu_types_labels as $index => $label) {
                 $label = sanitize_text_field($label);
+                $plural = isset($menu_types_plurals[$index]) ? sanitize_text_field($menu_types_plurals[$index]) : '';
                 
-                if (!empty($label)) {
-                    // Generate key from label using StringUtils
-                    $key = \DailyMenuManager\Helper\StringUtils::hard_sanitize($label);
-                    
-                    // Ensure key is unique by adding a suffix if needed
-                    $original_key = $key;
-                    $counter = 1;
-                    while (isset($menu_types[$key])) {
-                        $key = $original_key . '_' . $counter;
-                        $counter++;
-                    }
-                    
-                    // Get the plural form if available
-                    $plural = isset($menu_types_plurals[$index]) ? sanitize_text_field($menu_types_plurals[$index]) : '';
-                    
+                if ($label && $plural) {
+                    $key = StringUtils::hard_sanitize($label);
+                                        
                     $menu_types[$key] = [
                         'label' => $label,
-                        'plural' => $plural
+                        'plural' => $plural,
+                        'enabled' => true
                     ];
+                }
+            }
+            // Merge with existing menu types
+            foreach ($current_menu_types as $key => $type) {
+                if (!isset($menu_types[$key])) {
+                    $type['enabled'] = false;
+                    $menu_types[$key] = $type;
+                }
+            }
+            // Remove empty menu types
+            foreach ($menu_types as $key => $type) {
+                if (empty($type['label']) || empty($type['plural'])) {
+                    unset($menu_types[$key]);
                 }
             }
             
@@ -187,7 +213,6 @@ class SettingsController {
      * @return array The menu properties
      */
     public static function getMenuProperties(): array {
-        Settings::init();
         $settings_model = Settings::getInstance();
         
         // Try to get from database first
@@ -214,7 +239,6 @@ class SettingsController {
      * @return string The main color in hex format
      */
     public static function getMainColor(): string {
-        Settings::init();
         $settings_model = Settings::getInstance();
         
         // Get main color from database
@@ -304,7 +328,6 @@ class SettingsController {
      * @return string The selected currency
      */
     public static function getCurrency(): string {
-        Settings::init();
         $settings_model = Settings::getInstance();
         
         // Get currency from database
@@ -346,7 +369,6 @@ class SettingsController {
      * @return string The custom currency symbol
      */
     public static function getCustomCurrencySymbol(): string {
-        Settings::init();
         $settings_model = Settings::getInstance();
         
         // Get custom currency symbol from database with default value
@@ -377,7 +399,6 @@ class SettingsController {
      * @return string The selected price format
      */
     public static function getPriceFormat(): string {
-        Settings::init();
         $settings_model = Settings::getInstance();
         
         // Get price format from database
@@ -486,7 +507,6 @@ class SettingsController {
      * @return array The consumption types
      */
     public static function getConsumptionTypes(): array {
-        Settings::init();
         $settings_model = Settings::getInstance();
         
         // Get consumption types from database with default values
@@ -510,37 +530,98 @@ class SettingsController {
      * 
      * @return array The menu types
      */
-    public static function getMenuTypes(): array {
-        Settings::init();
+    public static function getMenuTypes($getAll = false): array {
         $settings_model = Settings::getInstance();
 
         // Get menu types from database
         $menu_types = $settings_model->get('menu_types');
+
+        $menu_types = array_filter($menu_types, function($type) use ($getAll) {
+            return ($getAll || isset($type['enabled']) && $type['enabled']);
+        });
         
         // Set default values if empty
         if (empty($menu_types)) {
-            $menu_types = [
-                'appetizer' => [
-                    'label' => __('Appetizer', 'daily-menu-manager'),
-                    'plural' => __('Appetizers', 'daily-menu-manager'),
-                    'enabled' => true
-                ],
-                'main_course' => [
-                    'label' => __('Main Course', 'daily-menu-manager'),
-                    'plural' => __('Main Courses', 'daily-menu-manager'),
-                    'enabled' => true
-                ],
-                'dessert' => [
-                    'label' => __('Dessert', 'daily-menu-manager'),
-                    'plural' => __('Desserts', 'daily-menu-manager'),
-                    'enabled' => true
-                ]
-            ];
-            
-            // Store in the database for future use
+            $menu_types = self::createDefaultOptions('menu_types');
             $settings_model->set('menu_types', $menu_types);
         }
         
         return $menu_types;
     }
-}  // This closing bracket was likely missing
+
+    public static function createDefaultOptions($type = null) {
+
+        $settings_model = Settings::getInstance();
+
+        if ($type === null) {
+            // Set all default values
+            foreach (self::$deafults as $type => $default) {
+                // only set if not already set
+                $menu_types = $settings_model->get($type);
+                if (!$menu_types) {
+                    $settings_model->set($type, $default);
+                }
+            }
+        } else {
+        
+            $menu_types = $settings_model->get($type);
+
+            // No Defaults set, but we have default values, so set them!
+            if (!$menu_types && isset(self::$deafults[$type])) {
+                $settings_model->set($type, self::$deafults[$type]);
+            }
+
+            if (isset(self::$deafults[$type])) {
+                return $settings_model->get($type);
+            }
+
+        }
+
+
+        
+    }
+
+
+
+        // TODO: Set default values for all 
+
+        // $default_options = [
+        //     'daily_menu_manager_settings' => [
+        //         'currency' => '€',
+        //         'order_prefix' => date('Ymd') . '-',
+        //         'enable_email_notifications' => true,
+        //         'notification_email' => get_option('admin_email'),
+        //         'menu_types' => [
+        //             'appetizer' => [
+        //                 'label' => __('Appetizer', 'daily-menu-manager'),
+        //                 'plural' => __('Appetizers', 'daily-menu-manager'),
+        //                 'enabled' => true
+        //             ],
+        //             'main_course' => [
+        //                 'label' => __('Main Course', 'daily-menu-manager'),
+        //                 'plural' => __('Main Course', 'daily-menu-manager'),
+        //                 'enabled' => true
+        //             ],
+        //             'dessert' => [
+        //                 'label' => __('Dessert', 'daily-menu-manager'),
+        //                 'plural' => __('Dessert', 'daily-menu-manager'),
+        //                 'enabled' => true
+        //             ]
+        //         ],
+        //         'order_statuses' => [
+        //             'pending' => __('Pending', 'daily-menu-manager'),
+        //             'confirmed' => __('Confirmed', 'daily-menu-manager'),
+        //             'completed' => __('Completed', 'daily-menu-manager'),
+        //             'cancelled' => __('Cancelled', 'daily-menu-manager')
+        //         ]
+        //     ]
+        // ];
+
+        // foreach ($default_options as $option_name => $option_value) {
+        //     if (get_option($option_name) === false) {
+        //         add_option($option_name, $option_value);
+        //     }
+        // }
+
+
+}

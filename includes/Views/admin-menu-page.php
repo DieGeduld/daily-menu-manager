@@ -56,7 +56,6 @@ use DailyMenuManager\Admin\SettingsController;
 
     <!-- Menü-Item Templates -->
     <?php foreach (SettingsController::getMenuTypes() as $type => $labels): ?>
-        
         <script type="text/template" id="menu-item-template-<?php echo esc_attr($type); ?>">
             <?php MenuController::renderMenuItem(); ?>
         </script>

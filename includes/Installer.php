@@ -1,6 +1,7 @@
 <?php
 namespace DailyMenuManager;
 
+use DailyMenuManager\Admin\SettingsController;
 use DailyMenuManager\Models\Settings;
 
 class Installer {
@@ -66,53 +67,8 @@ class Installer {
     /**
      * Erstellt die Standard-Plugin-Optionen
      */
-    private static function createDefaultOptions() {
-
-        Settings::init();
-        $settings_model = Settings::getInstance();
-        
-        // Get menu types from database
-        $menu_types = $settings_model->get('menu_types');
-        
-        // TODO: Set default values for all 
-
-        // $default_options = [
-        //     'daily_menu_manager_settings' => [
-        //         'currency' => '€',
-        //         'order_prefix' => date('Ymd') . '-',
-        //         'enable_email_notifications' => true,
-        //         'notification_email' => get_option('admin_email'),
-        //         'menu_types' => [
-        //             'appetizer' => [
-        //                 'label' => __('Appetizer', 'daily-menu-manager'),
-        //                 'plural' => __('Appetizers', 'daily-menu-manager'),
-        //                 'enabled' => true
-        //             ],
-        //             'main_course' => [
-        //                 'label' => __('Main Course', 'daily-menu-manager'),
-        //                 'plural' => __('Main Course', 'daily-menu-manager'),
-        //                 'enabled' => true
-        //             ],
-        //             'dessert' => [
-        //                 'label' => __('Dessert', 'daily-menu-manager'),
-        //                 'plural' => __('Dessert', 'daily-menu-manager'),
-        //                 'enabled' => true
-        //             ]
-        //         ],
-        //         'order_statuses' => [
-        //             'pending' => __('Pending', 'daily-menu-manager'),
-        //             'confirmed' => __('Confirmed', 'daily-menu-manager'),
-        //             'completed' => __('Completed', 'daily-menu-manager'),
-        //             'cancelled' => __('Cancelled', 'daily-menu-manager')
-        //         ]
-        //     ]
-        // ];
-
-        // foreach ($default_options as $option_name => $option_value) {
-        //     if (get_option($option_name) === false) {
-        //         add_option($option_name, $option_value);
-        //     }
-        // }
+    private static function createDefaultOptions():void {
+        SettingsController::createDefaultOptions();
     }
 
     /**
@@ -182,7 +138,7 @@ class Installer {
      */
     private static function removeOptions() {
         delete_option('daily_menu_manager_version');
-        delete_option('daily_menu_manager_settings');
+        //delete_option('daily_menu_manager_settings');
         delete_option('daily_menu_manager_notices');
         
         // Entferne alle Transients
