@@ -286,11 +286,12 @@ input[type=date]::-webkit-calendar-picker-indicator {
   border-radius: 4px;
   display: flex !important;
   justify-content: space-between;
+  width: 200px;
 }
 .flatpickr-wrapper input[type=text] {
   background: none;
   border: none !important;
-  width: 100px;
+  width: 100%;
   box-shadow: none;
 }
 .flatpickr-wrapper .dashicons {

@@ -44,11 +44,12 @@ input[type="date"] {
 	border-radius: 4px;
 	display: flex !important;
 	justify-content: space-between;
+  width: 200px;
 	
 	input[type="text"] {
 		background: none;
 		border: none !important;
-		width: 100px;
+		width: 100%;
 		box-shadow: none;
 	}
 	
