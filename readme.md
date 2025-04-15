@@ -15,6 +15,7 @@ Feature Request:
 - Ab wann (noch Ax verfügbar) anzeigen?
 - email notification
 - define order states (pending, complete, etc...)
+- backup to cloud
 
 
 todo:
