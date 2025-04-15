@@ -49,8 +49,12 @@ class SettingsController {
                         'enabled' => true
                     ]
                 ],
+                "order_times" => [
+                    'start_time' => '11:00',
+                    'end_time' => '16:00',
+                    'interval' => 30
+                ]
             ];
-
         }
         
         add_action('admin_menu', [self::class, 'addAdminMenu']);
@@ -90,7 +94,17 @@ class SettingsController {
             }
             $settings_model->set('menu_properties', $sanitized_properties);
 
-            
+            /* Order Times */
+            if (isset($_POST['daily_menu_order_times'])) {
+                $order_times = $_POST['daily_menu_order_times'];
+                $sanitized_order_times = [
+                    'start_time' => sanitize_text_field($order_times['start_time']),
+                    'end_time' => sanitize_text_field($order_times['end_time']),
+                    'interval' => intval($order_times['interval'])
+                ];
+                $settings_model->set('order_times', $sanitized_order_times);
+            }
+
             /* Main Color */
             if (isset($_POST['daily_menu_main_color'])) {
                 if (function_exists('sanitize_hex_color')) {
@@ -119,6 +133,12 @@ class SettingsController {
             if (isset($_POST['daily_menu_price_format'])) {
                 $price_format = sanitize_text_field($_POST['daily_menu_price_format']);
                 $settings_model->set('price_format', $price_format);
+            }
+            
+            /* Time Format */
+            if (isset($_POST['daily_menu_time_format'])) {
+                $time_format = sanitize_text_field($_POST['daily_menu_time_format']);
+                $settings_model->set('time_format', $time_format);
             }
             
             /* Order Prefix */
@@ -502,6 +522,40 @@ class SettingsController {
     }
     
     /**
+     * Get time format
+     * 
+     * @return string The selected time format
+     */
+    public static function getTimeFormat(): string {
+        $settings_model = Settings::getInstance();
+        
+        // Get time format from database
+        $time_format = $settings_model->get('time_format');
+        
+        // Set default value if empty
+        if (empty($time_format)) {
+            $time_format = 'H:i'; // Default to 24-hour format
+            
+            // Store in the database for future use
+            $settings_model->set('time_format', $time_format);
+        }
+        
+        return $time_format;
+    }
+
+    /**
+     * Format time according to settings
+     *
+     * @param string $time The time to format (HH:mm format)
+     * @return string The formatted time
+     */
+    public static function formatTime(string $time): string {
+        $format = self::getTimeFormat();
+        $timestamp = strtotime($time);
+        return date($format, $timestamp);
+    }
+    
+    /**
      * Get consumption types
      * 
      * @return array The consumption types
@@ -547,6 +601,31 @@ class SettingsController {
         }
         
         return $menu_types;
+    }
+
+    /**
+     * Get order times
+     * 
+     * @return array The order times settings
+     */
+    public static function getOrderTimes(): array {
+        $settings_model = Settings::getInstance();
+        
+        // Get order times from database with default values
+        $order_times = $settings_model->get('order_times');
+        
+        if (empty($order_times)) {
+            $order_times = [
+                'start_time' => '11:00',
+                'end_time' => '16:00',
+                'interval' => 30
+            ];
+            
+            // Store in the database for future use
+            $settings_model->set('order_times', $order_times);
+        }
+        
+        return $order_times;
     }
 
     public static function createDefaultOptions($type = null) {

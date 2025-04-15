@@ -2,6 +2,7 @@
 namespace DailyMenuManager\Frontend;
 
 use DailyMenuManager\Admin\SettingsController;
+use DailyMenuManager\Models\Settings;
 use DailyMenuManager\Models\Menu;
 
 class ShortcodeController {
@@ -249,13 +250,11 @@ class ShortcodeController {
                                 <select name="pickup_time" id="pickup_time" required>
                                     <option value=""><?php _e('Please choose', 'daily-menu-manager'); ?></option>
                                     <?php
-                                    $start = strtotime('11:00');
-                                    $end = strtotime('16:00');
-                                    for ($time = $start; $time <= $end; $time += 1800) { // 1800 seconds = 30 minutes
+                                    foreach (self::getAvailablePickupTimes() as $time) {
                                         printf(
                                             '<option value="%s">%s</option>',
-                                            date('H:i', $time),
-                                            date('H:i', $time)
+                                            esc_attr($time),
+                                            esc_html($time)
                                         );
                                     }
                                     ?>
@@ -279,26 +278,6 @@ class ShortcodeController {
         </div>
         <?php
         return ob_get_clean();
-    }
-
-    /**
-    * AJAX Handler zum Abrufen der verfügbaren Mengen
-    */
-    public static function getAvailableQuantities() {
-        $menu_id = isset($_POST['menu_id']) ? intval($_POST['menu_id']) : 0;
-        if (!$menu_id) {
-            wp_send_json_error(['message' => 'Keine Menü-ID angegeben']);
-        }
-    
-        $menu = new Menu();
-        $items = $menu->getMenuItems($menu_id);
-        
-        $quantities = [];
-        foreach ($items as $item) {
-            $quantities[$item->id] = $item->available_quantity;
-        }
-        
-        wp_send_json_success(['quantities' => $quantities]);
     }
     
     /**
@@ -352,5 +331,25 @@ class ShortcodeController {
         return isset($types[$type]) ? $types[$type] : ucfirst($type);
     }
 
+/**
+     * Gets available pickup times based on settings
+     */
+    private static function getAvailablePickupTimes(): array {
+        $settings = Settings::getInstance();
+        $order_times = $settings->get('order_times', [
+            'start_time' => '11:00',
+            'end_time' => '16:00',
+            'interval' => 30
+        ]);
 
+        $start = strtotime($order_times['start_time']);
+        $end = strtotime($order_times['end_time']);
+        $interval = intval($order_times['interval']) * 60; // Convert minutes to seconds
+        
+        $times = [];
+        for ($time = $start; $time <= $end; $time += $interval) {
+            $times[] = date('H:i', $time);
+        }
+        return $times;
+    }
 }

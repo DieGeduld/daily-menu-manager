@@ -743,3 +743,15 @@ msgstr "Aktuelles Preisformat-Beispiel:"
 #: includes/Views/admin-settings-page.php:206
 msgid "Save settings to update example"
 msgstr "Einstellungen speichern, um Beispiel zu aktualisieren"
+
+msgid "Time format"
+msgstr "Zeitformat"
+
+msgid "24-hour format (14:30)"
+msgstr "24-Stunden-Format (14:30)"
+
+msgid "12-hour format with AM/PM (2:30 PM)"
+msgstr "12-Stunden-Format mit AM/PM (2:30 PM)"
+
+msgid "Choose how times should be displayed throughout the plugin."
+msgstr "Wählen Sie, wie Zeiten im Plugin angezeigt werden sollen."

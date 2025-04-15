@@ -92,6 +92,21 @@ settings_errors('daily_menu_properties');
                             </p>
                         </td>
                     </tr>
+
+                    <tr valign="top">
+                        <th scope="row"><?php _e('Time format', 'daily-menu-manager'); ?></th>
+                        <td>
+                            <select name="daily_menu_time_format" class="regular-text">
+                                <option value="H:i" <?php selected(self::getTimeFormat(), 'H:i'); ?>>
+                                    <?php _e('24-hour format (14:30)', 'daily-menu-manager'); ?>
+                                </option>
+                                <option value="g:i A" <?php selected(self::getTimeFormat(), 'g:i A'); ?>>
+                                    <?php _e('12-hour format with AM/PM (2:30 PM)', 'daily-menu-manager'); ?>
+                                </option>
+                            </select>
+                            <p class="description"><?php _e('Choose how times should be displayed throughout the plugin.', 'daily-menu-manager'); ?></p>
+                        </td>
+                    </tr>
                 </table>
             </div>
 
