@@ -40,12 +40,12 @@ class SettingsController {
                     ],
                     'main_course' => [
                         'label' => __('Main Course', 'daily-menu-manager'),
-                        'plural' => __('Main Course', 'daily-menu-manager'),
+                        'plural' => __('Main Courses', 'daily-menu-manager'),
                         'enabled' => true
                     ],
                     'dessert' => [
                         'label' => __('Dessert', 'daily-menu-manager'),
-                        'plural' => __('Dessert', 'daily-menu-manager'),
+                        'plural' => __('Desserts', 'daily-menu-manager'),
                         'enabled' => true
                     ]
                 ],
