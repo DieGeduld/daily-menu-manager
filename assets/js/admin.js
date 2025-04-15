@@ -1,6 +1,13 @@
 jQuery(document).ready(function($) {
 
-    // Template Management
+  var notyf = new Notyf({
+    position: {
+      x: 'right',
+      y: 'top',
+    },
+  });
+
+  // Template Management
     let templateItem;
     const $existingItem = $('.menu-item').first();
     if ($existingItem.length) {
@@ -94,17 +101,11 @@ jQuery(document).ready(function($) {
 
     // Benutzer-Feedback
     function showFeedback(message, type = 'success') {
-        const $feedback = $('<div>')
-            .addClass('feedback-message')
-            .addClass('feedback-' + type)
-            .text(message)
-            .hide()
-            .insertAfter('.menu-items')
-            .fadeIn(300);
-            
-        setTimeout(() => $feedback.fadeOut(300, function() {
-            $(this).remove();
-        }), 3000);
+      if (type === 'error') {
+        notyf.error(message);
+      } else {
+        notyf.success(message);
+      }
     }
 
     // Sortierung
@@ -242,7 +243,47 @@ jQuery(document).ready(function($) {
                 }
             }
         })
-        .on('click', '.menu-item-header:not(.menu-item-header *)', function(e) {
+        .on('click', '.duplicate-menu-item', function(e) {
+            e.preventDefault();
+            
+            const menuItem = $(this).closest('.menu-item');
+            const itemId = menuItem.data('id');
+            const itemContainer = $(this).closest('.menu-item');
+            
+            if (!itemId) {
+                alert(dailyMenuAdmin.messages.saveError);
+                return;
+            }
+            
+            $.ajax({
+                url: dailyMenuAdmin.ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'duplicate_menu_item',
+                    item_id: itemId,
+                    _ajax_nonce: window.dailyMenuAdmin.nonce
+
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Append the new item to the menu items container
+                        itemContainer.after(response.data.html);
+                        
+                        // Show success message
+                        showFeedback(response.data.message, 'success');
+                        
+                        // Initialize any necessary functionality for the new item
+                        //initMenuItemFunctionality();
+                    } else {
+                        showFeedback(response.data.message, 'error');
+                    }
+                },
+                error: function() {
+                    showFeedback(dailyMenuAdmin.messages.saveError, 'error');
+                }
+            });
+        })
+        .on('click', '.menu-item-header button.toggle-menu-item', function(e) {
             e.preventDefault();
             const $menuItem = $(this).closest('.menu-item');
             const $content = $menuItem.find('.menu-item-content');
@@ -291,7 +332,7 @@ jQuery(document).ready(function($) {
     const debouncedAutoSave = _.debounce(function() {
         console.log('Auto-Save würde jetzt ausgeführt...');
         // Hier Auto-Save Logik implementieren
-    }, 30000);
+    }, 3000);
 
     $('.menu-form').on('change', 'input, textarea', debouncedAutoSave);
 
@@ -475,17 +516,18 @@ jQuery(document).ready(function($) {
         handleMenuItemKeyboardNav(e, $(this));
     });
 
+
+    
     // Header Click Handler
-    $(document).on('click', '.menu-item-header button', function(e) {
-        e.stopPropagation();
-    });
+    // $(document).on('click', '.menu-item-header button.toggle-menu-item', function(e) {
+    //     e.stopPropagation();
+    // });
 
     // Hover-Effekt für Header
     $('.menu-item-header').hover(
         function() { $(this).addClass('header-hover'); },
         function() { $(this).removeClass('header-hover'); }
     );
-    
 
     $('.menu-item').each(function() {
         restoreItemState($(this));
@@ -586,5 +628,38 @@ jQuery(document).ready(function($) {
 
 
     jQuery("#settings-tabs").tabs();
+
+
+    // Helper function to show notifications
+    function showNotification(message, type) {
+        const notificationClass = type === 'success' ? 'notice-success' : 'notice-error';
+        
+        const notification = $(`
+            <div class="notice ${notificationClass} is-dismissible">
+                <p>${message}</p>
+                <button type="button" class="notice-dismiss">
+                    <span class="screen-reader-text">Dismiss this notice.</span>
+                </button>
+            </div>
+        `);
+        
+        $('#wpbody-content').prepend(notification);
+        
+        // Auto-dismiss after 5 seconds
+        setTimeout(function() {
+            notification.fadeOut(function() {
+                $(this).remove();
+            });
+        }, 5000);
+        
+        // Handle dismiss button
+        notification.find('.notice-dismiss').on('click', function() {
+            notification.fadeOut(function() {
+                $(this).remove();
+            });
+        });
+    }
+
+
 
 });

@@ -69,6 +69,24 @@ class MenuController {
             true
         );
 
+        // Notyf CSS
+        wp_enqueue_style(
+            'notyf',
+            'https://cdn.jsdelivr.net/npm/notyf@3.10.0/notyf.min.css',
+            [],
+            '3.10.0'
+        );
+
+        // Notyf JS
+        wp_enqueue_script(
+            'notyf',
+            'https://cdn.jsdelivr.net/npm/notyf@3.10.0/notyf.min.js',
+            [],
+            '3.10.0',
+            true
+        );
+
+        
         // Vue.js Admin App
         // wp_enqueue_script(
         //     'daily-menu-vue-admin',
@@ -125,6 +143,8 @@ class MenuController {
                     'saveSuccess' => __('Menu was saved!', 'daily-menu-manager'),
                     'saveError' => __('Error saving menu.', 'daily-menu-manager'),
                     'deleteConfirm' => __('Are you sure you want to delete this menu item?', 'daily-menu-manager'),
+                    'duplicateSuccess' => __('Menu item was duplicated successfully!', 'daily-menu-manager'),
+                    'duplicateError' => __('Error duplicating menu item.', 'daily-menu-manager'),
                     'selectDate' => __('Please select a date.', 'daily-menu-manager'),
                     'noItems' => __('Please add at least one menu item.', 'daily-menu-manager'),
                     'requiredFields' => __('Please fill in all required fields.', 'daily-menu-manager'),
@@ -311,6 +331,87 @@ class MenuController {
     }
 
     /**
+     * AJAX Handler für das Duplizieren eines Menüeintrags
+     */
+    public static function handleDuplicateMenuItem() {
+        check_ajax_referer('daily_menu_admin_nonce');
+        
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);
+        }
+
+        $item_id = intval($_POST['item_id']);
+        if (!$item_id) {
+            wp_send_json_error(['message' => __('Invalid menu item ID.', 'daily-menu-manager')]);
+        }
+
+        global $wpdb;
+        
+        // Get the original item
+        $original_item = $wpdb->get_row($wpdb->prepare(
+            "SELECT * FROM {$wpdb->prefix}menu_items WHERE id = %d",
+            $item_id
+        ));
+
+        if (!$original_item) {
+            wp_send_json_error(['message' => __('Menu item not found.', 'daily-menu-manager')]);
+        }
+
+        // Create duplicate item data
+        $data = [
+            'menu_id' => $original_item->menu_id,
+            'item_type' => $original_item->item_type,
+            'title' => $original_item->title . ' ' . __('(Copy)', 'daily-menu-manager'),
+            'description' => $original_item->description,
+            'price' => $original_item->price,
+            'available_quantity' => $original_item->available_quantity,
+            'properties' => $original_item->properties,
+            'allergens' => $original_item->allergens,
+            'sort_order' => $original_item->sort_order + 1
+        ];
+
+        // Insert the duplicate
+        $inserted = $wpdb->insert(
+            $wpdb->prefix . 'menu_items',
+            $data,
+            ['%d', '%s', '%s', '%s', '%f', '%d', '%s', '%s', '%d']
+        );
+
+        if ($inserted === false) {
+            wp_send_json_error(['message' => __('Error duplicating menu item.', 'daily-menu-manager')]);
+        }
+
+        $new_item_id = $wpdb->insert_id;
+
+        // Update sort order for items after the new one
+        $wpdb->query($wpdb->prepare(
+            "UPDATE {$wpdb->prefix}menu_items 
+            SET sort_order = sort_order + 1 
+            WHERE menu_id = %d 
+            AND id != %d 
+            AND sort_order >= %d",
+            $original_item->menu_id,
+            $new_item_id,
+            $data['sort_order']
+        ));
+
+        // Get the new item for rendering
+        $new_item = $wpdb->get_row($wpdb->prepare(
+            "SELECT * FROM {$wpdb->prefix}menu_items WHERE id = %d",
+            $new_item_id
+        ));
+
+        ob_start();
+        self::renderMenuItem($new_item);
+        $html = ob_get_clean();
+
+        wp_send_json_success([
+            'message' => __('Menu item duplicated successfully.', 'daily-menu-manager'),
+            'html' => $html
+        ]);
+    }
+
+    /**
      * AJAX Handler for getting menu data
      */
     public static function handleGetMenuData() {
@@ -419,6 +520,11 @@ class MenuController {
     
                 <!-- Right Controls -->
                 <div class="menu-item-actions">
+                    <button type="button" 
+                            class="copy-menu-item dashicons dashicons-move"
+                            title="<?php esc_attr_e('Copy this menu item to another day', 'daily-menu-manager'); ?>"
+                            aria-label="<?php esc_attr_e('Copy this menu item to another day', 'daily-menu-manager'); ?>">
+                    </button>  
                     <button type="button" 
                             class="duplicate-menu-item dashicons dashicons-admin-page"
                             title="<?php esc_attr_e('Duplicate item', 'daily-menu-manager'); ?>"
