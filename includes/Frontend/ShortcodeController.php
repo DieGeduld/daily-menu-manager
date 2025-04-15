@@ -250,11 +250,13 @@ class ShortcodeController {
                                 <select name="pickup_time" id="pickup_time" required>
                                     <option value=""><?php _e('Please choose', 'daily-menu-manager'); ?></option>
                                     <?php
+                                    $timeFormat = SettingsController::getTimeFormat();
                                     foreach (self::getAvailablePickupTimes() as $time) {
+                                        $timeFormatted = SettingsController::formatTime($time);
                                         printf(
                                             '<option value="%s">%s</option>',
                                             esc_attr($time),
-                                            esc_html($time)
+                                            esc_html($timeFormatted)
                                         );
                                     }
                                     ?>

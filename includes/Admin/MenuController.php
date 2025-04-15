@@ -169,8 +169,8 @@ class MenuController {
                     'cancel' => __('Cancel', 'daily-menu-manager')
                 ],
                 'menus' => Menu::getMenuDates(),
-                'dateFormat' => get_option('date_format'),
-                'timeFormat' => get_option('time_format'),
+                'dateFormat' => get_option('date_format'), // TODO: ???
+                'timeFormat' => get_option('time_format'), // TODO: ???
                 'locale' => get_locale(),
                 'weekStart' => get_option('start_of_week'),
                 'menuTypes' => SettingsController::getMenuTypes(true),
