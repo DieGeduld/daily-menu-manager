@@ -40,6 +40,7 @@ settings_errors('daily_menu_properties');
             <li><a href="#tab-menu-types"><?php _e('Menu Types', 'daily-menu-manager'); ?></a></li>
             <li><a href="#tab-appearance"><?php _e('Appearance', 'daily-menu-manager'); ?></a></li>
             <li><a href="#tab-consumption-types"><?php _e('Consumption Types', 'daily-menu-manager'); ?></a></li>
+            <li><a href="#tab-order-times"><?php _e('Order Times', 'daily-menu-manager'); ?></a></li>
             <li><a href="#tab-database"><?php _e('Database', 'daily-menu-manager'); ?></a></li>
         </ul>
         
@@ -215,6 +216,44 @@ settings_errors('daily_menu_properties');
                             </div>
                             <button type="button" class="button add-consumption-type"><?php _e('Add consumption type', 'daily-menu-manager'); ?></button>
                             <p class="description"><?php _e('Define the consumption types for orders (e.g., Pick up, Eat in).', 'daily-menu-manager'); ?></p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div id="tab-order-times">
+                <table class="form-table">
+                    <tr valign="top">
+                        <th scope="row"><?php _e('Order time settings', 'daily-menu-manager'); ?></th>
+                        <td>
+                            <?php $order_times = self::getOrderTimes(); ?>
+                            <div class="order-times-container">
+                                <div class="order-time-field">
+                                    <label for="daily_menu_order_times[start_time]"><?php _e('Start Time', 'daily-menu-manager'); ?></label>
+                                    <input type="time" 
+                                        name="daily_menu_order_times[start_time]" 
+                                        value="<?php echo esc_attr($order_times['start_time']); ?>" 
+                                        class="regular-text" />
+                                </div>
+                                <div class="order-time-field">
+                                    <label for="daily_menu_order_times[end_time]"><?php _e('End Time', 'daily-menu-manager'); ?></label>
+                                    <input type="time" 
+                                        name="daily_menu_order_times[end_time]" 
+                                        value="<?php echo esc_attr($order_times['end_time']); ?>" 
+                                        class="regular-text" />
+                                </div>
+                                <div class="order-time-field">
+                                    <label for="daily_menu_order_times[interval]"><?php _e('Time Interval (minutes)', 'daily-menu-manager'); ?></label>
+                                    <input type="number" 
+                                        name="daily_menu_order_times[interval]" 
+                                        value="<?php echo esc_attr($order_times['interval']); ?>" 
+                                        min="5"
+                                        max="120"
+                                        step="5"
+                                        class="regular-text" />
+                                </div>
+                            </div>
+                            <p class="description"><?php _e('Define when orders can be placed and picked up. The time interval determines the available pickup time slots.', 'daily-menu-manager'); ?></p>
                         </td>
                     </tr>
                 </table>
