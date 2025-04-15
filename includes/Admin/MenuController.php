@@ -77,6 +77,23 @@ class MenuController {
             '3.10.0'
         );
 
+        // SweetModal CSS
+        wp_enqueue_style(
+            'sweetalert2',
+            'https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.css',
+            [],
+            '11.4.10'
+        );
+        
+        // SweetModal JS
+        wp_enqueue_script(
+            'sweetalert2',
+            'https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.js',
+            [],
+            '11.4.10',
+            true
+        );
+
         // Notyf JS
         wp_enqueue_script(
             'notyf',
