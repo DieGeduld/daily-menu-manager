@@ -451,6 +451,26 @@ class MenuController {
     }
 
     /**
+    * AJAX Handler zum Abrufen der verfügbaren Mengen
+    */
+    public static function getAvailableQuantities() {
+        $menu_id = isset($_POST['menu_id']) ? intval($_POST['menu_id']) : 0;
+        if (!$menu_id) {
+            wp_send_json_error(['message' => 'Keine Menü-ID angegeben']);
+        }
+    
+        $menu = new Menu();
+        $items = $menu->getMenuItems($menu_id);
+        
+        $quantities = [];
+        foreach ($items as $item) {
+            $quantities[$item->id] = $item->available_quantity;
+        }
+        
+        wp_send_json_success(['quantities' => $quantities]);
+    }
+
+    /**
      * AJAX Handler for saving menu data
      */
     public static function handleSaveMenuData() {

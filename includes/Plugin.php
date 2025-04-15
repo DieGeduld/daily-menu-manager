@@ -61,11 +61,11 @@ class Plugin {
     }
 
     private function registerPublicAjaxHandlers(): void {
-        add_action('wp_ajax_nopriv_submit_order', [Admin\OrderController::class, 'handleOrder']);
-        add_action('wp_ajax_nopriv_get_available_quantities', [Admin\SettingsController::class, 'getAvailableQuantities']);        
+        add_action('wp_ajax_nopriv_submit_order', [OrderController::class, 'handleOrder']);
+        add_action('wp_ajax_nopriv_get_available_quantities', [MenuController::class, 'getAvailableQuantities']);        
 
-        add_action('wp_ajax_submit_order', [Admin\OrderController::class, 'handleOrder']);
-        add_action('wp_ajax_get_available_quantities', [Admin\SettingsController::class, 'getAvailableQuantities']);
+        add_action('wp_ajax_submit_order', [OrderController::class, 'handleOrder']);
+        add_action('wp_ajax_get_available_quantities', [MenuController::class, 'getAvailableQuantities']);
     }
 
     private function registerAdminAjaxHandlers(): void {
