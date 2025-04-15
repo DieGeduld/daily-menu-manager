@@ -169,7 +169,9 @@ jQuery(document).ready(function($) {
                 .find('input[name*="[type]"]').val(type);
         
         // Label aktualisieren
-        $newItem.find('.menu-item-type-label').text(window.dailyMenuAdmin.menuTypes[type]?.label || type);
+
+        const menuType = window.dailyMenuAdmin.menuTypes[type]?.label || type;
+        $newItem.find('.menu-item-type-label').text(menuType + ':');
         
         // Events initialisieren
         initializeMenuItemEvents($newItem);
@@ -570,14 +572,15 @@ jQuery(document).ready(function($) {
     });
 
 
-  $(document).on('input keydown', '.menu-item input[name*="[title]"]', function() {
-        const $field = $(this).closest('.menu-item');
+    $(document).on('input keydown', '.menu-item input[name*="[title]"]', function() {
+        const $field = $(this).closest('.menu-item').first();
         const type = $field.data('type');
         const menuType = window.dailyMenuAdmin.menuTypes[type];
         //if (!menuType) return;
-        const text = $field.find('input[name*="[title]"]').text();
+        const text = $field.find('input[name*="[title]"]').val();
 
-        $field.find('.menu-item-type-label').text(menuType.label + ': ' + text);
+        $field.find('.menu-item-type-label').text(menuType.label + ':');
+        $field.find('.menu-item-title-preview').text(text);
     });
 
 

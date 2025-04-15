@@ -70,13 +70,13 @@ class MenuController {
         );
 
         // Vue.js Admin App
-        wp_enqueue_script(
-            'daily-menu-vue-admin',
-            plugins_url('assets/dist/admin.js', dirname(__DIR__)),
-            [],
-            DMM_VERSION,
-            true
-        );
+        // wp_enqueue_script(
+        //     'daily-menu-vue-admin',
+        //     plugins_url('assets/dist/admin.js', dirname(__DIR__)),
+        //     [],
+        //     DMM_VERSION,
+        //     true
+        // );
     
         // Admin Styles
         wp_enqueue_style(
@@ -136,7 +136,7 @@ class MenuController {
                 'timeFormat' => get_option('time_format'),
                 'locale' => get_locale(),
                 'weekStart' => get_option('start_of_week'),
-                'menuTypes' => SettingsController::getMenuTypes(),
+                'menuTypes' => SettingsController::getMenuTypes(true),
             ]
         );
     }
@@ -413,8 +413,8 @@ class MenuController {
     
                 <!-- Title Area -->
                 <div class="menu-item-title-area">
-                    <span class="menu-item-type-label"><?php echo esc_html($item_config['label']); ?></span>
-                    <span class="menu-item-title-preview"><?php echo esc_html($item->title ?: __('(No title)', 'daily-menu-manager')); ?></span>
+                    <span class="menu-item-type-label"><?php esc_attr_e($item_config['label'], 'daily-menu-manager') . ":"; ?></span>
+                    <span class="menu-item-title-preview"><?php esc_attr_e($item->title ?: '(No title)', 'daily-menu-manager'); ?></span>
                 </div>
     
                 <!-- Right Controls -->
