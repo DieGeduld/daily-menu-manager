@@ -660,47 +660,26 @@ class SettingsController {
         
     }
 
-
-
-        // TODO: Set default values for all 
-
-        // $default_options = [
-        //     'daily_menu_manager_settings' => [
-        //         'currency' => '€',
-        //         'order_prefix' => date('Ymd') . '-',
-        //         'enable_email_notifications' => true,
-        //         'notification_email' => get_option('admin_email'),
-        //         'menu_types' => [
-        //             'appetizer' => [
-        //                 'label' => __('Appetizer', 'daily-menu-manager'),
-        //                 'plural' => __('Appetizers', 'daily-menu-manager'),
-        //                 'enabled' => true
-        //             ],
-        //             'main_course' => [
-        //                 'label' => __('Main Course', 'daily-menu-manager'),
-        //                 'plural' => __('Main Course', 'daily-menu-manager'),
-        //                 'enabled' => true
-        //             ],
-        //             'dessert' => [
-        //                 'label' => __('Dessert', 'daily-menu-manager'),
-        //                 'plural' => __('Dessert', 'daily-menu-manager'),
-        //                 'enabled' => true
-        //             ]
-        //         ],
-        //         'order_statuses' => [
-        //             'pending' => __('Pending', 'daily-menu-manager'),
-        //             'confirmed' => __('Confirmed', 'daily-menu-manager'),
-        //             'completed' => __('Completed', 'daily-menu-manager'),
-        //             'cancelled' => __('Cancelled', 'daily-menu-manager')
-        //         ]
-        //     ]
-        // ];
-
-        // foreach ($default_options as $option_name => $option_value) {
-        //     if (get_option($option_name) === false) {
-        //         add_option($option_name, $option_value);
-        //     }
-        // }
-
+    /**
+     * Get date format
+     * 
+     * @return string The selected date format
+     */
+    public static function getDateFormat(): string {
+        $settings_model = Settings::getInstance();
+        
+        // Get date format from database
+        $date_format = $settings_model->get('date_format');
+        
+        // Set default value if empty - using WordPress default date format
+        if (empty($date_format)) {
+            $date_format = get_option('date_format', 'Y-m-d');
+            
+            // Store in the database for future use
+            $settings_model->set('date_format', $date_format);
+        }
+        
+        return $date_format;
+    }
 
 }

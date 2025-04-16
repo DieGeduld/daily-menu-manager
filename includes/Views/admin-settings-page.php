@@ -249,7 +249,6 @@ settings_errors('daily_menu_properties');
                                     <input data-no-calendar="true" 
                                             data-alt-format="<?php echo esc_attr(self::getTimeFormat() == "g:i A" ? "h:i K" : self::getTimeFormat()); ?>"
                                             data-time_24hr="<?php echo esc_attr((self::getTimeFormat() == "H:i") ? 'true' : 'false'); ?>"
-                                            data-alt-format="<?php echo esc_attr(self::getTimeFormat()); ?>"
                                             data-alt-input=true
                                             data-date-format="H:i"
                                             data-enable-time=true
@@ -263,7 +262,6 @@ settings_errors('daily_menu_properties');
                                     <input data-no-calendar="true" 
                                             data-alt-format="<?php echo esc_attr(self::getTimeFormat() == "g:i A" ? "h:i K" : self::getTimeFormat()); ?>"
                                             data-time_24hr="<?php echo esc_attr((self::getTimeFormat() == "H:i") ? 'true' : 'false'); ?>"
-                                            data-alt-format="<?php echo esc_attr(self::getTimeFormat()); ?>"
                                             data-alt-input=true
                                             data-date-format="H:i"
                                             data-enable-time=true

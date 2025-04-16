@@ -170,6 +170,7 @@ class MenuController {
                 ],
                 'menus' => Menu::getMenuDates(),
                 'timeFormat' => SettingsController::getTimeFormat(),
+                'dateFormat' => SettingsController::getDateFormat(),
                 'priceFormat' => SettingsController::getPriceFormat(),
                 'currencySymbol' => SettingsController::getCurrencySymbol(),
                 'locale' => get_locale(),
