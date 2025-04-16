@@ -342,14 +342,6 @@ jQuery(document).ready(function($) {
         }
     });
 
-    // Auto-Save
-    const debouncedAutoSave = _.debounce(function() {
-        console.log('Auto-Save würde jetzt ausgeführt...');
-        // Hier Auto-Save Logik implementieren
-    }, 3000);
-
-    $('.menu-form').on('change', 'input, textarea', debouncedAutoSave);
-
     // Sortierreihenfolge aktualisieren
     function updateSortOrder() {
         $('.menu-item').each(function(index) {

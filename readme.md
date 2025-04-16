@@ -3,7 +3,6 @@ Feature Request:
 - Uploading Fotos
 - User can define Headline Texts and "no menu" - text
 - Field Validation: parsley
-- neues item, unterscheidlich
 - besser filter möglichkeiten
 - auto refresh auch im BE
 - vue.js
