@@ -169,11 +169,12 @@ class MenuController {
                     'cancel' => __('Cancel', 'daily-menu-manager')
                 ],
                 'menus' => Menu::getMenuDates(),
-                'dateFormat' => get_option('date_format'), // TODO: ???
-                'timeFormat' => get_option('time_format'), // TODO: ???
+                'timeFormat' => SettingsController::getTimeFormat(),
+                'priceFormat' => SettingsController::getPriceFormat(),
+                'currencySymbol' => SettingsController::getCurrencySymbol(),
                 'locale' => get_locale(),
-                'weekStart' => get_option('start_of_week'),
                 'menuTypes' => SettingsController::getMenuTypes(true),
+                'orderTimes' => SettingsController::getOrderTimes(),
             ]
         );
     }

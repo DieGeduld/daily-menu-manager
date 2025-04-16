@@ -74,7 +74,9 @@ class ShortcodeController {
                 'emptyOrder' => __('Please select at least one dish.', 'daily-menu-manager'),
                 'requiredFields' => __('Please fill out all required fields.', 'daily-menu-manager')
             ], 
-            'currency' => SettingsController::getCurrencySymbol()
+            'timeFormat' => SettingsController::getTimeFormat(),
+            'priceFormat' => SettingsController::getPriceFormat(),
+            'currencySymbol' => SettingsController::getCurrencySymbol(),
         ]);
 
 

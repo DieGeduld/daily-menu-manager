@@ -6,6 +6,7 @@
  */
 
 use DailyMenuManager\Admin\SettingsController;
+use DailyMenuManager\Helper\DateUtils;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -243,21 +244,35 @@ settings_errors('daily_menu_properties');
                         <td>
                             <?php $order_times = self::getOrderTimes(); ?>
                             <div class="order-times-container">
-                                <div class="order-time-field">
+                                <div class="order-time-field order-time-field-start-container">
                                     <label for="daily_menu_order_times[start_time]"><?php _e('Start Time', 'daily-menu-manager'); ?></label>
-                                    <input type="time" 
+                                    <input data-no-calendar="true" 
+                                            data-alt-format="<?php echo esc_attr(self::getTimeFormat() == "g:i A" ? "h:i K" : self::getTimeFormat()); ?>"
+                                            data-time_24hr="<?php echo esc_attr((self::getTimeFormat() == "H:i") ? 'true' : 'false'); ?>"
+                                            data-alt-format="<?php echo esc_attr(self::getTimeFormat()); ?>"
+                                            data-alt-input=true
+                                            data-date-format="H:i"
+                                            data-enable-time=true
+                                    type="time" 
                                         name="daily_menu_order_times[start_time]" 
-                                        value="<?php echo esc_attr($order_times['start_time']); ?>" 
-                                        class="regular-text" />
+                                        value="<?php echo esc_attr(DateUtils::convertTimeToFormat($order_times['start_time'], self::getTimeFormat())); ?>" 
+                                        class="order-time-field-start" />
                                 </div>
-                                <div class="order-time-field">
+                                <div class="order-time-field order-time-field-end-container">
                                     <label for="daily_menu_order_times[end_time]"><?php _e('End Time', 'daily-menu-manager'); ?></label>
-                                    <input type="time" 
+                                    <input data-no-calendar="true" 
+                                            data-alt-format="<?php echo esc_attr(self::getTimeFormat() == "g:i A" ? "h:i K" : self::getTimeFormat()); ?>"
+                                            data-time_24hr="<?php echo esc_attr((self::getTimeFormat() == "H:i") ? 'true' : 'false'); ?>"
+                                            data-alt-format="<?php echo esc_attr(self::getTimeFormat()); ?>"
+                                            data-alt-input=true
+                                            data-date-format="H:i"
+                                            data-enable-time=true
+                                    type="time" 
                                         name="daily_menu_order_times[end_time]" 
-                                        value="<?php echo esc_attr($order_times['end_time']); ?>" 
-                                        class="regular-text" />
+                                        value="<?php echo esc_attr(DateUtils::convertTimeToFormat($order_times['end_time']), self::getTimeFormat()); ?>" 
+                                        class="order-time-field-end" />
                                 </div>
-                                <div class="order-time-field">
+                                <div class="order-time-field order-time-field-interval-container">
                                     <label for="daily_menu_order_times[interval]"><?php _e('Time Interval (minutes)', 'daily-menu-manager'); ?></label>
                                     <input type="number" 
                                         name="daily_menu_order_times[interval]" 
@@ -265,7 +280,7 @@ settings_errors('daily_menu_properties');
                                         min="5"
                                         max="120"
                                         step="5"
-                                        class="regular-text" />
+                                        class="order-time-field-interval" />
                                 </div>
                             </div>
                             <p class="description"><?php _e('Define when orders can be placed and picked up. The time interval determines the available pickup time slots.', 'daily-menu-manager'); ?></p>

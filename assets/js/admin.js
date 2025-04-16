@@ -608,8 +608,6 @@ jQuery(document).ready(function($) {
         }
     });
 
-    
-
     const selectedDateTo = flatpickr(".selectedDateTo", {
         dateFormat: "Y-m-d",
         altInput: true,
@@ -627,6 +625,18 @@ jQuery(document).ready(function($) {
         enable: window.dailyMenuAdmin.menus ?? [],
     });
 
+    const time_start = flatpickr('.order-time-field-start', {
+      minuteIncrement: 5,
+      wrap: false,
+    });
+
+    const time_end = flatpickr('.order-time-field-end', {
+      minuteIncrement: 5,
+      wrap: false,
+    });
+
+    
+
 
     $(document).on('input keydown', '.menu-item input[name*="[title]"]', function() {
         const $field = $(this).closest('.menu-item').first();
@@ -640,39 +650,12 @@ jQuery(document).ready(function($) {
     });
 
 
+        
 
-    jQuery("#settings-tabs").tabs();
 
 
-    // Helper function to show notifications
-    function showNotification(message, type) {
-        const notificationClass = type === 'success' ? 'notice-success' : 'notice-error';
-        
-        const notification = $(`
-            <div class="notice ${notificationClass} is-dismissible">
-                <p>${message}</p>
-                <button type="button" class="notice-dismiss">
-                    <span class="screen-reader-text">Dismiss this notice.</span>
-                </button>
-            </div>
-        `);
-        
-        $('#wpbody-content').prepend(notification);
-        
-        // Auto-dismiss after 5 seconds
-        setTimeout(function() {
-            notification.fadeOut(function() {
-                $(this).remove();
-            });
-        }, 5000);
-        
-        // Handle dismiss button
-        notification.find('.notice-dismiss').on('click', function() {
-            notification.fadeOut(function() {
-                $(this).remove();
-            });
-        });
-    }
+    $("#settings-tabs").tabs();
+
 
 
 
