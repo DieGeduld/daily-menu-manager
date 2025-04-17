@@ -1,4 +1,4 @@
-.daily-menu {
+.daily-menu-manager {
     margin: 0 auto;
     padding: 20px;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -6,25 +6,25 @@
     color: black;
 }
 
-.daily-menu > h2 {
+.daily-menu-manager > h2 {
     color: black;
 }
 
-.daily-menu .menu-section:not(:last-child) {
+.daily-menu-manager .menu-section:not(:last-child) {
     margin-bottom: 40px;
 }
 
-.daily-menu .menu-section h3 {
+.daily-menu-manager .menu-section h3 {
     border-bottom: 2px solid #333;
     padding-bottom: 10px;
     margin-bottom: 20px;
 }
 
-.daily-menu .menu-item:not(:last-child) {
+.daily-menu-manager .menu-item:not(:last-child) {
     margin-bottom: 25px;
 }
 
-.daily-menu .menu-item {
+.daily-menu-manager .menu-item {
     
     padding: 10px;
     background: #fff;
@@ -32,7 +32,7 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.daily-menu .menu-item-header {
+.daily-menu-manager .menu-item-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -40,32 +40,32 @@
     margin-bottom: 5px;
 }
 
-.daily-menu .menu-item-footer {
+.daily-menu-manager .menu-item-footer {
     display: flex;
     justify-content: space-between;
 }
 
-.daily-menu .menu-item-title {
+.daily-menu-manager .menu-item-title {
     font-size: 1.2em;
     font-weight: 600;
 }
 
-.daily-menu .menu-item-price {
+.daily-menu-manager .menu-item-price {
     font-weight: 600;
     color: #2c5282;
 }
 
-.daily-menu .menu-item-description {
+.daily-menu-manager .menu-item-description {
     color: #666;
     margin-bottom: 15px;
 }
 
-.daily-menu .quantity-control {
+.daily-menu-manager .quantity-control {
     display: flex;
     align-items: center;
 }
 
-.daily-menu .quantity-btn {
+.daily-menu-manager .quantity-btn {
     border: none;
     background: #2c5282;
     color: white;
@@ -76,11 +76,11 @@
     align-items: center;
 }
 
-.daily-menu .quantity-btn.minus {
+.daily-menu-manager .quantity-btn.minus {
     margin-left: 10px;
 }
 
-.daily-menu .quantity-input {
+.daily-menu-manager .quantity-input {
     width: 70px;
     height: 70px;
     text-align: center;
@@ -91,31 +91,31 @@
 }
 
 /* Chrome, Safari, Edge, Opera */
-.daily-menu input::-webkit-outer-spin-button,
-.daily-menu input::-webkit-inner-spin-button {
+.daily-menu-manager input::-webkit-outer-spin-button,
+.daily-menu-manager input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
 /* Firefox */
-.daily-menu input[type=number] {
+.daily-menu-manager input[type=number] {
   -moz-appearance: textfield;
 }
 
-.daily-menu .item-notes {
+.daily-menu-manager .item-notes {
     grid-column: 1 / -1;
     display: grid;
     gap: 5px;
 }
 
-.daily-menu .item-notes input {
+.daily-menu-manager .item-notes input {
     width: 100%;
     padding: 8px;
     border: 1px solid #e2e8f0;
     border-radius: 4px;
 }
 
-.daily-menu .order-summary {
+.daily-menu-manager .order-summary {
     margin-bottom: 30px;
     padding: 20px;
     background: #f7fafc;
@@ -123,39 +123,39 @@
     border: 1px solid #e2e8f0;
 }
 
-.daily-menu .order-total {
+.daily-menu-manager .order-total {
     font-size: 1.2em;
     font-weight: 600;
     color: #2c5282;
 }
 
-.daily-menu .customer-info {
+.daily-menu-manager .customer-info {
     margin-bottom: 30px;
 }
 
-.daily-menu .form-field {
+.daily-menu-manager .form-field {
     margin-bottom: 15px;
 }
 
-.daily-menu .form-field label {
+.daily-menu-manager .form-field label {
     display: block;
     margin-bottom: 5px;
     font-weight: 500;
 }
 
 .form-field input,
-.daily-menu .form-field textarea {
+.daily-menu-manager .form-field textarea {
     width: 100%;
     padding: 8px;
     border: 1px solid #e2e8f0;
     border-radius: 4px;
 }
 
-.daily-menu .form-field textarea {
+.daily-menu-manager .form-field textarea {
     height: 100px;
 }
 
-.daily-menu .submit-order {
+.daily-menu-manager .submit-order {
     background: #2c5282;
     color: white;
     border: none;
@@ -167,11 +167,11 @@
     transition: background 0.3s ease;
 }
 
-.daily-menu .submit-order:hover {
+.daily-menu-manager .submit-order:hover {
     background: #2a4365;
 }
 
-.daily-menu .order-confirmation {
+.daily-menu-manager .order-confirmation {
     margin-top: 30px;
     padding: 20px;
     background: #c6f6d5;
@@ -180,22 +180,22 @@
     text-align: center;
 }
 
-.daily-menu .order-confirmation h3 {
+.daily-menu-manager .order-confirmation h3 {
     color: #22543d;
     margin-bottom: 15px;
 }
 
-.daily-menu #order-number {
+.daily-menu-manager #order-number {
     font-size: 1.4em;
     color: #22543d;
 }
 
-.daily-menu .confirmation-details {
+.daily-menu-manager .confirmation-details {
     margin-top: 20px;
     text-align: left;
 }
 
-.daily-menu .error-message {
+.daily-menu-manager .error-message {
     background: #fed7d7;
     border: 1px solid #feb2b2;
     color: #822727;
@@ -206,29 +206,29 @@
 
 
 
-.daily-menu .swal2-popup {
+.daily-menu-manager .swal2-popup {
     font-size: 1rem;
 }
 
-.daily-menu .swal2-html-container {
+.daily-menu-manager .swal2-html-container {
     text-align: left;
 }
 
 
 /* Desktop Layout (ab 768px) */
 @media (min-width: 768px) {
-    .daily-menu .menu-layout {
+    .daily-menu-manager .menu-layout {
         display: flex;
         gap: 2rem;
         align-items: flex-start;
     }
 
-    .daily-menu  .menu-items-column {
+    .daily-menu-manager  .menu-items-column {
         flex: 1;
         max-width: 65%;
     }
 
-    .daily-menu .order-info-column {
+    .daily-menu-manager .order-info-column {
         width: 35%;
         position: sticky;
         top: 2rem;
@@ -239,21 +239,21 @@
     }
 
     /* Optionale Verbesserungen */
-    .daily-menu .menu-section:not(:last-child) {
+    .daily-menu-manager .menu-section:not(:last-child) {
         margin-bottom: 2rem;
     }
 
-    .daily-menu .menu-item {
+    .daily-menu-manager .menu-item {
         padding: 1rem;
         background: #f9f9f9;
         border-radius: 6px;
     }
 
-    .daily-menu .order-summary, .customer-info {
+    .daily-menu-manager .order-summary, .customer-info {
         margin-bottom: 1.5rem;
     }
 
-    .daily-menu .submit-order {
+    .daily-menu-manager .submit-order {
         width: 100%;
         margin-top: 1rem;
     }
@@ -261,12 +261,12 @@
 
 /* Mobile Layout (unter 768px) */
 @media (max-width: 767px) {
-    .daily-menu .menu-items-column,
-    .daily-menu .order-info-column {
+    .daily-menu-manager .menu-items-column,
+    .daily-menu-manager .order-info-column {
         width: 100%;
     }
     
-    .daily-menu .order-info-column {
+    .daily-menu-manager .order-info-column {
         margin-top: 2rem;
     }
 }

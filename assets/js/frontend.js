@@ -57,7 +57,7 @@ jQuery(document).ready(function($) {
             const price = parseFloat($(this).data('price')) || 0;
             total += quantity * price;
         });
-        $('#total-amount').text(total.toFixed(2) + ' ' + window.dailyMenuAjax.currency);
+        $('#total-amount').text(total.toFixed(2) + ' ' + window.dailyMenuAjax.currencySymbol);
     }
 
     // Handle quantity buttons
@@ -142,14 +142,14 @@ jQuery(document).ready(function($) {
                     let detailsHtml = '<h4>Bestellte Gerichte:</h4><ul style="text-align: left; list-style-type: none; padding-left: 0;">';
                     response.data.items.forEach(function(item) {
                         detailsHtml += `<li style="margin-bottom: 10px;">
-                            ${item.quantity}x ${item.title} (${(item.price * item.quantity).toFixed(2)} ${window.dailyMenuAjax.currency})`;
+                            ${item.quantity}x ${item.title} (${(item.price * item.quantity).toFixed(2)} ${window.dailyMenuAjax.currencySymbol})`;
                         if (item.notes) {
                             detailsHtml += `<br><small>Anmerkung: ${item.notes}</small>`;
                         }
                         detailsHtml += '</li>';
                     });
                     detailsHtml += '</ul>';
-                    detailsHtml += `<p><strong>Gesamtbetrag: ${response.data.total_amount.toFixed(2)}&nbsp;${window.dailyMenuAjax.currency}</strong></p>`;
+                    detailsHtml += `<p><strong>Gesamtbetrag: ${response.data.total_amount.toFixed(2)}&nbsp;${window.dailyMenuAjax.currencySymbol}</strong></p>`;
                     
                     Swal.fire({
                         title: 'Bestellung erfolgreich aufgegeben!',

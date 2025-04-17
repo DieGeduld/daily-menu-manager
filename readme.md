@@ -13,6 +13,7 @@ Feature Request:
 - define order states (pending, complete, etc...)
 - backup to cloud
 - Statistiken für bestellungen (uhrzeit-x, anzahl-y)
+- Allergene (A, F, G)
 
 
 todo:

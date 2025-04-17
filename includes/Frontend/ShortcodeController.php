@@ -113,7 +113,7 @@ class ShortcodeController {
         // Output Buffer starten
         ob_start();
         ?>
-        <div class="daily-menu">
+        <div class="daily-menu-manager">
             <h2><?php echo esc_html($atts['title']); ?> - <?php echo date_i18n('d. F Y', strtotime($atts['date'])); ?></h2>
 
             <?php if ($atts['show_order_form']): ?>
@@ -142,7 +142,6 @@ class ShortcodeController {
                                 <h3><?php echo esc_html($type_label); ?></h3>
                                 
                                 <?php foreach ($items as $item): ?>
-                                    <?php // $props = array_keys(json_decode($item->properties ?? "{}", true) ?? []); ?>
                                     <?php $props = array_keys($item->properties ?? []); ?>
                                     <div class="menu-item" data-item-available_quantity="<?php echo esc_attr($item->available_quantity); ?>" data-item-id="<?php echo esc_attr($item->id); ?>">
                                         <div class="menu-item-header">
@@ -156,12 +155,10 @@ class ShortcodeController {
                                         <?php
                                             $main_color = SettingsController::getMainColor();
                                             foreach ($props as &$prop) {
-                                                echo "<div style=\"background-color: $main_color;\" class=\"badge text-decoration-none me-1 mb-1\">$prop</div>";
+                                                echo "<div style=\"background-color: $main_color;\" class=\"badge text-decoration-none me-1 mb-1\">" . __($prop, 'daily-menu-manager') . "</div>";
                                             }
                                         ?>
                                         <div class="menu-item-footer">
-
-                                            
                                             <p class="menu-item-description">
                                                 <?php if ($item->description): ?>
                                                     <?php echo nl2br(esc_html($item->description)); ?>
