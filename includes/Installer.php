@@ -1,7 +1,7 @@
 <?php
 namespace DailyMenuManager;
 
-use DailyMenuManager\Admin\SettingsController;
+use DailyMenuManager\Controller\Admin\SettingsController;
 use DailyMenuManager\Models\Settings;
 
 class Installer {

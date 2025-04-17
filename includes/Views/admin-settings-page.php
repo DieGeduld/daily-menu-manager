@@ -5,7 +5,7 @@
  * @package DailyMenuManager
  */
 
-use DailyMenuManager\Admin\SettingsController;
+use DailyMenuManager\Controller\Admin\SettingsController;
 use DailyMenuManager\Helper\DateUtils;
 
 if (!defined('ABSPATH')) {

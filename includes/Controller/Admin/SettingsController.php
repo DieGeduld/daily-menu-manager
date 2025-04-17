@@ -1,5 +1,5 @@
 <?php
-namespace DailyMenuManager\Admin;
+namespace DailyMenuManager\Controller\Admin;
 
 use DailyMenuManager\Models\Settings;
 use DailyMenuManager\Helper\StringUtils;

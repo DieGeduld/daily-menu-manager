@@ -1,10 +1,14 @@
 <?php
 namespace DailyMenuManager;
 
-use DailyMenuManager\Admin\MenuController;
-use DailyMenuManager\Admin\OrderController;
-use DailyMenuManager\Admin\SettingsController;
-use DailyMenuManager\Frontend\ShortcodeController;
+use DailyMenuManager\Controller\Common\AjaxController;
+use DailyMenuManager\Controller\Admin\MenuController;
+use DailyMenuManager\Controller\Admin\OrderController;
+use DailyMenuManager\Controller\Admin\SettingsController;
+use DailyMenuManager\Controller\Frontend\ShortcodeController;
+use DailyMenuManager\Models\Menu;
+use DailyMenuManager\Models\Order;
+use DailyMenuManager\Models\Settings;
 
 class Plugin {
     private static ?self $instance = null;
@@ -31,59 +35,29 @@ class Plugin {
 
     private function initializeComponents(): void {
         // Initialize Models
-        Models\Menu::init();
-        Models\Order::init();
-        Models\Settings::init();
+        Menu::init();
+        Order::init();
+        Settings::init();
+        // Initialize Admin and Frontend components
+        AjaxController::init();
         
         // Initialize Components based on context
         if (is_admin()) {
             $this->initAdminComponents();
         }
         $this->initFrontendComponents();
-        $this->registerAjaxHandlers();
+        
+        
     }
 
     private function initAdminComponents(): void {
-        Admin\MenuController::init();
-        Admin\OrderController::init();
-        Admin\SettingsController::init();
+        MenuController::init();
+        OrderController::init();
+        SettingsController::init();
     }
 
     private function initFrontendComponents(): void {
-        Frontend\ShortcodeController::init();
-    }
-
-    private function registerAjaxHandlers(): void {
-        $this->registerPublicAjaxHandlers();
-        if (is_admin()) {
-            $this->registerAdminAjaxHandlers();
-        }
-    }
-
-    private function registerPublicAjaxHandlers(): void {
-        add_action('wp_ajax_nopriv_submit_order', [OrderController::class, 'handleOrder']);
-        add_action('wp_ajax_nopriv_get_available_quantities', [MenuController::class, 'getAvailableQuantities']);        
-
-        add_action('wp_ajax_submit_order', [OrderController::class, 'handleOrder']);
-        add_action('wp_ajax_get_available_quantities', [MenuController::class, 'getAvailableQuantities']);
-    }
-
-    private function registerAdminAjaxHandlers(): void {
-        
-        $admin_handlers = [
-            'duplicate_menu_item' => [MenuController::class, 'handleDuplicateMenuItem'],
-            'delete_menu_item' => [MenuController::class, 'handleDeleteMenuItem'],
-            'save_menu_order' => [MenuController::class, 'handleSaveMenuOrder'],
-            'get_menu_data' => [MenuController::class, 'handleGetMenuData'],
-            'save_menu_data'=> [MenuController::class, 'handleSaveMenuData'],
-            'copy_menu' => [MenuController::class, 'handleCopyMenu'],
-            'print_order' => [OrderController::class, 'handlePrintOrder'],
-            'delete_order' => [OrderController::class, 'handleDeleteOrder'],
-        ];
-
-        foreach ($admin_handlers as $action => $callback) {
-            add_action('wp_ajax_' . $action, $callback);
-        }
+        ShortcodeController::init();
     }
 
     private function checkForUpdates(): void {

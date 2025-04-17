@@ -24,6 +24,9 @@ if (!defined('DMM_VERSION')) {
 if (!defined('DMM_PLUGIN_DIR')) {
     define('DMM_PLUGIN_DIR', plugin_dir_path(__FILE__));
 }
+if (!defined('DMM_PLUGIN_URL')) {
+    define('DMM_PLUGIN_URL', plugin_dir_url(__FILE__));
+}
 if (!defined('DMM_PLUGIN_FILE')) {
     define('DMM_PLUGIN_FILE', __FILE__);
 }

@@ -1,8 +1,8 @@
 <?php
     defined('ABSPATH') or die('Direct access not allowed!');
 
-use DailyMenuManager\Admin\MenuController;
-use DailyMenuManager\Admin\SettingsController;
+use DailyMenuManager\Controller\Admin\MenuController;
+use DailyMenuManager\Controller\Admin\SettingsController;
 ?>
 
 <div class="wrap">

@@ -1,7 +1,8 @@
 <?php
-namespace DailyMenuManager\Admin;
+namespace DailyMenuManager\Controller\Admin;
 
 use DailyMenuManager\Models\Order;
+use DailyMenuManager\Models\Menu;
 
 class OrderStatistics {
     public $total_orders = 0;
@@ -54,14 +55,14 @@ class OrderController {
 
         wp_enqueue_style(
             'daily-menu-admin-orders',
-            plugins_url('assets/css/admin-orders.css', dirname(__DIR__)),
+            DMM_PLUGIN_URL . 'assets/css/admin-orders.css',
             [],
             DMM_VERSION
         );
 
         wp_enqueue_script(
             'daily-menu-admin-orders',
-            plugins_url('assets/js/admin-orders.js', dirname(__DIR__)),
+            DMM_PLUGIN_URL . 'assets/js/admin-orders.js',
             ['jquery'],
             DMM_VERSION,
             true
@@ -177,6 +178,35 @@ class OrderController {
             wp_send_json_success(['message' => __('Order deleted successfully.', 'daily-menu-manager')]);
         } else {
             wp_send_json_error(['message' => __('Error deleting order.', 'daily-menu-manager')]);
+        }
+    }
+
+        /**
+     * Verarbeitet eingehende Bestellungen via AJAX
+     */
+    public static function handleOrder() {
+        check_ajax_referer('menu_order_nonce');
+        
+        if (empty($_POST['items'])) {
+            wp_send_json_error(['message' => __('No dishes selected.', 'daily-menu-manager')]);
+        }
+
+        $order = new \DailyMenuManager\Models\Order();
+        $result = $order->createOrder($_POST);
+
+        if (is_wp_error($result)) {
+            wp_send_json_error([
+                'message' => $result->get_error_message()
+            ]);
+        } else {
+            $menu = new Menu();
+            $update = $menu->updateAvailableQuantities($_POST['items']);
+            if (is_wp_error($update)) {
+                wp_send_json_error([
+                    'message' => __('Error updating available quantities: ', 'daily-menu-manager') . $update->get_error_message()
+                ]);
+            }
+            wp_send_json_success($result);
         }
     }
 }

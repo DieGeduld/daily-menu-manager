@@ -1,7 +1,8 @@
 <?php
 
 defined('ABSPATH') or die('Direct access not allowed!');
-use \DailyMenuManager\Admin\SettingsController;
+use DailyMenuManager\Controller\Admin\SettingsController;
+use DailyMenuManager\Models\Order;
 ?>
 
 <div class="wrap">

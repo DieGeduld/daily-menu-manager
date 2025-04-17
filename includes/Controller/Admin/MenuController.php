@@ -1,5 +1,5 @@
 <?php
-namespace DailyMenuManager\Admin;
+namespace DailyMenuManager\Controller\Admin;
 
 use DailyMenuManager\Models\Menu;
 use DailyMenuManager\Models\Settings;
@@ -63,7 +63,7 @@ class MenuController {
         // Plugin Admin Scripts
         wp_enqueue_script(
             'daily-menu-admin',
-            plugins_url('assets/js/admin.js', dirname(__DIR__)),
+            DMM_PLUGIN_URL . '/assets/js/admin.js',
             ['jquery', 'jquery-ui-core', 'jquery-ui-sortable', 'jquery-ui-dialog', 'jquery-ui-tabs'],
             DMM_VERSION,
             true
@@ -107,7 +107,7 @@ class MenuController {
         // Vue.js Admin App
         // wp_enqueue_script(
         //     'daily-menu-vue-admin',
-        //     plugins_url('assets/dist/admin.js', dirname(__DIR__)),
+        //     DMM_PLUGIN_URL . 'assets/dist/admin.js',
         //     [],
         //     DMM_VERSION,
         //     true
@@ -116,7 +116,7 @@ class MenuController {
         // Admin Styles
         wp_enqueue_style(
             'daily-menu-admin-style',
-            plugins_url('assets/css/admin.min.css', dirname(__DIR__)),
+            DMM_PLUGIN_URL . 'assets/css/admin.min.css',
             [],
             DMM_VERSION
         );
@@ -671,7 +671,7 @@ class MenuController {
                     <div class="options-grid">
                     <?php
 
-                        $allProps = \DailyMenuManager\Admin\SettingsController::getMenuProperties() ?? [];
+                        $allProps = SettingsController::getMenuProperties() ?? [];
 
                         //$props = json_decode($item->properties ?? '{}', true) ?? [];
                         $props = $item->properties ?? [];
