@@ -10,7 +10,7 @@ jQuery(document).ready(function($) {
     // Funktion zur Aktualisierung der verfügbaren Mengen
     function updateAvailableQuantities() {
         const menuId = $('input[name="menu_id"]').val();
-        if !(menuId) {
+        if (!menuId) {
             return;
         }
         // AJAX-Anfrage zur Aktualisierung der verfügbaren Mengen
