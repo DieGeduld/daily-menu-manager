@@ -55,7 +55,7 @@ class OrderController {
 
         wp_enqueue_style(
             'daily-menu-admin-orders',
-            DMM_PLUGIN_URL . 'assets/css/admin-orders.css',
+            DMM_PLUGIN_URL . 'assets/dist/admin-orders.css',
             [],
             DMM_VERSION
         );

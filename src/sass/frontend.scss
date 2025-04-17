@@ -1,0 +1,255 @@
+$color_1: black;
+$color_2: #333;
+$color_3: #2c5282;
+$color_4: #666;
+$color_5: white;
+$color_6: #22543d;
+$color_7: #822727;
+$font-family_1: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+.daily-menu-manager {
+	margin: 0 auto;
+	padding: 20px;
+	font-family: $font-family_1;
+	background: whitesmoke;
+	color: $color_1;
+	>h2 {
+		color: $color_1;
+	}
+	.menu-section {
+		&:not(:last-child) {
+			margin-bottom: 40px;
+		}
+		h3 {
+			border-bottom: 2px solid #333;
+			padding-bottom: 10px;
+			margin-bottom: 20px;
+		}
+	}
+	.menu-item {
+		&:not(:last-child) {
+			margin-bottom: 25px;
+		}
+		padding: 10px;
+		background: #fff;
+		border-radius: 5px;
+		box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+	}
+	.menu-item-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		color: $color_2;
+		margin-bottom: 5px;
+	}
+	.menu-item-footer {
+		display: flex;
+		justify-content: space-between;
+	}
+	.menu-item-title {
+		font-size: 1.2em;
+		font-weight: 600;
+	}
+	.menu-item-price {
+		font-weight: 600;
+		color: $color_3;
+	}
+	.menu-item-description {
+		color: $color_4;
+		margin-bottom: 15px;
+	}
+	.quantity-control {
+		display: flex;
+		align-items: center;
+	}
+	.quantity-btn {
+		border: none;
+		background: #2c5282;
+		color: $color_5;
+		width: 30px;
+		height: 30px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	.quantity-btn.minus {
+		margin-left: 10px;
+	}
+	.quantity-input {
+		width: 70px;
+		height: 70px;
+		text-align: center;
+		box-shadow: none;
+		margin: 0;
+		padding: 0px;
+		height: 30px;
+	}
+	input {
+		&::-webkit-outer-spin-button {
+			-webkit-appearance: none;
+			margin: 0;
+		}
+		&::-webkit-inner-spin-button {
+			-webkit-appearance: none;
+			margin: 0;
+		}
+	}
+	input[type=number] {
+		-moz-appearance: textfield;
+	}
+	.item-notes {
+		grid-column: 1 / -1;
+		display: grid;
+		gap: 5px;
+		input {
+			width: 100%;
+			padding: 8px;
+			border: 1px solid #e2e8f0;
+			border-radius: 4px;
+		}
+	}
+	.order-summary {
+		margin-bottom: 30px;
+		padding: 20px;
+		background: #f7fafc;
+		border-radius: 8px;
+		border: 1px solid #e2e8f0;
+	}
+	.order-total {
+		font-size: 1.2em;
+		font-weight: 600;
+		color: $color_3;
+	}
+	.customer-info {
+		margin-bottom: 30px;
+	}
+	.form-field {
+		margin-bottom: 15px;
+		label {
+			display: block;
+			margin-bottom: 5px;
+			font-weight: 500;
+		}
+		textarea {
+			width: 100%;
+			padding: 8px;
+			border: 1px solid #e2e8f0;
+			border-radius: 4px;
+			height: 100px;
+		}
+	}
+	.submit-order {
+		background: #2c5282;
+		color: $color_5;
+		border: none;
+		padding: 12px 24px;
+		border-radius: 4px;
+		font-size: 1.1em;
+		cursor: pointer;
+		width: 100%;
+		transition: background 0.3s ease;
+		&:hover {
+			background: #2a4365;
+		}
+	}
+	.order-confirmation {
+		margin-top: 30px;
+		padding: 20px;
+		background: #c6f6d5;
+		border: 1px solid #9ae6b4;
+		border-radius: 8px;
+		text-align: center;
+		h3 {
+			color: $color_6;
+			margin-bottom: 15px;
+		}
+	}
+	#order-number {
+		font-size: 1.4em;
+		color: $color_6;
+	}
+	.confirmation-details {
+		margin-top: 20px;
+		text-align: left;
+	}
+	.error-message {
+		background: #fed7d7;
+		border: 1px solid #feb2b2;
+		color: $color_7;
+		padding: 10px;
+		border-radius: 4px;
+		margin: 10px 0;
+	}
+	.swal2-popup {
+		font-size: 1rem;
+	}
+	.swal2-html-container {
+		text-align: left;
+	}
+}
+.form-field {
+	input {
+		width: 100%;
+		padding: 8px;
+		border: 1px solid #e2e8f0;
+		border-radius: 4px;
+	}
+}
+.menu-item[data-item-available_quantity="0"] {
+	opacity: 0.5;
+	background: #f9f9f9;
+	cursor: not-allowed;
+}
+@media (min-width: 768px) {
+	.daily-menu-manager {
+		.menu-layout {
+			display: flex;
+			gap: 2rem;
+			align-items: flex-start;
+		}
+		.menu-items-column {
+			flex: 1;
+			max-width: 65%;
+		}
+		.order-info-column {
+			width: 35%;
+			position: sticky;
+			top: 2rem;
+			background: white;
+			padding: 1.5rem;
+			border-radius: 8px;
+			box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+		}
+		.menu-section {
+			&:not(:last-child) {
+				margin-bottom: 2rem;
+			}
+		}
+		.menu-item {
+			padding: 1rem;
+			background: #f9f9f9;
+			border-radius: 6px;
+		}
+		.order-summary {
+			margin-bottom: 1.5rem;
+		}
+		.submit-order {
+			width: 100%;
+			margin-top: 1rem;
+		}
+	}
+	.customer-info {
+		margin-bottom: 1.5rem;
+	}
+}
+@media (max-width: 767px) {
+	.daily-menu-manager {
+		.menu-items-column {
+			width: 100%;
+		}
+		.order-info-column {
+			width: 100%;
+			margin-top: 2rem;
+		}
+	}
+}

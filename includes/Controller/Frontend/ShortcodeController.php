@@ -25,7 +25,7 @@ class ShortcodeController {
         // CSS laden
         wp_enqueue_style(
             'daily-menu-frontend',
-            DMM_PLUGIN_URL . 'assets/css/frontend.css',
+            DMM_PLUGIN_URL . 'assets/dist/frontend.css',
             [],
             DMM_VERSION
         );

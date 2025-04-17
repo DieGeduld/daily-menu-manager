@@ -116,7 +116,7 @@ class MenuController {
         // Admin Styles
         wp_enqueue_style(
             'daily-menu-admin-style',
-            DMM_PLUGIN_URL . 'assets/css/admin.min.css',
+            DMM_PLUGIN_URL . 'assets/dist/admin.min.css',
             [],
             DMM_VERSION
         );
