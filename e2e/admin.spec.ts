@@ -42,13 +42,13 @@ for (const locale of locales) {
       await expect(page.getByRole('heading', { name: translation })).toBeVisible();
 
       translation = translations["Today's orders"] || "Today's orders";
-      await expect(page.getByText(translation)).toBeVisible();
-
+      await expect(page.locator('.summary-table tr').nth(0).locator('td').first()).toHaveText(translation);
+      
       translation = translations["Today's revenue"] || "Today's revenue";
-      await expect(page.getByText(translation)).toBeVisible();
-
+      await expect(page.locator('.summary-table tr').nth(1).locator('td').first()).toHaveText(translation);
+      
       translation = translations['Ordered items'] || 'Ordered items';
-      await expect(page.getByText(translation)).toBeVisible();
+      await expect(page.locator('.summary-table tr').nth(2).locator('td').first()).toHaveText(translation);
     });
 
     test('should be able to access settings page', async ({ page }) => {

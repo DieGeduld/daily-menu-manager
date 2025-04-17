@@ -30,7 +30,8 @@ test.describe(`Daily Menu Manager Make A Order`, () => {
     // Wenn Elemente vorhanden sind, entferne sie nacheinander
     for (let i = 0; i < count; i++) {
       await page.locator('.remove-menu-item').first().click();
-      await page.waitForTimeout(200);
+      await page.locator('.swal2-confirm').first().click();
+      await page.waitForTimeout(1000);
     }
     
     await page.locator('.menu-controls .button').first().click();
