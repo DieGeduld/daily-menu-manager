@@ -6,24 +6,32 @@
     <div v-else>
       <p v-if="error">{{ error }}</p>
       <p v-else-if="menuItems.length === 0">Keine Menüpunkte verfügbar.</p>
-      <ul v-else class="menu-items-list">
-        <li v-for="item in menuItems" :key="item.id" class="menu-item">
-          <h3>{{ item.title }}</h3>
-          <p class="description">{{ item.description }}</p>
-          <p class="price">{{ item.price }} €</p>
-        </li>
-      </ul>
+      <div v-else class="menu-items-list">
+        <!-- Hier wird die MenuItem-Komponente für jedes Element verwendet -->
+        <menu-item
+          v-for="item in menuItems"
+          :key="item.id"
+          :item-id="item.id"
+          :title="item.title"
+          :description="item.description"
+          :price="item.price"
+          :available-quantity="item.availableQuantity || 99"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-
 import { getMenuItems } from '../services/api.js';
 import { formatDate } from '../../common/helper.js';
+import MenuItem from './MenuItem.vue';
 
 export default {
   name: 'DailyMenuApp',
+  components: {
+    MenuItem // Registriere die Komponente
+  },
   props: {
     menuId: {
       type: [String, Number],
@@ -71,9 +79,8 @@ export default {
       } finally {
         this.loading = false;
       }
-    },
-
-  },
+    }
+  }
 };
 </script>
 
@@ -86,28 +93,7 @@ export default {
 }
 
 .menu-items-list {
-  list-style: none;
   padding: 0;
   margin: 20px 0;
-}
-
-.menu-item {
-  border-bottom: 1px solid #eee;
-  padding: 15px 0;
-}
-
-.menu-item h3 {
-  margin-top: 0;
-  margin-bottom: 8px;
-}
-
-.description {
-  color: #666;
-  margin-bottom: 8px;
-}
-
-.price {
-  font-weight: bold;
-  color: #222;
 }
 </style>

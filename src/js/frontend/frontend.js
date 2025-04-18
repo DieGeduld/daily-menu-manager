@@ -19,9 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
       menuId,
       menuDate,
       title
-    });
-    
-    app.mount(appElement);
+    }).mount(appElement);
     
     console.log('Daily Menu App wurde initialisiert!');
   }
