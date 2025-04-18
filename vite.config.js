@@ -1,20 +1,26 @@
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { resolve } from 'path';
+import legacy from '@vitejs/plugin-legacy';
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    legacy({
+      targets: ['defaults', 'not IE 11']
+    })
+  ],
   resolve: {
     alias: {
-      '@': resolve(__dirname, '.'),
+      '@': resolve(__dirname, '.')
     }
   },
   build: {
-    outDir: 'assets/dist',
+    outDir: 'dist',
     rollupOptions: {
       input: {
-        admin: resolve(__dirname, 'assets/js/vue/admin.js'),
-        frontend: resolve(__dirname, 'assets/js/vue/frontend.js')
+        admin: resolve(__dirname, 'src/js/admin/admin.js'),
+        frontend: resolve(__dirname, 'src/js/frontend/frontend.js')
       },
       output: {
         entryFileNames: '[name].js',

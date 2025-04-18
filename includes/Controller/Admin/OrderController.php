@@ -55,7 +55,7 @@ class OrderController {
 
         wp_enqueue_style(
             'daily-menu-admin-orders',
-            DMM_PLUGIN_URL . 'assets/dist/admin-orders.css',
+            DMM_PLUGIN_URL . 'dist/admin-orders.css',
             [],
             DMM_VERSION
         );
@@ -160,7 +160,7 @@ class OrderController {
      * AJAX Handler for deleting orders
      */
     public static function handleDeleteOrder() {
-        check_ajax_referer('daily_menu_orders_nonce');
+        check_ajax_referer('daily_menu_orders_nonce'); //TODO: Only for admin
         
         if (!current_user_can('manage_options')) {
             wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);

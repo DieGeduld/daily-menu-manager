@@ -130,7 +130,6 @@
 .menu-item-title-area {
   flex-grow: 1;
   margin-right: 10px;
-
 }
 
 .menu-item-actions {
@@ -429,23 +428,6 @@ table {
 .dashicons {
   width: 40px;
   height: 34px;
-}
-
-.order-times-container {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-bottom: 15px;
-}
-
-.order-time-field {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.order-time-field input {
-  width: 200px;
 }
 
 /*# sourceMappingURL=admin.css.map */

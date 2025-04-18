@@ -14,6 +14,7 @@
     "sass:watch": "sass --watch src/sass/admin.scss:assets/css/admin.css & sass --watch src/sass/admin.scss:assets/css/admin.min.css --style compressed",
     "dev": "concurrently \"npm run sass:watch\" \"vite\"",
     "build": "vite build",
+    "build:watch": "vite build --watch",
     "preview": "vite preview"
   },
   "keywords": [],
@@ -22,19 +23,20 @@
   "devDependencies": {
     "@playwright/test": "^1.51.1",
     "@types/node": "^22.14.1",
-    "@vitejs/plugin-vue": "^5.2.3",
-    "concurrently": "^9.1.2",
+    "@vitejs/plugin-legacy": "^5.4.3",
+    "@vitejs/plugin-vue": "^4.5.1",
+    "concurrently": "^8.2.2",
     "dotenv": "^16.5.0",
     "node-sass": "^9.0.0",
     "nodemon": "^3.1.9",
-    "sass": "^1.86.3",
-    "vite": "^6.2.6",
-    "vue": "^3.5.13"
+    "sass": "^1.69.5",
+    "vite": "^5.0.4",
+    "vue": "^3.3.9"
   },
   "dependencies": {
     "gettext-parser": "^8.0.0",
     "notyf": "^3.10.0",
-    "pinia": "^3.0.2",
+    "pinia": "^2.1.7",
     "sweetalert2": "^11.19.1"
   }
 }

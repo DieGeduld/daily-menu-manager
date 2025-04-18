@@ -63,7 +63,7 @@ class MenuController {
         // Plugin Admin Scripts
         wp_enqueue_script(
             'daily-menu-admin',
-            DMM_PLUGIN_URL . '/assets/js/admin.js',
+            DMM_PLUGIN_URL . '/assets/js/admin.js', //TODO: Longrun: dist/admin.min.js
             ['jquery', 'jquery-ui-core', 'jquery-ui-sortable', 'jquery-ui-dialog', 'jquery-ui-tabs'],
             DMM_VERSION,
             true
@@ -102,21 +102,11 @@ class MenuController {
             '3.10.0',
             true
         );
-
-        
-        // Vue.js Admin App
-        // wp_enqueue_script(
-        //     'daily-menu-vue-admin',
-        //     DMM_PLUGIN_URL . 'assets/dist/admin.js',
-        //     [],
-        //     DMM_VERSION,
-        //     true
-        // );
     
         // Admin Styles
         wp_enqueue_style(
             'daily-menu-admin-style',
-            DMM_PLUGIN_URL . 'assets/dist/admin.min.css',
+            DMM_PLUGIN_URL . 'dist/admin.css', //TODO: min
             [],
             DMM_VERSION
         );
@@ -150,8 +140,7 @@ class MenuController {
         // Lokalisierung - WICHTIG: Muss nach dem Enqueue des Scripts erfolgen
         wp_localize_script(
             'daily-menu-admin',
-            'dailyMenuAdmin',
-            [
+            'dailyMenuAdmin', [
                 'ajaxurl' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('daily_menu_admin_nonce'),
                 'messages' => [
@@ -452,10 +441,35 @@ class MenuController {
         ]);
     }
 
+
+    /**
+     * AJAX Handler for getting today's menu
+     */
+    public static function handleGetCurrentMenu() {
+        check_ajax_referer('daily_menu_manager_nonce');
+
+        $menu = new \DailyMenuManager\Models\Menu();
+        $current_menu = $menu->getMenuForDate(current_time('Y-m-d'));
+        
+        if (!$current_menu) {
+            // TODO: Be able to enter a custom message
+            wp_send_json_error(['message' => __('No menu available for today.', 'daily-menu-manager')]);
+        }
+        
+        $menu_items = $menu->getMenuItems($current_menu->id);
+        
+        wp_send_json_success([
+            'menu' => $current_menu,
+            'items' => $menu_items
+        ]);
+    }
+
     /**
     * AJAX Handler zum Abrufen der verfügbaren Mengen
     */
     public static function getAvailableQuantities() {
+        check_ajax_referer('daily-menu-manager');
+
         $menu_id = isset($_POST['menu_id']) ? intval($_POST['menu_id']) : 0;
         if (!$menu_id) {
             wp_send_json_error(['message' => 'Keine Menü-ID angegeben']);

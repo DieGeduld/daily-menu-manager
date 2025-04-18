@@ -18,6 +18,9 @@ class AjaxController {
 
         add_action('wp_ajax_submit_order', [OrderController::class, 'handleOrder']);
         add_action('wp_ajax_get_available_quantities', [MenuController::class, 'getAvailableQuantities']);
+
+        add_action('wp_ajax_nopriv_get_current_menu', [MenuController::class, 'handleGetCurrentMenu']);
+        add_action('wp_ajax_get_current_menu', [MenuController::class, 'handleGetCurrentMenu']);
     }
 
     public static function registerAdminAjaxHandlers(): void {

@@ -14,6 +14,7 @@ Feature Request:
 - backup to cloud
 - Statistiken für bestellungen (uhrzeit-x, anzahl-y)
 - Allergene (A, F, G)
+- Show Orders and only be able to cancel order
 
 
 todo:
