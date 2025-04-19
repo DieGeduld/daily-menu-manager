@@ -17,5 +17,7 @@ Feature Request:
 - Show Orders and only be able to cancel order
 - was passiert, wenn man 4 im warenkorb hat, und einer 1 bestellt?
 
+
 todo:
-clean up handles, all in plugin.php
+- clean up handles, all in plugin.php
+- menu.php aufteilen
