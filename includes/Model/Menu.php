@@ -1,6 +1,6 @@
 <?php
 
-namespace DailyMenuManager\Models;
+namespace DailyMenuManager\Model;
 
 class Menu
 {
@@ -39,7 +39,7 @@ class Menu
     public static function createTables()
     {
         global $wpdb;
-        if (!function_exists('dbDelta')) {
+        if (! function_exists('dbDelta')) {
             require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         }
         $charset_collate = $wpdb->get_charset_collate();

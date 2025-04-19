@@ -2,24 +2,37 @@
 
 namespace DailyMenuManager\Controller\Admin;
 
-use DailyMenuManager\Models\Menu;
+use DailyMenuManager\Entity\MenuItem;
+use DailyMenuManager\Repository\MenuItemRepository;
+use DailyMenuManager\Service\MenuService;
 
 class MenuController
 {
     private static $instance = null;
+    private static $menu_service;
 
     public static function init()
     {
         if (self::$instance === null) {
             self::$instance = new self();
+            self::$menu_service = new MenuService();
         }
 
         add_action('admin_menu', [self::class, 'addAdminMenu']);
 
+        // Register AJAX handlers
+        add_action('wp_ajax_save_menu_order', [self::class, 'handleSaveMenuOrder']);
+        add_action('wp_ajax_copy_menu', [self::class, 'handleCopyMenu']);
+        add_action('wp_ajax_delete_menu_item', [self::class, 'handleDeleteMenuItem']);
+        add_action('wp_ajax_duplicate_menu_item', [self::class, 'handleDuplicateMenuItem']);
+        add_action('wp_ajax_get_menu_data', [self::class, 'handleGetMenuData']);
+        add_action('wp_ajax_get_current_menu', [self::class, 'handleGetCurrentMenu']);
+        add_action('wp_ajax_get_available_quantities', [self::class, 'getAvailableQuantities']);
+        add_action('wp_ajax_save_menu_data', [self::class, 'handleSaveMenuData']);
     }
 
     /**
-     * Fügt Menüeinträge zum WordPress Admin hinzu
+     * Adds menu entries to the WordPress Admin
      */
     public static function addAdminMenu()
     {
@@ -35,15 +48,17 @@ class MenuController
     }
 
     /**
-     * Zeigt die Hauptseite des Menü-Managers
+     * Displays the main page of the menu manager
      */
     public static function displayMenuPage()
     {
-        $menu_model = new \DailyMenuManager\Models\Menu();
+        // Get selected date or set current date
+        $selected_date = isset($_GET['menu_date']) ? sanitize_text_field($_GET['menu_date']) : current_time('Y-m-d');
 
-        // Speichern des Menüs wenn das Formular abgeschickt wurde
+        // Save menu if form was submitted
         if (isset($_POST['save_menu']) && check_admin_referer('save_menu_nonce')) {
-            $result = $menu_model->saveMenu($_POST);
+            $result = self::saveMenuFromPost($_POST);
+
             if (is_wp_error($result)) {
                 add_settings_error(
                     'daily_menu_manager',
@@ -61,19 +76,27 @@ class MenuController
             }
         }
 
-        // Hole das ausgewählte Datum oder setze das aktuelle Datum
-        $selected_date = isset($_GET['menu_date']) ? sanitize_text_field($_GET['menu_date']) : current_time('Y-m-d');
+        // Get the current menu with items
+        $current_menu = self::$menu_service->getMenuForDate($selected_date);
+        $menu_items = $current_menu ? $current_menu->getItems() : [];
 
-        // Hole das aktuelle Menü
-        $current_menu = $menu_model->getMenuForDate($selected_date);
-        $menu_items = $current_menu ? $menu_model->getMenuItems($current_menu->id) : [];
-
-        // Template laden
+        // Load the template
         require_once DMM_PLUGIN_DIR . 'includes/Views/admin-menu-page.php';
     }
 
     /**
-     * AJAX Handler für die Sortierung der Menüeinträge
+     * Saves a menu from POST data
+     *
+     * @param array $post_data The POST data
+     * @return int|WP_Error The menu ID or WP_Error on failure
+     */
+    private static function saveMenuFromPost($post_data)
+    {
+        return self::$menu_service->saveMenu($post_data);
+    }
+
+    /**
+     * AJAX handler for saving menu item order
      */
     public static function handleSaveMenuOrder()
     {
@@ -88,8 +111,7 @@ class MenuController
             wp_send_json_error(['message' => __('No order information received.', 'daily-menu-manager')]);
         }
 
-        $menu = new Menu();
-        $result = $menu->updateItemOrder($item_order);
+        $result = self::$menu_service->updateItemOrder($item_order);
 
         if ($result) {
             wp_send_json_success(['message' => __('Order updated.', 'daily-menu-manager')]);
@@ -99,7 +121,7 @@ class MenuController
     }
 
     /**
-     * AJAX Handler für das Kopieren eines Menüs
+     * AJAX handler for copying a menu
      */
     public static function handleCopyMenu()
     {
@@ -118,16 +140,15 @@ class MenuController
             wp_send_json_error(['message' => __('Invalid parameters.', 'daily-menu-manager')]);
         }
 
-        $menu = new Menu();
         if ($type == "from") {
-            $items = $menu->getMenuForDate($selectedDate);
+            $menu = self::$menu_service->getMenuForDate($selectedDate);
 
-            if (! $items) {
+            if (! $menu) {
                 wp_send_json_error(['message' => __('No menu exists for this date.', 'daily-menu-manager')]);
                 exit();
             }
 
-            $result = $menu->copyMenu(intval($items->id), $currentDate);
+            $result = self::$menu_service->copyMenu($menu->id, $currentDate);
 
             if (is_wp_error($result)) {
                 wp_send_json_error(['message' => $result->get_error_message()]);
@@ -138,12 +159,11 @@ class MenuController
                 ]);
             }
         } elseif ($type == "to") {
-
             if (! $currentDate || ! $menu_id) {
                 wp_send_json_error(['message' => __('Invalid parameters, menu ID missing', 'daily-menu-manager')]);
             }
 
-            $result = $menu->copyMenu(intval($menu_id), $selectedDate);
+            $result = self::$menu_service->copyMenu($menu_id, $selectedDate);
 
             if (is_wp_error($result)) {
                 wp_send_json_error(['message' => $result->get_error_message()]);
@@ -156,29 +176,10 @@ class MenuController
         } else {
             wp_send_json_error(['message' => __('Invalid parameters.', 'daily-menu-manager')]);
         }
-
-        $menu = new Menu();
-        $items = $menu->getMenuForDate($selectedDate);
-
-        // Check if a menu already exists for the target date
-        if ($menu->menuExists($currentDate)) {
-            wp_send_json_error(['message' => __('A menu already exists for this date.', 'daily-menu-manager')]);
-        }
-
-        $result = $menu->copyMenu($menu_id, $currentDate);
-
-        if (is_wp_error($result)) {
-            wp_send_json_error(['message' => $result->get_error_message()]);
-        } else {
-            wp_send_json_success([
-                'message' => __('Menu copied successfully.', 'daily-menu-manager'),
-                'new_menu_id' => $result,
-            ]);
-        }
     }
 
     /**
-     * AJAX Handler für das Löschen eines Menüeintrags
+     * AJAX handler for deleting a menu item
      */
     public static function handleDeleteMenuItem()
     {
@@ -193,14 +194,9 @@ class MenuController
             wp_send_json_error(['message' => __('Invalid menu item ID.', 'daily-menu-manager')]);
         }
 
-        global $wpdb;
-        $result = $wpdb->delete(
-            $wpdb->prefix . 'menu_items',
-            ['id' => $item_id],
-            ['%d']
-        );
+        $result = self::$menu_service->deleteMenuItem($item_id);
 
-        if ($result === false) {
+        if (! $result) {
             wp_send_json_error(['message' => __('Error deleting menu item.', 'daily-menu-manager')]);
         } else {
             wp_send_json_success(['message' => __('Menu item deleted successfully.', 'daily-menu-manager')]);
@@ -208,7 +204,7 @@ class MenuController
     }
 
     /**
-     * AJAX Handler für das Duplizieren eines Menüeintrags
+     * AJAX handler for duplicating a menu item
      */
     public static function handleDuplicateMenuItem()
     {
@@ -223,61 +219,15 @@ class MenuController
             wp_send_json_error(['message' => __('Invalid menu item ID.', 'daily-menu-manager')]);
         }
 
-        global $wpdb;
+        $new_item_id = self::$menu_service->duplicateMenuItem($item_id);
 
-        // Get the original item
-        $original_item = $wpdb->get_row($wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}menu_items WHERE id = %d",
-            $item_id
-        ));
-
-        if (! $original_item) {
-            wp_send_json_error(['message' => __('Menu item not found.', 'daily-menu-manager')]);
+        if (is_wp_error($new_item_id)) {
+            wp_send_json_error(['message' => $new_item_id->get_error_message()]);
         }
-
-        // Create duplicate item data
-        $data = [
-            'menu_id' => $original_item->menu_id,
-            'item_type' => $original_item->item_type,
-            'title' => $original_item->title . ' ' . __('(Copy)', 'daily-menu-manager'),
-            'description' => $original_item->description,
-            'price' => $original_item->price,
-            'available_quantity' => $original_item->available_quantity,
-            'properties' => $original_item->properties,
-            'allergens' => $original_item->allergens,
-            'sort_order' => $original_item->sort_order + 1,
-        ];
-
-        // Insert the duplicate
-        $inserted = $wpdb->insert(
-            $wpdb->prefix . 'menu_items',
-            $data,
-            ['%d', '%s', '%s', '%s', '%f', '%d', '%s', '%s', '%d']
-        );
-
-        if ($inserted === false) {
-            wp_send_json_error(['message' => __('Error duplicating menu item.', 'daily-menu-manager')]);
-        }
-
-        $new_item_id = $wpdb->insert_id;
-
-        // Update sort order for items after the new one
-        $wpdb->query($wpdb->prepare(
-            "UPDATE {$wpdb->prefix}menu_items 
-            SET sort_order = sort_order + 1 
-            WHERE menu_id = %d 
-            AND id != %d 
-            AND sort_order >= %d",
-            $original_item->menu_id,
-            $new_item_id,
-            $data['sort_order']
-        ));
 
         // Get the new item for rendering
-        $new_item = $wpdb->get_row($wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}menu_items WHERE id = %d",
-            $new_item_id
-        ));
+        $menu_item_repository = new MenuItemRepository();
+        $new_item = $menu_item_repository->findById($new_item_id);
 
         ob_start();
         self::renderMenuItem($new_item);
@@ -290,7 +240,7 @@ class MenuController
     }
 
     /**
-     * AJAX Handler for getting menu data
+     * AJAX handler for getting menu data
      */
     public static function handleGetMenuData()
     {
@@ -302,67 +252,58 @@ class MenuController
 
         $date = isset($_GET['date']) ? sanitize_text_field($_GET['date']) : current_time('Y-m-d');
 
-        $menu = new \DailyMenuManager\Models\Menu();
-        $current_menu = $menu->getMenuForDate($date);
-        $menu_items = $current_menu ? $menu->getMenuItems($current_menu->id) : [];
+        $current_menu = self::$menu_service->getMenuForDate($date);
+        $menu_items = $current_menu ? $current_menu->getItems() : [];
 
         wp_send_json_success([
-            'menu' => $current_menu,
-            'items' => $menu_items,
+            'menu' => $current_menu ? $current_menu->toArray() : null,
+            'items' => array_map(function ($item) { return $item->toArray(); }, $menu_items),
         ]);
     }
 
-
     /**
-     * AJAX Handler for getting today's menu
+     * AJAX handler for getting today's menu
      */
     public static function handleGetCurrentMenu()
     {
         check_ajax_referer('daily_menu_manager_nonce');
 
-        sleep(2);
+        sleep(2); // Simulating processing time
 
-        $menu = new \DailyMenuManager\Models\Menu();
-        $current_menu = $menu->getMenuForDate(current_time('Y-m-d'));
+        $current_menu = self::$menu_service->getMenuForDate(current_time('Y-m-d'));
 
         if (! $current_menu) {
             // TODO: Be able to enter a custom message
             wp_send_json_error(['message' => __('No menu available for today.', 'daily-menu-manager')]);
         }
 
-        $menu_items = $menu->getMenuItems($current_menu->id);
+        $menu_items = $current_menu->getItems();
 
         wp_send_json_success([
-            'menu' => $current_menu,
-            'items' => $menu_items,
+            'menu' => $current_menu->toArray(),
+            'items' => array_map(function ($item) { return $item->toArray(); }, $menu_items),
         ]);
     }
 
     /**
-    * AJAX Handler zum Abrufen der verfügbaren Mengen
-    */
+     * AJAX handler for getting available quantities
+     */
     public static function getAvailableQuantities()
     {
         check_ajax_referer('daily-menu-manager');
 
         $menu_id = isset($_POST['menu_id']) ? intval($_POST['menu_id']) : 0;
         if (! $menu_id) {
-            wp_send_json_error(['message' => 'Keine Menü-ID angegeben']);
+            wp_send_json_error(['message' => __('No menu ID provided', 'daily-menu-manager')]);
         }
 
-        $menu = new Menu();
-        $items = $menu->getMenuItems($menu_id);
-
-        $quantities = [];
-        foreach ($items as $item) {
-            $quantities[$item->id] = $item->available_quantity;
-        }
+        $quantities = self::$menu_service->getAvailableQuantities($menu_id);
 
         wp_send_json_success(['quantities' => $quantities]);
     }
 
     /**
-     * AJAX Handler for saving menu data
+     * AJAX handler for saving menu data
      */
     public static function handleSaveMenuData()
     {
@@ -377,10 +318,8 @@ class MenuController
             wp_send_json_error(['message' => __('Invalid data received.', 'daily-menu-manager')]);
         }
 
-        $menu = new \DailyMenuManager\Models\Menu();
-
         try {
-            $result = $menu->saveMenu($data);
+            $result = self::saveMenuFromPost($data);
             if (is_wp_error($result)) {
                 wp_send_json_error(['message' => $result->get_error_message()]);
             } else {
@@ -395,249 +334,53 @@ class MenuController
     }
 
     /**
-     * Rendert ein einzelnes Menü-Item im Admin-Bereich
+     * Renders a single menu item in the admin area
+     *
+     * @param MenuItem|null $item The menu item to render
      */
     public static function renderMenuItem($item = null)
     {
-
-        // Hier sollten wir auch die Möglichkeit haben, neue Items zu rendern,
-        // die also noch leer sind.
-
+        // For new items, create an empty item
         if ($item === null) {
-            $item = new \stdClass();
-            $item->id = 0;
-            $item->item_type = '';
-            $item->title = '';
-            $item->description = '';
-            $item->price = 0;
-            $item->available_quantity = 0;
-            $item->properties = [];
-            $item->allergens = '';
-            $item->sort_order = 0;
-            $item->image_id = null;
-            $item->image_url = null;
+            $item = new MenuItem([
+                'id' => 0,
+                'item_type' => '',
+                'title' => '',
+                'description' => '',
+                'price' => 0,
+                'available_quantity' => 0,
+                'properties' => [],
+                'allergens' => '',
+                'sort_order' => 0,
+                'image_id' => null,
+                'image_url' => null,
+            ]);
         }
 
-        // Hole die Item-Konfiguration basierend auf dem Typ
+        // Get the item configuration based on the type
         $item_config = self::getMenuTypeConfig($item->item_type);
         $is_collapsed = isset($_COOKIE['menu_item_' . $item->id . '_collapsed']) && $_COOKIE['menu_item_' . $item->id . '_collapsed'] === 'true';
         $collapse_class = $is_collapsed ? 'collapsed' : '';
-        ?>
-        <div class="menu-item <?php echo esc_attr($collapse_class); ?>" 
-             data-type="<?php echo esc_attr($item->item_type); ?>"
-             data-id="<?php echo esc_attr($item->id); ?>">
-            
-            <!-- Header Section -->
-            <div class="menu-item-header">
-                <!-- Left Controls -->
-                <div class="menu-item-controls">
-                    <span class="move-handle dashicons dashicons-move" 
-                          title="<?php esc_attr_e('Drag to reorder', 'daily-menu-manager'); ?>"
-                          aria-label="<?php esc_attr_e('Drag handle', 'daily-menu-manager'); ?>">
-                    </span>
-                    <button type="button" 
-                            class="toggle-menu-item dashicons <?php echo $is_collapsed ? 'dashicons-arrow-right' : 'dashicons-arrow-down'; ?>"
-                            aria-expanded="<?php echo $is_collapsed ? 'false' : 'true'; ?>"
-                            aria-label="<?php esc_attr_e('Toggle menu item', 'daily-menu-manager'); ?>"
-                            title="<?php esc_attr_e('Click to expand/collapse', 'daily-menu-manager'); ?>">
-                    </button>
-                </div>
-    
-                <!-- Title Area -->
-                <div class="menu-item-title-area">
-                    <span class="menu-item-type-label"><?php esc_attr_e($item_config['label'], 'daily-menu-manager') . ":"; ?></span>
-                    <span class="menu-item-title-preview"><?php esc_attr_e($item->title ?: '(No title)', 'daily-menu-manager'); ?></span>
-                </div>
-    
-                <!-- Right Controls -->
-                <div class="menu-item-actions">
-                    <button type="button" 
-                            class="copy-menu-item dashicons dashicons-move"
-                            title="<?php esc_attr_e('Copy this menu item to another day', 'daily-menu-manager'); ?>"
-                            aria-label="<?php esc_attr_e('Copy this menu item to another day', 'daily-menu-manager'); ?>">
-                    </button>  
-                    <button type="button" 
-                            class="duplicate-menu-item dashicons dashicons-admin-page"
-                            title="<?php esc_attr_e('Duplicate item', 'daily-menu-manager'); ?>"
-                            aria-label="<?php esc_attr_e('Duplicate this menu item', 'daily-menu-manager'); ?>">
-                    </button>
-                    <button type="button" 
-                            class="remove-menu-item dashicons dashicons-trash"
-                            title="<?php esc_attr_e('Delete item', 'daily-menu-manager'); ?>"
-                            aria-label="<?php esc_attr_e('Delete this menu item', 'daily-menu-manager'); ?>">
-                    </button>
-                </div>
-            </div>
-    
-            <!-- Content Section -->
-            <div class="menu-item-content" <?php echo $is_collapsed ? 'style="display: none;"' : ''; ?>>
-                <!-- Hidden Fields -->
-                <input type="hidden" name="menu_items[<?php echo esc_attr($item->id); ?>][id]" 
-                       value="<?php echo esc_attr($item->id); ?>">
-                <input type="hidden" name="menu_items[<?php echo esc_attr($item->id); ?>][type]" 
-                       value="<?php echo esc_attr($item->item_type); ?>">
-                <input type="hidden" name="menu_items[<?php echo esc_attr($item->id); ?>][sort_order]" 
-                       value="<?php echo esc_attr($item->sort_order); ?>" 
-                       class="sort-order">
-    
-                <!-- Title Field -->
-                <div class="menu-item-field">
-                    <label for="title_<?php echo esc_attr($item->id); ?>">
-                        <?php _e('Title', 'daily-menu-manager'); ?>
-                        <span class="required">*</span>
-                    </label>
-                    <input type="text" 
-                           id="title_<?php echo esc_attr($item->id); ?>"
-                           name="menu_items[<?php echo esc_attr($item->id); ?>][title]"
-                           value="<?php echo esc_attr($item->title); ?>"
-                           required
-                           class="menu-item-title-input"
-                           data-original-value="<?php echo esc_attr($item->title); ?>">
-                    <span class="field-description">
-                        <?php _e('Enter the name of the dish or menu item', 'daily-menu-manager'); ?>
-                    </span>
-                </div>
-    
-                <!-- Description Field -->
-                <div class="menu-item-field">
-                    <label for="description_<?php echo esc_attr($item->id); ?>">
-                        <?php _e('Description', 'daily-menu-manager'); ?>
-                    </label>
-                    <textarea id="description_<?php echo esc_attr($item->id); ?>"
-                              name="menu_items[<?php echo esc_attr($item->id); ?>][description]"
-                              class="menu-item-description"
-                              rows="3"
-                              data-original-value="<?php echo esc_attr($item->description); ?>"><?php
-                        echo esc_textarea($item->description);
-        ?></textarea>
-                    <span class="field-description">
-                        <?php _e('Optional: Add ingredients or other details about this item', 'daily-menu-manager'); ?>
-                    </span>
-                </div>
-    
-                <!-- Price Field -->
-                <div class="menu-item-field">
-                    <label for="price_<?php echo esc_attr($item->id); ?>">
-                        <?php _e('Price', 'daily-menu-manager'); ?>
-                        <span class="required">*</span>
-                    </label>
-                    <div class="price-input-wrapper">
-                        <span class="currency-symbol"><?php echo esc_html(SettingsController::getCurrencySymbol()); ?></span>
-                        <!-- Todo: Format price in selected format -->
-                        <input type="number" 
-                            id="price_<?php echo esc_attr($item->id); ?>"
-                            name="menu_items[<?php echo esc_attr($item->id); ?>][price]"
-                            value="<?php echo esc_attr(number_format($item->price, 2, '.', '')); ?>"
-                            step="0.01"
-                            min="0"
-                            required
-                            class="menu-item-price">
-                    </div>
-                    <span class="field-description">
-                        <?php _e('Enter the price for this item (e.g., 12,50)', 'daily-menu-manager'); ?>
-                    </span>
-                </div>
 
-                <!-- Available Quantity Field -->
-                <div class="menu-item-field">
-                    <label for="available_quantity_<?php echo esc_attr($item->id); ?>">
-                        <?php _e('Available Quantity', 'daily-menu-manager'); ?>
-                    </label>
-                    <input type="number" 
-                        id="available_quantity_<?php echo esc_attr($item->id); ?>"
-                        name="menu_items[<?php echo esc_attr($item->id); ?>][available_quantity]"
-                        value="<?php echo esc_attr($item->available_quantity); ?>"
-                        min="0"
-                        class="menu-item-available-quantity">
-                    <span class="field-description">
-                        <?php _e('Enter the available quantity for this item', 'daily-menu-manager'); ?>
-                    </span>
-                </div>
-    
-                <!-- Additional Options Field -->
-                <div class="menu-item-field">
-                    <label for="options_<?php echo esc_attr($item->id); ?>">
-                        <?php _e('Additional Options', 'daily-menu-manager'); ?>
-                        <a href="<?php echo esc_url(admin_url('admin.php?page=daily-menu-manager-settings')); ?>"><?php _e('Manage additional options', 'daily-menu-manager'); ?></a>
-                    </label>
-                    <div class="options-grid">
-                    <?php
-
-            $allProps = SettingsController::getMenuProperties() ?? [];
-
-        //$props = json_decode($item->properties ?? '{}', true) ?? [];
-        $props = $item->properties ?? [];
-        foreach ($allProps as $key => $prop): ?>
-                        <label class="checkbox-label">
-                            <input type="checkbox" 
-                                   name="menu_items[<?php echo esc_attr($item->id); ?>][properties][<?php echo $prop; ?>]"
-                                   <?php checked(isset($props[$prop])); ?>>
-                            <?php echo $prop; ?>
-                        </label>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-    
-                <!-- Allergen Information Field -->
-                <div class="menu-item-field">
-                    <label for="allergens_<?php echo esc_attr($item->id); ?>">
-                        <?php _e('Allergen Information', 'daily-menu-manager'); ?>
-                    </label>
-                    <textarea id="allergens_<?php echo esc_attr($item->id); ?>"
-                              name="menu_items[<?php echo esc_attr($item->id); ?>][allergens]"
-                              class="menu-item-allergens"
-                              rows="2"><?php
-        echo esc_textarea(isset($item->allergens) ? $item->allergens : '');
-        ?></textarea>
-                    <span class="field-description">
-                        <?php _e('List any allergens present in this dish', 'daily-menu-manager'); ?>
-                    </span>
-                </div>
-    
-                <!-- Advanced Settings (Initially Hidden) -->
-                <div class="advanced-settings" style="display: none;">
-                    <button type="button" class="toggle-advanced-settings">
-                        <?php _e('Advanced Settings', 'daily-menu-manager'); ?>
-                    </button>
-                    <div class="advanced-settings-content">
-                        <!-- Availability Times -->
-                        <div class="menu-item-field">
-                            <label>
-                                <?php _e('Availability Times', 'daily-menu-manager'); ?>
-                            </label>
-                            <div class="time-range-inputs">
-                                <input type="time" 
-                                       name="menu_items[<?php echo esc_attr($item->id); ?>][available_from]"
-                                       value="<?php echo esc_attr(isset($item->available_from) ? $item->available_from : ''); ?>">
-                                <span>-</span>
-                                <input type="time" 
-                                       name="menu_items[<?php echo esc_attr($item->id); ?>][available_until]"
-                                       value="<?php echo esc_attr(isset($item->available_until) ? $item->available_until : ''); ?>">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <?php
+        require DMM_PLUGIN_DIR . 'includes/Views/menu-item-template.php';
     }
 
     /**
-     * Holt die Konfiguration für einen bestimmten Menütyp
+     * Gets the configuration for a specific menu type
      *
-     * @param string $type Der Menütyp (z.B. 'appetizer', 'main_course', 'dessert')
-     * @return array Die Konfiguration für den Menütyp
+     * @param string $type The menu type (e.g. 'appetizer', 'main_course', 'dessert')
+     * @return array The configuration for the menu type
      */
     private static function getMenuTypeConfig($type)
     {
-        $menu_types = SettingsController::getMenuTypes();
+        $menu_types = \DailyMenuManager\Controller\Admin\SettingsController::getMenuTypes();
 
-        // Wenn der Typ existiert, gib seine Konfiguration zurück
+        // If the type exists, return its configuration
         if (isset($menu_types[$type])) {
             return $menu_types[$type];
         }
 
-        // Fallback für unbekannte Typen
+        // Fallback for unknown types
         return [
             'label' => ucfirst(str_replace('_', ' ', $type)),
             'plural' => ucfirst(str_replace('_', ' ', $type)),

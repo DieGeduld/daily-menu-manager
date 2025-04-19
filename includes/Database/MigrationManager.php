@@ -72,7 +72,7 @@ class MigrationManager
             KEY status (status)
         ) $charsetCollate;";
 
-        if (!function_exists('dbDelta')) {
+        if (! function_exists('dbDelta')) {
             require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         }
         dbDelta($sql);

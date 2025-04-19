@@ -2,8 +2,8 @@
 
 namespace DailyMenuManager\Controller\Admin;
 
-use DailyMenuManager\Models\Menu;
-use DailyMenuManager\Models\Order;
+use DailyMenuManager\Model\Menu;
+use DailyMenuManager\Model\Order;
 
 class OrderStatistics
 {
@@ -55,7 +55,7 @@ class OrderController
      */
     public static function displayOrdersPage()
     {
-        $order_model = new \DailyMenuManager\Models\Order();
+        $order_model = new Order();
 
         // Filter-Logik
         $filters = [
@@ -166,7 +166,7 @@ class OrderController
             wp_send_json_error(['message' => __('No dishes selected.', 'daily-menu-manager')]);
         }
 
-        $order = new \DailyMenuManager\Models\Order();
+        $order = new Order();
         $result = $order->createOrder($_POST);
 
         if (is_wp_error($result)) {

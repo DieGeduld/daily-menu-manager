@@ -3,7 +3,7 @@
 namespace DailyMenuManager;
 
 use DailyMenuManager\Controller\Admin\SettingsController;
-use DailyMenuManager\Models\Settings;
+use DailyMenuManager\Model\Settings;
 
 class Installer
 {

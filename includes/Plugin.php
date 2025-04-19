@@ -8,9 +8,9 @@ use DailyMenuManager\Controller\Admin\SettingsController;
 use DailyMenuManager\Controller\Common\AjaxController;
 use DailyMenuManager\Controller\Common\AssetController;
 use DailyMenuManager\Controller\Frontend\ShortcodeController;
-use DailyMenuManager\Models\Menu;
-use DailyMenuManager\Models\Order;
-use DailyMenuManager\Models\Settings;
+use DailyMenuManager\Model\Menu;
+use DailyMenuManager\Model\Order;
+use DailyMenuManager\Model\Settings;
 
 class Plugin
 {

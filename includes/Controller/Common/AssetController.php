@@ -3,7 +3,7 @@
 namespace DailyMenuManager\Controller\Common;
 
 use DailyMenuManager\Controller\Admin\SettingsController;
-use DailyMenuManager\Models\Menu;
+use DailyMenuManager\Model\Menu;
 
 class AssetController
 {

@@ -5,7 +5,7 @@ namespace DailyMenuManager\Controller\Admin;
 //TODO: To Common?
 
 use DailyMenuManager\Helper\StringUtils;
-use DailyMenuManager\Models\Settings;
+use DailyMenuManager\Model\Settings;
 
 class SettingsController
 {

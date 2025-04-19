@@ -4,7 +4,7 @@ namespace DailyMenuManager\Tests\Admin;
 
 use Brain\Monkey\Functions;
 use DailyMenuManager\Controller\Admin\SettingsController;
-use DailyMenuManager\Models\Settings;
+use DailyMenuManager\Model\Settings;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 

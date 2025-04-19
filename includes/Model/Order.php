@@ -1,6 +1,6 @@
 <?php
 
-namespace DailyMenuManager\Models;
+namespace DailyMenuManager\Model;
 
 class Order
 {
