@@ -68,8 +68,6 @@ class ShortcodeController {
 
         wp_enqueue_script_module('daily-menu-frontend-module');
 
-        // AJAX URL und Nonce für JavaScript verfügbar machen
-        // wp_localize_script() geht nicht, da wir Module verwenden
         add_action('wp_head', function () {
             ?>
             <script>

@@ -13,13 +13,14 @@ class AjaxController {
     }
 
     public static function registerPublicAjaxHandlers(): void {
+        // Frontend AJAX Handlers (für alle Benutzer)
         add_action('wp_ajax_nopriv_submit_order', [OrderController::class, 'handleOrder']);
         add_action('wp_ajax_nopriv_get_available_quantities', [MenuController::class, 'getAvailableQuantities']);        
-
+        add_action('wp_ajax_nopriv_get_current_menu', [MenuController::class, 'handleGetCurrentMenu']);
+        
+        // Frontend AJAX Handlers (für eingeloggte Benutzer)
         add_action('wp_ajax_submit_order', [OrderController::class, 'handleOrder']);
         add_action('wp_ajax_get_available_quantities', [MenuController::class, 'getAvailableQuantities']);
-
-        add_action('wp_ajax_nopriv_get_current_menu', [MenuController::class, 'handleGetCurrentMenu']);
         add_action('wp_ajax_get_current_menu', [MenuController::class, 'handleGetCurrentMenu']);
     }
 
