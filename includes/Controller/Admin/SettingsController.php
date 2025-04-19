@@ -1,5 +1,6 @@
 <?php
 namespace DailyMenuManager\Controller\Admin;
+//TODO: To Common?
 
 use DailyMenuManager\Models\Settings;
 use DailyMenuManager\Helper\StringUtils;
@@ -682,4 +683,27 @@ class SettingsController {
         return $date_format;
     }
 
+    /**
+     * Gets available pickup times based on settings
+     */
+    public static function getAvailablePickupTimes(): array {
+        $settings = Settings::getInstance();
+
+        //TODO: set default values in the database if not exists
+        $order_times = $settings->get('order_times', [
+            'start_time' => '11:00',
+            'end_time' => '16:00',
+            'interval' => 30
+        ]);
+
+        $start = strtotime($order_times['start_time']);
+        $end = strtotime($order_times['end_time']);
+        $interval = intval($order_times['interval']) * 60; // Convert minutes to seconds
+        
+        $times = [];
+        for ($time = $start; $time <= $end; $time += $interval) {
+            $times[] = date('H:i', $time);
+        }
+        return $times;
+    }
 }

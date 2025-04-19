@@ -13,7 +13,6 @@ class MenuController {
         }
         
         add_action('admin_menu', [self::class, 'addAdminMenu']);
-        add_action('admin_enqueue_scripts', [self::class, 'enqueueAdminScripts']);
 
     }
 
@@ -29,143 +28,6 @@ class MenuController {
             [self::class, 'displayMenuPage'],
             'dashicons-food',
             6
-        );
-    }
-
-    /**
-     * Lädt Admin Assets
-     */
-    public static function enqueueAdminScripts($hook) {
-        // TODO: Check
-        if ('daily-menu_page_daily-menu-orders' !== $hook && 'toplevel_page_daily-menu-manager' !== $hook && "tagesmenue_page_daily-menu-manager-settings" != $hook) {
-            return;
-        }
-    
-        // jQuery UI Components
-        wp_enqueue_script('jquery-ui-core');
-        wp_enqueue_script('jquery-ui-sortable');
-        wp_enqueue_script('jquery-ui-dialog');
-        wp_enqueue_script('jquery-ui-tabs');
-        
-        // jQuery UI Styles
-        wp_enqueue_style(
-            'jquery-ui-style',
-            '//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css'
-        );
-        
-        wp_enqueue_style(
-            'jquery-ui-styles',
-            'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css',
-            [],
-            '1.12.1'
-        );
-
-        // Plugin Admin Scripts
-        wp_enqueue_script(
-            'daily-menu-admin',
-            DMM_PLUGIN_URL . '/assets/js/admin.js', //TODO: Longrun: dist/admin.min.js
-            ['jquery', 'jquery-ui-core', 'jquery-ui-sortable', 'jquery-ui-dialog', 'jquery-ui-tabs'],
-            DMM_VERSION,
-            true
-        );
-
-        // Notyf CSS
-        wp_enqueue_style(
-            'notyf',
-            'https://cdn.jsdelivr.net/npm/notyf@3.10.0/notyf.min.css',
-            [],
-            '3.10.0'
-        );
-
-        // SweetModal CSS
-        wp_enqueue_style(
-            'sweetalert2',
-            'https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.css',
-            [],
-            '11.4.10'
-        );
-        
-        // SweetModal JS
-        wp_enqueue_script(
-            'sweetalert2',
-            'https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.js',
-            [],
-            '11.4.10',
-            true
-        );
-
-        // Notyf JS
-        wp_enqueue_script(
-            'notyf',
-            'https://cdn.jsdelivr.net/npm/notyf@3.10.0/notyf.min.js',
-            [],
-            '3.10.0',
-            true
-        );
-    
-        // Admin Styles
-        wp_enqueue_style(
-            'daily-menu-admin-style',
-            DMM_PLUGIN_URL . 'dist/admin.css', //TODO: min
-            [],
-            DMM_VERSION
-        );
-
-        // Flatpickr CSS
-        wp_enqueue_style(
-            'flatpickr',
-            'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css',
-            [],
-            '4.6.13'
-        );
-
-        
-        // Flatpickr Light Theme
-        // wp_enqueue_style(
-        //     'flatpickr-light',
-        //     'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/themes/light.css',
-        //     [],
-        //     '4.6.13'
-        // );
-        
-        // Flatpickr JS
-        wp_enqueue_script(
-            'flatpickr',
-            'https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js',
-            [],
-            '4.6.13',
-            true
-        );
-    
-        // Lokalisierung - WICHTIG: Muss nach dem Enqueue des Scripts erfolgen
-        wp_localize_script(
-            'daily-menu-admin',
-            'dailyMenuAdmin', [
-                'ajaxurl' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('daily_menu_admin_nonce'),
-                'messages' => [
-                    'copySuccess' => __('Menu was copied successfully!', 'daily-menu-manager'),
-                    'copyError' => __('Error copying menu.', 'daily-menu-manager'),
-                    'saveSuccess' => __('Menu was saved!', 'daily-menu-manager'),
-                    'saveError' => __('Error saving menu.', 'daily-menu-manager'),
-                    'deleteConfirm' => __('Are you sure you want to delete this menu item?', 'daily-menu-manager'),
-                    'duplicateSuccess' => __('Menu item was duplicated successfully!', 'daily-menu-manager'),
-                    'duplicateError' => __('Error duplicating menu item.', 'daily-menu-manager'),
-                    'selectDate' => __('Please select a date.', 'daily-menu-manager'),
-                    'noItems' => __('Please add at least one menu item.', 'daily-menu-manager'),
-                    'requiredFields' => __('Please fill in all required fields.', 'daily-menu-manager'),
-                    'copy' => __('Copy', 'daily-menu-manager'),
-                    'cancel' => __('Cancel', 'daily-menu-manager')
-                ],
-                'menus' => Menu::getMenuDates(),
-                'timeFormat' => SettingsController::getTimeFormat(),
-                'dateFormat' => SettingsController::getDateFormat(),
-                'priceFormat' => SettingsController::getPriceFormat(),
-                'currencySymbol' => SettingsController::getCurrencySymbol(),
-                'locale' => get_locale(),
-                'menuTypes' => SettingsController::getMenuTypes(true),
-                'orderTimes' => SettingsController::getOrderTimes(),
-            ]
         );
     }
 
@@ -447,6 +309,8 @@ class MenuController {
      */
     public static function handleGetCurrentMenu() {
         check_ajax_referer('daily_menu_manager_nonce');
+
+        sleep(2);
 
         $menu = new \DailyMenuManager\Models\Menu();
         $current_menu = $menu->getMenuForDate(current_time('Y-m-d'));

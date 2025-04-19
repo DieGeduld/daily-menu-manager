@@ -6,6 +6,7 @@ use DailyMenuManager\Controller\Admin\MenuController;
 use DailyMenuManager\Controller\Admin\OrderController;
 use DailyMenuManager\Controller\Admin\SettingsController;
 use DailyMenuManager\Controller\Frontend\ShortcodeController;
+use DailyMenuManager\Controller\Common\AssetController;
 use DailyMenuManager\Models\Menu;
 use DailyMenuManager\Models\Order;
 use DailyMenuManager\Models\Settings;
@@ -40,20 +41,21 @@ class Plugin {
         Settings::init();
         // Initialize Admin and Frontend components
         AjaxController::init();
-        
-        // Initialize Components based on context
-        if (is_admin()) {
-            $this->initAdminComponents();
-        }
-        $this->initFrontendComponents();
-        
-        
-    }
-
-    private function initAdminComponents(): void {
+        AssetController::init();
         MenuController::init();
         OrderController::init();
         SettingsController::init();
+        
+        // Initialize Components based on context
+        if (is_admin()) {
+            //TODO: Initialize admin-specific components
+        }
+        $this->initAdminComponents();
+        $this->initFrontendComponents();
+    }
+
+    private function initAdminComponents(): void {
+
     }
 
     private function initFrontendComponents(): void {

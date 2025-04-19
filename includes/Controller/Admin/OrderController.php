@@ -27,7 +27,6 @@ class OrderController {
         }
         
         add_action('admin_menu', [self::class, 'addAdminMenu']);
-        add_action('admin_enqueue_scripts', [self::class, 'enqueueAdminScripts']);
         
     }
 
@@ -43,40 +42,6 @@ class OrderController {
             'daily-menu-orders',
             [self::class, 'displayOrdersPage']
         );
-    }
-
-    /**
-     * Lädt die benötigten Admin-Scripts
-     */
-    public static function enqueueAdminScripts($hook) {
-        if ('daily-menu_page_daily-menu-orders' !== $hook) {
-            return;
-        }
-
-        wp_enqueue_style(
-            'daily-menu-admin-orders',
-            DMM_PLUGIN_URL . 'dist/admin-orders.css',
-            [],
-            DMM_VERSION
-        );
-
-        wp_enqueue_script(
-            'daily-menu-admin-orders',
-            DMM_PLUGIN_URL . 'assets/js/admin-orders.js',
-            ['jquery'],
-            DMM_VERSION,
-            true
-        );
-
-        wp_localize_script('daily-menu-admin-orders', 'dailyMenuOrders', [
-            'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('daily_menu_orders_nonce'),
-            'messages' => [
-                'deleteConfirm' => __('Are you sure you want to delete this order?', 'daily-menu-manager'),
-                'deleteSuccess' => __('Order has been deleted.', 'daily-menu-manager'),
-                'deleteError' => __('Error deleting the order.', 'daily-menu-manager')
-            ]
-        ]);
     }
 
     /**

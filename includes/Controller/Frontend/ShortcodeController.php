@@ -7,108 +7,24 @@ use DailyMenuManager\Models\Menu;
 
 class ShortcodeController {
     private static $instance = null;
-    
-    public static function init() {
+
+    private function __construct() {
+        // Singleton Pattern: Verhindert die Instanziierung von außen
+    }
+    private function __clone() {
+        // Verhindert das Klonen der Instanz
+    }
+
+    private static function getInstance() {
         if (self::$instance === null) {
             self::$instance = new self();
         }
-        
-        add_shortcode('daily_menu', [self::class, 'renderMenu']);
-        add_action('wp_enqueue_scripts', [self::class, 'enqueueAssets']);
+        return self::$instance;
     }
-
-    /**
-     * Lädt die benötigten CSS und JavaScript Dateien
-     */
-    public static function enqueueAssets() {
-        // CSS laden
-        wp_enqueue_style(
-            'daily-menu-frontend',
-            DMM_PLUGIN_URL . 'dist/frontend.css',
-            [],
-            DMM_VERSION
-        );
-
-        // Bootstrap CSS (falls benötigt)
-        wp_enqueue_style(
-            'bootstrap-css',
-            'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
-            array(),
-            '5.3.0'
-        );
     
-        // SweetAlert2 CSS
-        wp_enqueue_style(
-            'sweetalert2',
-            'https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.10.5/sweetalert2.min.css',
-            [],
-            '11.10.5'
-        );
-    
-        // SweetAlert2 JS
-        wp_register_script(
-            'sweetalert2',
-            'https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.10.5/sweetalert2.all.min.js',
-            [],
-            '11.10.5',
-            true
-        );
-        wp_enqueue_script('sweetalert2');
-    
-        // Vue.js Frontend App
-        wp_register_script_module(
-            'daily-menu-frontend-module',
-            DMM_PLUGIN_URL . 'dist/frontend.js',
-            [],
-            DMM_VERSION,
-            true
-        );
-
-        wp_script_add_data('daily-menu-frontend', 'type', 'module');
-
-        wp_enqueue_script_module('daily-menu-frontend-module');
-
-        add_action('wp_head', function () {
-            ?>
-            <script>
-                window.dailyMenuAjax = <?php echo json_encode([
-                    'ajaxurl' => admin_url('admin-ajax.php'),
-                    'nonce' => wp_create_nonce('daily_menu_manager_nonce'),
-                    'messages' => [
-                        'orderSuccess' => __('Your order has been successfully placed!', 'daily-menu-manager'),
-                        'orderError' => __('There was an error placing your order. Please try again.', 'daily-menu-manager'),
-                        'emptyOrder' => __('Please select at least one dish.', 'daily-menu-manager'),
-                        'requiredFields' => __('Please fill out all required fields.', 'daily-menu-manager'),
-                    ],
-                    'timeFormat' => SettingsController::getTimeFormat(),
-                    'dateFormat' => SettingsController::getDateFormat(),
-                    'priceFormat' => SettingsController::getPriceFormat(),
-                    'currencySymbol' => SettingsController::getCurrencySymbol(),
-                    'pickupTimes' => ShortcodeController::getAvailablePickupTimes(),
-                    'translations' => [
-                        'notes' => __('Notes for this item', 'daily-menu-manager'),
-                        'available' => __('available', 'daily-menu-manager'),
-                        'orderTotal' => __('Order Total', 'daily-menu-manager'),
-                        'yourData' => __('Your Information', 'daily-menu-manager'),
-                        'submit' => __('Place Order', 'daily-menu-manager'),
-                        'submitting' => __('Submitting...', 'daily-menu-manager'),
-                        'name' => __('Name', 'daily-menu-manager'),
-                        'phone' => __('Phone', 'daily-menu-manager'),
-                        'pickupTime' => __('Pickup Time', 'daily-menu-manager'),
-                        'selectTime' => __('Select time', 'daily-menu-manager'),
-                        'additionalNotes' => __('Additional Notes', 'daily-menu-manager'),
-                        'orderSummary' => __('Order Summary', 'daily-menu-manager'),
-                        'noItems' => __('No items selected', 'daily-menu-manager'),
-                        'loading' => __('Loading menu...', 'daily-menu-manager'),
-                        'close' => __('Close', 'daily-menu-manager'),
-                        'orderNumber' => __('Order Number', 'daily-menu-manager'),
-                        'pickupInstructions' => __('Please mention this number when picking up.', 'daily-menu-manager')
-                    ]
-                ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
-            </script>
-            <?php
-        });
-        
+    public static function init() {
+        self::getInstance();
+        add_shortcode('daily_menu', [self::class, 'renderMenu']);
     }
 
     /**
@@ -121,7 +37,13 @@ class ShortcodeController {
         // Shortcode Attribute mit Standardwerten
         $atts = shortcode_atts([
             'date' => current_time('Y-m-d'),
-            'title' => __('Today\'s Menu', 'daily-menu-manager')
+            'title' => __('Today\'s Menu', 'daily-menu-manager'),
+            'show_prices' => 'yes',
+            //TOOD: Implentieren
+            'show_descriptions' => 'yes',
+            'layout' => 'grid',
+            'items_per_page' => 0,
+            'order_form_position' => 'right'
         ], $atts, 'daily_menu');
 
         // Hole das Menü
@@ -309,27 +231,5 @@ class ShortcodeController {
     return ob_get_clean();
 
         */
-    }
-
-    /**
-     * Gets available pickup times based on settings
-     */
-    private static function getAvailablePickupTimes(): array {
-        $settings = Settings::getInstance();
-        $order_times = $settings->get('order_times', [
-            'start_time' => '11:00',
-            'end_time' => '16:00',
-            'interval' => 30
-        ]);
-
-        $start = strtotime($order_times['start_time']);
-        $end = strtotime($order_times['end_time']);
-        $interval = intval($order_times['interval']) * 60; // Convert minutes to seconds
-        
-        $times = [];
-        for ($time = $start; $time <= $end; $time += $interval) {
-            $times[] = date('H:i', $time);
-        }
-        return $times;
     }
 }
