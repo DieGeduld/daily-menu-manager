@@ -95,9 +95,7 @@ $font-family_1: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-seri
 			margin: 0;
 		}
 	}
-	input[type=number] {
-		-moz-appearance: textfield;
-	}
+
 	.item-notes {
 		grid-column: 1 / -1;
 		display: grid;
