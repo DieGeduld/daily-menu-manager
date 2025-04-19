@@ -57,8 +57,7 @@ class AssetController
             'daily-menu-frontend-module',
             DMM_PLUGIN_URL . 'dist/frontend.js',
             [],
-            DMM_VERSION,
-            true
+            DMM_VERSION
         );
 
         wp_script_add_data('daily-menu-frontend', 'type', 'module');

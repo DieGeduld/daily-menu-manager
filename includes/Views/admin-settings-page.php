@@ -267,7 +267,7 @@ settings_errors('daily_menu_properties');
                                             data-enable-time=true
                                     type="time" 
                                         name="daily_menu_order_times[end_time]" 
-                                        value="<?php echo esc_attr(DateUtils::convertTimeToFormat($order_times['end_time']), self::getTimeFormat()); ?>" 
+                                        value="<?php echo esc_attr(DateUtils::convertTimeToFormat($order_times['end_time'], self::getTimeFormat())); ?>" 
                                         class="order-time-field-end" />
                                 </div>
                                 <div class="order-time-field order-time-field-interval-container">

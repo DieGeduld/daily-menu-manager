@@ -41,7 +41,9 @@ class V150AddSettingsTable extends Migration
                 UNIQUE KEY setting_key (setting_key)
             ) $charset_collate;";
 
-            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+            if (!function_exists('dbDelta')) {
+                require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+            }
             dbDelta($sql);
 
             // Insert default values

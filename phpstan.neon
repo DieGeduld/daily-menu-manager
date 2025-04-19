@@ -1,0 +1,21 @@
+includes:
+    - vendor/szepeviktor/phpstan-wordpress/extension.neon
+
+parameters:
+  # Optional: WordPress-Level definieren
+  level: 1
+
+  paths:
+    - daily-menu-manager.php
+    - includes
+    - tests
+
+  ignoreErrors:
+    - '#Constant DMM_PLUGIN_DIR not found.#'
+    - '#Variable \$wpdb might not be defined.#'
+    - '#Constant DMM_PLUGIN_URL not found.#'
+    - '#Path in require_once\(\) "./wp-admin/includes/upgrade.php" is not a file or it does not exist.#'
+
+  errorFormat: table
+    
+  editorUrl: 'vscode://file/%%file%%:%%line%%'

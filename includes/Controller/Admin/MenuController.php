@@ -644,35 +644,4 @@ class MenuController
             'enabled' => false,
         ];
     }
-
-}
-
-
-
-// Füge neue Menüeinträge hinzu
-if (isset($menu_data['menu_items'])) {
-    $sort_order = 1;
-    foreach ($menu_data['menu_items'] as $item_data) {
-        $inserted = $wpdb->insert(
-            $wpdb->prefix . 'menu_items',
-            [
-                'menu_id' => $menu_id,
-                'item_type' => sanitize_text_field($item_data['type']),
-                'title' => sanitize_text_field($item_data['title']),
-                'description' => sanitize_textarea_field($item_data['description']),
-                'price' => floatval($item_data['price']),
-                'available_quantity' => intval($item_data['available_quantity']),
-                'properties' => sanitize_text_field($item_data['properties']),
-                'allergens' => sanitize_textarea_field($item_data['allergens']),
-                'sort_order' => $sort_order++,
-            ],
-            ['%d', '%s', '%s', '%s', '%f', '%d', '%s', '%s', '%d']
-        );
-
-        if ($inserted === false) {
-            error_log($wpdb->last_error);
-
-            throw new \Exception('Fehler beim Speichern der Menüeinträge.' . $wpdb->last_error);
-        }
-    }
 }
