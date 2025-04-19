@@ -3,7 +3,6 @@
 namespace DailyMenuManager\Database\migrations;
 
 use DailyMenuManager\Database\Migration;
-use wpdb;
 
 /**
  * Class V110AddGeneralNotes
@@ -39,7 +38,7 @@ class V110AddGeneralNotes extends Migration
         if (empty($column_exists)) {
             $this->wpdb->query("ALTER TABLE $table_name ADD COLUMN $column_name TEXT AFTER notes");
         }
-        
+
         parent::up();
     }
 
@@ -59,7 +58,7 @@ class V110AddGeneralNotes extends Migration
             $column_name
         ));
 
-        if (!empty($column_exists)) {
+        if (! empty($column_exists)) {
             $wpdb->query("ALTER TABLE $table_name DROP COLUMN $column_name");
         }
     }
@@ -96,8 +95,9 @@ class V110AddGeneralNotes extends Migration
     public function getAffectedTables(): array
     {
         global $wpdb;
+
         return [
-            "{$wpdb->prefix}menu_orders"
+            "{$wpdb->prefix}menu_orders",
         ];
     }
 
@@ -108,11 +108,11 @@ class V110AddGeneralNotes extends Migration
     {
         global $wpdb;
         $table_name = $wpdb->prefix . 'menu_orders';
-        
-        if (!$this->tableExists($table_name)) {
+
+        if (! $this->tableExists($table_name)) {
             throw new \RuntimeException("Table '$table_name' does not exist");
         }
-        
+
         return true;
     }
 
@@ -140,8 +140,9 @@ class V110AddGeneralNotes extends Migration
     protected function getRequiredTables(): array
     {
         global $wpdb;
+
         return [
-            "{$wpdb->prefix}menu_orders"
+            "{$wpdb->prefix}menu_orders",
         ];
     }
 }

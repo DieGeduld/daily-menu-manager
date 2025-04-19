@@ -6,7 +6,7 @@ use Exception;
 
 /**
  * Class MigrationManager
- * 
+ *
  * Handles loading and executing migrations. Tracks the current database version,
  * discovers migration files, and executes them in order.
  */
@@ -53,7 +53,7 @@ class MigrationManager
     private function setupMigrationTable()
     {
         global $wpdb;
-        
+
         $tableName = $wpdb->prefix . 'dmm_migration_status';
         $charsetCollate = $wpdb->get_charset_collate();
 
@@ -76,7 +76,8 @@ class MigrationManager
         dbDelta($sql);
     }
 
-    public function hasOpenMigrations():bool {
+    public function hasOpenMigrations(): bool
+    {
         return $this->currentVersion !== '0.0.0' && $this->currentVersion !== DMM_VERSION;
     }
 
@@ -107,8 +108,10 @@ class MigrationManager
         usort($files, function ($a, $b) {
             $versionA = $this->extractVersion(basename($a, '.php'));
             $versionB = $this->extractVersion(basename($b, '.php'));
+
             return version_compare($versionA, $versionB);
         });
+
         return $files;
     }
 
@@ -123,6 +126,7 @@ class MigrationManager
         } elseif (preg_match('/^(\d+\.\d+\.\d+)/', $filename, $matches)) {
             return $matches[1];
         }
+
         return '0.0.0';
     }
 
@@ -132,7 +136,7 @@ class MigrationManager
     private function getMigrationClassName($file)
     {
         $baseName = basename($file, '.php');
-        
+
         // Unterstützt beide Formate
         if (preg_match('/^V(\d+)/', $baseName)) {
             $className = $baseName;
@@ -141,7 +145,7 @@ class MigrationManager
             $className = preg_replace('/^(\d+)\.(\d+)\.(\d+)_/', 'V$1$2$3_', $baseName);
             $className = str_replace('_', '', ucwords($className, '_'));
         }
-        
+
         return 'DailyMenuManager\\Database\\migrations\\' . $className;
     }
 
@@ -155,19 +159,19 @@ class MigrationManager
             return $this->loadedMigrations[$file];
         }
 
-        if (!file_exists($file)) {
+        if (! file_exists($file)) {
             throw new Exception("Migration file not found: $file");
         }
 
         require_once $file;
         $className = $this->getMigrationClassName($file);
 
-        if (!class_exists($className)) {
+        if (! class_exists($className)) {
             throw new Exception("Migration class $className not found in file $file");
         }
 
         $migration = new $className();
-        if (!$migration instanceof Migration) {
+        if (! $migration instanceof Migration) {
             throw new Exception("Class $className must extend Migration");
         }
 
@@ -183,15 +187,17 @@ class MigrationManager
     /**
      * Execute a migration
      */
-    private function executeMigration($file, $manualExecution):bool
+    private function executeMigration($file, $manualExecution): bool
     {
         $migration = $this->getMigrationInstance($file);
 
-        if (!$migration->canAutorun() && !$manualExecution) {
+        if (! $migration->canAutorun() && ! $manualExecution) {
             $migration->logMigration("Autorun is disabled for automatic migration {$migration->getVersion()}");
+
             return false;
         }
         $migration->up();
+
         return true;
     }
 
@@ -200,7 +206,7 @@ class MigrationManager
      */
     private function validateMigrationVersion($version)
     {
-        if (!preg_match('/^\d+\.\d+\.\d+$/', $version)) {
+        if (! preg_match('/^\d+\.\d+\.\d+$/', $version)) {
             throw new Exception("Invalid migration version format: $version");
         }
     }
@@ -229,15 +235,15 @@ class MigrationManager
 
             // Sortiere Migrationen nach Abhängigkeiten
             $sortedVersions = $this->topologicalSort($dependencyGraph);
-            
+
             // Führe Migrationen in sortierter Reihenfolge aus
             foreach ($sortedVersions as $version) {
                 $file = $this->findMigrationFile($version);
-                
+
                 if ($this->shouldRunMigration($version)) {
                     $this->log("Running migration $version");
                     $this->recordMigrationStart($version, $batch);
-                    
+
                     try {
                         if ($this->executeMigration($file, $manualExecution)) {
                             $this->recordMigrationSuccess($version);
@@ -245,11 +251,13 @@ class MigrationManager
                         } else {
                             $this->log("Skipping migration $version - autorun disabled");
                             $this->recordMigrationSkip($version, $batch);
+
                             break;
                         }
                     } catch (\Exception $e) {
                         $this->log($e->getMessage());
                         $this->recordMigrationError($version, $e->getMessage());
+
                         throw $e;
                     }
                 } else {
@@ -263,6 +271,7 @@ class MigrationManager
         } catch (\Exception $e) {
             $wpdb->query('ROLLBACK');
             $this->log("Migration failed, rolling back changes: " . $e->getMessage());
+
             throw $e;
         }
     }
@@ -278,7 +287,7 @@ class MigrationManager
 
         // Für jeden Knoten im Graphen
         foreach ($graph as $node => $edges) {
-            if (!isset($visited[$node])) {
+            if (! isset($visited[$node])) {
                 $this->visit($node, $graph, $visited, $temp, $sorted);
             }
         }
@@ -294,15 +303,15 @@ class MigrationManager
         if (isset($temp[$node])) {
             throw new Exception("Circular dependency detected: $node");
         }
-        if (!isset($visited[$node])) {
+        if (! isset($visited[$node])) {
             $temp[$node] = true;
-            
+
             if (isset($graph[$node])) {
                 foreach ($graph[$node] as $dependency) {
                     $this->visit($dependency, $graph, $visited, $temp, $sorted);
                 }
             }
-            
+
             $visited[$node] = true;
             unset($temp[$node]);
             $sorted[] = $node;
@@ -315,13 +324,13 @@ class MigrationManager
     private function findMigrationFile($version)
     {
         $files = glob($this->migrationsPath . '*.php');
-        
+
         foreach ($files as $file) {
             if ($this->extractVersion(basename($file, '.php')) === $version) {
                 return $file;
             }
         }
-        
+
         throw new Exception("Migration file for version $version not found");
     }
 
@@ -332,7 +341,7 @@ class MigrationManager
             SELECT MAX(batch) 
             FROM {$wpdb->prefix}dmm_migration_status
         ");
-        
+
         return (int)$lastBatch + 1;
     }
 
@@ -344,8 +353,8 @@ class MigrationManager
             "SELECT COUNT(*) FROM {$wpdb->prefix}dmm_migration_status WHERE version = %s",
             $version
         ));
-   
-        if (!$versionExists) {
+
+        if (! $versionExists) {
 
             $wpdb->insert(
                 $wpdb->prefix . 'dmm_migration_status',
@@ -354,7 +363,7 @@ class MigrationManager
                     'batch' => $batch,
                     'status' => 'running',
                     'started_at' => current_time('mysql'),
-                    'is_dry_run' => 0
+                    'is_dry_run' => 0,
                 ]
             );
 
@@ -365,23 +374,23 @@ class MigrationManager
                 [
                     'status' => 'skipped',
                     'error_message' => 'Skipped due to autorun disabled',
-                    'completed_at' => current_time('mysql')
+                    'completed_at' => current_time('mysql'),
                 ],
                 ['version' => $version]
-            );  
+            );
         }
     }
 
     private function recordMigrationSuccess($version)
     {
         global $wpdb;
-        
+
         $wpdb->update(
             $wpdb->prefix . 'dmm_migration_status',
             [
                 'status' => 'completed',
                 'error_message' => null,
-                'completed_at' => current_time('mysql')
+                'completed_at' => current_time('mysql'),
             ],
             ['version' => $version]
         );
@@ -390,13 +399,13 @@ class MigrationManager
     private function recordMigrationError($version, $errorMessage)
     {
         global $wpdb;
-        
+
         $wpdb->update(
             $wpdb->prefix . 'dmm_migration_status',
             [
                 'status' => 'failed',
                 'error_message' => $errorMessage,
-                'completed_at' => current_time('mysql')
+                'completed_at' => current_time('mysql'),
             ],
             ['version' => $version]
         );
@@ -405,13 +414,13 @@ class MigrationManager
     private function recordMigrationSkip($version, $errorMessage)
     {
         global $wpdb;
-        
+
         $wpdb->update(
             $wpdb->prefix . 'dmm_migration_status',
             [
                 'status' => 'skipped',
                 'error_message' => 'Skipped due to autorun disabled',
-                'completed_at' => current_time('mysql')
+                'completed_at' => current_time('mysql'),
             ],
             ['version' => $version]
         );
@@ -420,13 +429,13 @@ class MigrationManager
     private function shouldRunMigration($version)
     {
         global $wpdb;
-        
+
         $status = $wpdb->get_var($wpdb->prepare(
             "SELECT status FROM {$wpdb->prefix}dmm_migration_status WHERE version = %s",
             $version
         ));
 
-        return !$status || $status === 'failed' || $status === 'skipped';   
+        return ! $status || $status === 'failed' || $status === 'skipped';
     }
 
     private function checkDependencies($version)
@@ -434,15 +443,16 @@ class MigrationManager
         // Finde die tatsächliche Migrationsdatei basierend auf der Version
         $files = glob($this->migrationsPath . '*.php');
         $migrationFile = null;
-        
+
         foreach ($files as $file) {
             if ($this->extractVersion(basename($file, '.php')) === $version) {
                 $migrationFile = $file;
+
                 break;
             }
         }
-        
-        if (!$migrationFile) {
+
+        if (! $migrationFile) {
             throw new Exception("Migration file for version $version not found");
         }
 
@@ -450,7 +460,7 @@ class MigrationManager
         $dependencies = $migration->getDependencies();
 
         foreach ($dependencies as $dependency) {
-            if (!$this->isMigrationCompleted($dependency)) {
+            if (! $this->isMigrationCompleted($dependency)) {
                 throw new Exception("Dependency not satisfied: $dependency");
             }
         }
@@ -461,7 +471,7 @@ class MigrationManager
     private function isMigrationCompleted($version)
     {
         global $wpdb;
-        
+
         $status = $wpdb->get_var($wpdb->prepare(
             "SELECT status FROM {$wpdb->prefix}dmm_migration_status WHERE version = %s",
             $version

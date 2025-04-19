@@ -8,7 +8,7 @@
 use DailyMenuManager\Controller\Admin\SettingsController;
 use DailyMenuManager\Helper\DateUtils;
 
-if (!defined('ABSPATH')) {
+if (! defined('ABSPATH')) {
     exit;
 }
 
@@ -80,9 +80,9 @@ settings_errors('daily_menu_properties');
                             <select name="daily_menu_price_format" class="regular-text">
                                 <?php foreach ($available_price_formats as $format_key => $format_name) : ?>
                                     <option value="<?php echo esc_attr($format_key); ?>" <?php selected($price_format, $format_key); ?>>
-                                        <?php 
-                                            echo esc_html($format_name); 
-                                        ?>
+                                        <?php
+                                            echo esc_html($format_name);
+                                    ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
@@ -117,7 +117,7 @@ settings_errors('daily_menu_properties');
                         <th scope="row"><?php _e('Menu properties', 'daily-menu-manager'); ?></th>
                         <td>
                             <div id="menu-properties-container">
-                                <?php if (!empty($properties)) : ?>
+                                <?php if (! empty($properties)) : ?>
                                     <?php foreach ($properties as $index => $property) : ?>
                                         <div class="property-row">
                                             <input type="text" 
@@ -150,7 +150,7 @@ settings_errors('daily_menu_properties');
                         <th scope="row"><?php _e('Menu types', 'daily-menu-manager'); ?></th>
                         <td>
                             <div id="menu-types-container">
-                                <?php if (!empty($menu_types)) : ?>
+                                <?php if (! empty($menu_types)) : ?>
                                     <?php foreach ($menu_types as $type_key => $type_data) : ?>
                                         <div class="menu-type-row">
                                             <input type="text" 
@@ -210,7 +210,7 @@ settings_errors('daily_menu_properties');
                         <th scope="row"><?php _e('Consumption types', 'daily-menu-manager'); ?></th>
                         <td>
                             <div id="consumption-types-container">
-                                <?php if (!empty($consumption_types)) : ?>
+                                <?php if (! empty($consumption_types)) : ?>
                                     <?php foreach ($consumption_types as $index => $type) : ?>
                                         <div class="consumption-type-row">
                                             <input type="text" 

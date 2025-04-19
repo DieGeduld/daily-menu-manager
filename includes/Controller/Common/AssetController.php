@@ -1,11 +1,14 @@
 <?php
+
 namespace DailyMenuManager\Controller\Common;
-use DailyMenuManager\Models\Menu;
 
 use DailyMenuManager\Controller\Admin\SettingsController;
+use DailyMenuManager\Models\Menu;
 
-class AssetController {
-    public static function init() {
+class AssetController
+{
+    public static function init()
+    {
         add_action('wp_enqueue_scripts', [self::class, 'enqueueFrontendAssets']);
         add_action('admin_enqueue_scripts', [self::class, 'enqueueAdminAssets']);
     }
@@ -13,7 +16,8 @@ class AssetController {
     /**
      * Lädt die benötigten CSS und JavaScript Dateien
      */
-    public static function enqueueFrontendAssets() {
+    public static function enqueueFrontendAssets()
+    {
         // CSS laden
         wp_enqueue_style(
             'daily-menu-frontend',
@@ -26,10 +30,10 @@ class AssetController {
         wp_enqueue_style(
             'bootstrap-css',
             'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
-            array(),
+            [],
             '5.3.0'
         );
-    
+
         // SweetAlert2 CSS
         wp_enqueue_style(
             'sweetalert2',
@@ -37,7 +41,7 @@ class AssetController {
             [],
             '11.10.5'
         );
-    
+
         // SweetAlert2 JS
         wp_register_script(
             'sweetalert2',
@@ -47,7 +51,7 @@ class AssetController {
             true
         );
         wp_enqueue_script('sweetalert2');
-    
+
         // Vue.js Frontend App
         wp_register_script_module(
             'daily-menu-frontend-module',
@@ -95,16 +99,17 @@ class AssetController {
                         'loading' => __('Loading menu...', 'daily-menu-manager'),
                         'close' => __('Close', 'daily-menu-manager'),
                         'orderNumber' => __('Order Number', 'daily-menu-manager'),
-                        'pickupInstructions' => __('Please mention this number when picking up.', 'daily-menu-manager')
-                    ]
+                        'pickupInstructions' => __('Please mention this number when picking up.', 'daily-menu-manager'),
+                    ],
                 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
             </script>
             <?php
         });
-        
+
     }
-    
-    public static function enqueueAdminAssets($hook) {
+
+    public static function enqueueAdminAssets($hook)
+    {
         // TODO: Check
         if ('daily-menu_page_daily-menu-orders' !== $hook && 'toplevel_page_daily-menu-manager' !== $hook && "tagesmenue_page_daily-menu-manager-settings" != $hook) {
             return;
@@ -200,7 +205,8 @@ class AssetController {
         // Lokalisierung - WICHTIG: Muss nach dem Enqueue des Scripts erfolgen
         wp_localize_script(
             'daily-menu-admin',
-            'dailyMenuAdmin', [
+            'dailyMenuAdmin',
+            [
                 'ajaxurl' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('daily_menu_admin_nonce'),
                 'messages' => [
@@ -215,7 +221,7 @@ class AssetController {
                     'noItems' => __('Please add at least one menu item.', 'daily-menu-manager'),
                     'requiredFields' => __('Please fill in all required fields.', 'daily-menu-manager'),
                     'copy' => __('Copy', 'daily-menu-manager'),
-                    'cancel' => __('Cancel', 'daily-menu-manager')
+                    'cancel' => __('Cancel', 'daily-menu-manager'),
                 ],
                 'menus' => Menu::getMenuDates(),
                 'timeFormat' => SettingsController::getTimeFormat(),

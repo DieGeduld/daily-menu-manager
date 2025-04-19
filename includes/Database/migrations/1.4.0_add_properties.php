@@ -3,7 +3,6 @@
 namespace DailyMenuManager\Database\migrations;
 
 use DailyMenuManager\Database\Migration;
-use wpdb;
 
 /**
  * Class V140AddProperties
@@ -29,18 +28,18 @@ class V140AddProperties extends Migration
     {
         $table_name = $this->wpdb->prefix . 'menu_items';
         $column_name = 'properties';
-    
+
         // Check if the column already exists
         $column_exists = $this->wpdb->get_results($this->wpdb->prepare(
             "SHOW COLUMNS FROM `{$this->wpdb->prefix}menu_items` LIKE %s",
             $column_name
         ));
-    
+
         if (empty($column_exists)) {
             $this->wpdb->query("ALTER TABLE `{$table_name}` ADD COLUMN `{$column_name}` VARCHAR(255) NULL AFTER `available_quantity`");
         }
 
-        parent::up();       
+        parent::up();
     }
 
     /**
@@ -59,7 +58,7 @@ class V140AddProperties extends Migration
             $column_name
         ));
 
-        if (!empty($column_exists)) {
+        if (! empty($column_exists)) {
             $wpdb->query("ALTER TABLE $table_name DROP COLUMN $column_name");
         }
     }
@@ -96,8 +95,9 @@ class V140AddProperties extends Migration
     public function getAffectedTables(): array
     {
         global $wpdb;
+
         return [
-            "{$wpdb->prefix}menu_items"
+            "{$wpdb->prefix}menu_items",
         ];
     }
 
@@ -108,11 +108,11 @@ class V140AddProperties extends Migration
     {
         global $wpdb;
         $table_name = $wpdb->prefix . 'menu_items';
-        
-        if (!$this->tableExists($table_name)) {
+
+        if (! $this->tableExists($table_name)) {
             throw new \RuntimeException("Table '$table_name' does not exist");
         }
-        
+
         return true;
     }
 

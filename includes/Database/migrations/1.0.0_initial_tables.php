@@ -3,7 +3,6 @@
 namespace DailyMenuManager\Database\migrations;
 
 use DailyMenuManager\Database\Migration;
-use wpdb;
 
 /**
  * Class V100InitialTables
@@ -132,11 +131,12 @@ class V100InitialTables extends Migration
     public function getAffectedTables(): array
     {
         global $wpdb;
+
         return [
             "{$wpdb->prefix}daily_menus",
             "{$wpdb->prefix}menu_items",
             "{$wpdb->prefix}menu_orders",
-            "{$wpdb->prefix}dmm_migration_status"
+            "{$wpdb->prefix}dmm_migration_status",
         ];
     }
 

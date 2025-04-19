@@ -30,7 +30,7 @@ class V150AddSettingsTable extends Migration
         $charset_collate = $this->wpdb->get_charset_collate();
 
         // Check if the table already exists
-        if (!$this->tableExists($table_name)) {
+        if (! $this->tableExists($table_name)) {
             $sql = "CREATE TABLE $table_name (
                 id mediumint(9) NOT NULL AUTO_INCREMENT,
                 setting_key varchar(100) NOT NULL,
@@ -43,7 +43,7 @@ class V150AddSettingsTable extends Migration
 
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
-            
+
             // Insert default values
             $this->insertDefaultSettings($table_name);
         }
@@ -55,19 +55,19 @@ class V150AddSettingsTable extends Migration
     private function insertDefaultSettings(string $table_name): void
     {
         global $wpdb;
-        
+
         // Default menu properties
         $default_properties = [
             __("Vegetarian", "daily-menu-manager"),
             __("Vegan", "daily-menu-manager"),
             __("Glutenfree", "daily-menu-manager"),
         ];
-        
+
         $wpdb->insert(
             $table_name,
             [
                 'setting_key' => 'menu_properties',
-                'setting_value' => json_encode($default_properties)
+                'setting_value' => json_encode($default_properties),
             ]
         );
     }
@@ -119,8 +119,9 @@ class V150AddSettingsTable extends Migration
     public function getAffectedTables(): array
     {
         global $wpdb;
+
         return [
-            "{$wpdb->prefix}menu_settings"
+            "{$wpdb->prefix}menu_settings",
         ];
     }
 

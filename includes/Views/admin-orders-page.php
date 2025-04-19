@@ -2,7 +2,7 @@
 
 defined('ABSPATH') or die('Direct access not allowed!');
 use DailyMenuManager\Controller\Admin\SettingsController;
-use DailyMenuManager\Models\Order;
+
 ?>
 
 <div class="wrap">
@@ -88,23 +88,23 @@ use DailyMenuManager\Models\Order;
                 </tr>
             </thead>
             <tbody>
-                <?php 
+                <?php
                 $current_order = '';
-                $order_total = 0;
-                
-                foreach ($orders as $order): 
-                    // Neue Bestellung beginnt
-                    if ($current_order !== $order->order_number): 
-                        if ($current_order !== ''): // Vorherige Bestellung abschließen ?>
+        $order_total = 0;
+
+        foreach ($orders as $order):
+            // Neue Bestellung beginnt
+            if ($current_order !== $order->order_number):
+                if ($current_order !== ''): // Vorherige Bestellung abschließen?>
                             <tr class="order-total">
                                 <td colspan="6"><strong><?php _e('Total:', 'daily-menu-manager'); ?></strong></td>
                                 <td colspan="2"><strong><?php echo SettingsController::formatPrice($order_total); ?></strong></td>
                             </tr>
                         <?php endif;
-                        
-                        $current_order = $order->order_number;
-                        $order_total = 0;
-                        ?>
+
+                $current_order = $order->order_number;
+                $order_total = 0;
+                ?>
                         
                         <tr class="order-header">
                             <td><strong><?php echo esc_html($order->order_number); ?></strong></td>
@@ -123,11 +123,11 @@ use DailyMenuManager\Models\Order;
                                 <?php endif; ?>
                             </td>
                         </tr>
-                    <?php endif; 
-                    
-                    $item_total = $order->quantity * $order->price;
-                    $order_total += $item_total;
-                    ?>
+                    <?php endif;
+
+            $item_total = $order->quantity * $order->price;
+            $order_total += $item_total;
+            ?>
                     
                     <tr class="order-item">
                         <td></td>
@@ -152,10 +152,10 @@ use DailyMenuManager\Models\Order;
                             <?php endif; ?>
                         </td>
                     </tr>
-                <?php endforeach; 
-                
-                // Letzte Bestellung abschließen
-                if ($current_order !== ''): ?>
+                <?php endforeach;
+
+// Letzte Bestellung abschließen
+if ($current_order !== ''): ?>
                     <tr class="order-total">
                         <td colspan="6"><strong><?php _e('Total:', 'daily-menu-manager'); ?></strong></td>
                         <td colspan="2"><strong><?php echo SettingsController::formatPrice($order_total); ?></strong></td>

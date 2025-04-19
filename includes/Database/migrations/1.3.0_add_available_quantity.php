@@ -3,7 +3,6 @@
 namespace DailyMenuManager\Database\migrations;
 
 use DailyMenuManager\Database\Migration;
-use wpdb;
 
 /**
  * Class V130AddAvailableQuantity
@@ -57,7 +56,7 @@ class V130AddAvailableQuantity extends Migration
             $column_name
         ));
 
-        if (!empty($column_exists)) {
+        if (! empty($column_exists)) {
             $wpdb->query("ALTER TABLE $table_name DROP COLUMN $column_name");
         }
     }
@@ -94,8 +93,9 @@ class V130AddAvailableQuantity extends Migration
     public function getAffectedTables(): array
     {
         global $wpdb;
+
         return [
-            "{$wpdb->prefix}menu_items"
+            "{$wpdb->prefix}menu_items",
         ];
     }
 
@@ -106,11 +106,11 @@ class V130AddAvailableQuantity extends Migration
     {
         global $wpdb;
         $table_name = $wpdb->prefix . 'menu_items';
-        
-        if (!$this->tableExists($table_name)) {
+
+        if (! $this->tableExists($table_name)) {
             throw new \RuntimeException("Table '$table_name' does not exist");
         }
-        
+
         return true;
     }
 

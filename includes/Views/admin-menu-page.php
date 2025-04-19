@@ -1,8 +1,9 @@
 <?php
-    defined('ABSPATH') or die('Direct access not allowed!');
+defined('ABSPATH') or die('Direct access not allowed!');
 
 use DailyMenuManager\Controller\Admin\MenuController;
 use DailyMenuManager\Controller\Admin\SettingsController;
+
 ?>
 
 <div class="wrap">
@@ -76,12 +77,12 @@ use DailyMenuManager\Controller\Admin\SettingsController;
 
         <div class="menu-items">
             <?php
-            if (!empty($menu_items)) {
+            if (! empty($menu_items)) {
                 foreach ($menu_items as $item) {
                     self::renderMenuItem($item);
                 }
             }
-            ?>
+?>
         </div>
 
         <?php submit_button(__('Save Menu', 'daily-menu-manager'), 'primary', 'save_menu'); ?>

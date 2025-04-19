@@ -28,18 +28,18 @@ class V160AddConsumptionType extends Migration
     {
         $table_name = $this->wpdb->prefix . 'menu_orders';
         $column_name = 'consumption_type';
-    
+
         // Check if the column already exists
         $column_exists = $this->wpdb->get_results($this->wpdb->prepare(
             "SHOW COLUMNS FROM `{$this->wpdb->prefix}menu_items` LIKE %s",
             $column_name
         ));
-    
+
         if (empty($column_exists)) {
             $this->wpdb->query("ALTER TABLE `{$table_name}` ADD COLUMN `{$column_name}` VARCHAR(255) NULL AFTER `customer_phone`");
         }
 
-        parent::up();       
+        parent::up();
     }
 
     /**
@@ -48,14 +48,14 @@ class V160AddConsumptionType extends Migration
     private function insertDefaultSettings(string $table_name): void
     {
         // global $wpdb;
-        
+
         // // Default menu properties
         // $default_properties = [
         //     __("Vegetarian", "daily-menu-manager"),
         //     __("Vegan", "daily-menu-manager"),
         //     __("Glutenfree", "daily-menu-manager"),
         // ];
-        
+
         // $wpdb->insert(
         //     $table_name,
         //     [
@@ -112,8 +112,9 @@ class V160AddConsumptionType extends Migration
     public function getAffectedTables(): array
     {
         global $wpdb;
+
         return [
-            "{$wpdb->prefix}menu_settings"
+            "{$wpdb->prefix}menu_settings",
         ];
     }
 

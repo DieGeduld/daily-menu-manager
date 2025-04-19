@@ -15,7 +15,7 @@ interface MigrationInterface
 {
     /**
      * Gibt an, ob die Migration automatisch ausgeführt werden kann.
-     * 
+     *
      * Bestimmt, ob die Migration im Rahmen automatischer Updates ohne
      * Benutzerinteraktion ausgeführt werden soll.
      *
@@ -25,7 +25,7 @@ interface MigrationInterface
 
     /**
      * Führt die Migration aus.
-     * 
+     *
      * Diese Methode enthält die Logik für die Vorwärts-Migration,
      * z.B. Erstellen von Tabellen, Hinzufügen von Spalten etc.
      *
@@ -36,7 +36,7 @@ interface MigrationInterface
 
     /**
      * Macht die Migration rückgängig.
-     * 
+     *
      * Diese Methode enthält die Logik für die Rückwärts-Migration,
      * z.B. Löschen von Tabellen, Entfernen von Spalten etc.
      *
@@ -47,7 +47,7 @@ interface MigrationInterface
 
     /**
      * Gibt die Version der Migration zurück.
-     * 
+     *
      * Die Version sollte dem semantischen Versionierungsformat folgen (x.y.z).
      * Beispiel: "1.0.0" für die erste Version.
      *
@@ -57,7 +57,7 @@ interface MigrationInterface
 
     /**
      * Gibt die Beschreibung der Migration zurück.
-     * 
+     *
      * Die Beschreibung sollte kurz und präzise erklären,
      * was die Migration macht.
      *
@@ -67,7 +67,7 @@ interface MigrationInterface
 
     /**
      * Prüft, ob die Migration rückgängig gemacht werden kann.
-     * 
+     *
      * Einige Migrationen, wie das Löschen von Daten, können nicht
      * rückgängig gemacht werden.
      *
@@ -77,7 +77,7 @@ interface MigrationInterface
 
     /**
      * Gibt die Abhängigkeiten der Migration zurück.
-     * 
+     *
      * Eine Liste von Migrations-Versionen, die vor dieser Migration
      * ausgeführt werden müssen.
      *
@@ -87,7 +87,7 @@ interface MigrationInterface
 
     /**
      * Gibt die von der Migration betroffenen Tabellen zurück.
-     * 
+     *
      * Diese Information wird für Logging und Abhängigkeitsprüfungen verwendet.
      *
      * @return array<string> Array mit Tabellennamen
@@ -96,7 +96,7 @@ interface MigrationInterface
 
     /**
      * Setzt die Batch-Größe für die Migration.
-     * 
+     *
      * Bei großen Datenmengen sollten die Operationen in kleineren
      * Batches ausgeführt werden.
      *
@@ -107,7 +107,7 @@ interface MigrationInterface
 
     /**
      * Prüft, ob alle Voraussetzungen für die Migration erfüllt sind.
-     * 
+     *
      * Z.B. ob erforderliche Tabellen existieren oder Abhängigkeiten
      * installiert sind.
      *
@@ -118,7 +118,7 @@ interface MigrationInterface
 
     /**
      * Gibt eine eindeutige ID für die Migration zurück.
-     * 
+     *
      * Die ID wird für das Tracking des Migrationsstatus verwendet.
      * Standardmäßig kann die Version als ID verwendet werden.
      *
@@ -128,7 +128,7 @@ interface MigrationInterface
 
     /**
      * Gibt den Zeitstempel der Migration zurück.
-     * 
+     *
      * Wird verwendet, um die Reihenfolge der Migrationen zu bestimmen,
      * wenn mehrere Migrationen die gleiche Version haben.
      *

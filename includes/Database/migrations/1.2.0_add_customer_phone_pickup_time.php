@@ -3,7 +3,6 @@
 namespace DailyMenuManager\Database\migrations;
 
 use DailyMenuManager\Database\Migration;
-use wpdb;
 
 /**
  * Class V120AddCustomerPhonePickupTime
@@ -48,7 +47,7 @@ class V120AddCustomerPhonePickupTime extends Migration
         if (empty($column_exists)) {
             $this->wpdb->query("ALTER TABLE $table_name ADD COLUMN pickup_time TIME AFTER general_notes");
         }
-        
+
         parent::up();
 
     }
@@ -68,7 +67,7 @@ class V120AddCustomerPhonePickupTime extends Migration
             'customer_phone'
         ));
 
-        if (!empty($column_exists)) {
+        if (! empty($column_exists)) {
             $wpdb->query("ALTER TABLE $table_name DROP COLUMN customer_phone");
         }
 
@@ -78,7 +77,7 @@ class V120AddCustomerPhonePickupTime extends Migration
             'pickup_time'
         ));
 
-        if (!empty($column_exists)) {
+        if (! empty($column_exists)) {
             $wpdb->query("ALTER TABLE $table_name DROP COLUMN pickup_time");
         }
     }
@@ -115,8 +114,9 @@ class V120AddCustomerPhonePickupTime extends Migration
     public function getAffectedTables(): array
     {
         global $wpdb;
+
         return [
-            "{$wpdb->prefix}menu_orders"
+            "{$wpdb->prefix}menu_orders",
         ];
     }
 
@@ -127,18 +127,18 @@ class V120AddCustomerPhonePickupTime extends Migration
     {
         global $wpdb;
         $table_name = $wpdb->prefix . 'menu_orders';
-        
-        if (!$this->tableExists($table_name)) {
+
+        if (! $this->tableExists($table_name)) {
             throw new \RuntimeException("Table '$table_name' does not exist");
         }
 
         // Überprüfe, ob die vorherigen Migrationen ausgeführt wurden
         foreach ($this->dependencies as $version) {
-            if (!$this->isMigrationCompleted($version)) {
+            if (! $this->isMigrationCompleted($version)) {
                 throw new \RuntimeException("Required migration version $version has not been executed");
             }
         }
-        
+
         return true;
     }
 
@@ -166,8 +166,9 @@ class V120AddCustomerPhonePickupTime extends Migration
     protected function getRequiredTables(): array
     {
         global $wpdb;
+
         return [
-            "{$wpdb->prefix}menu_orders"
+            "{$wpdb->prefix}menu_orders",
         ];
     }
 
@@ -180,7 +181,7 @@ class V120AddCustomerPhonePickupTime extends Migration
     private function isMigrationCompleted(string $version): bool
     {
         global $wpdb;
-        
+
         $status = $wpdb->get_var($wpdb->prepare(
             "SELECT status FROM {$wpdb->prefix}dmm_migration_status WHERE version = %s",
             $version

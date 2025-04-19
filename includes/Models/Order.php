@@ -1,34 +1,39 @@
 <?php
+
 namespace DailyMenuManager\Models;
 
-class Order {
+class Order
+{
     private static $instance = null;
-    
-    public static function init() {
+
+    public static function init()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
+
         return self::$instance;
     }
 
     /**
      * Erstellt eine neue Bestellung
-     * 
+     *
      * @param array $data Bestellungsdaten
      * @return array|WP_Error
      */
-    public static function createOrder($data) {
+    public static function createOrder($data)
+    {
         global $wpdb;
-        
+
         try {
             // Generiere fortlaufende Bestellnummer (000-999)
             $last_order = $wpdb->get_var(
                 "SELECT MAX(CAST(SUBSTRING_INDEX(order_number, '-', -1) AS UNSIGNED)) 
                 FROM {$wpdb->prefix}menu_orders"
             );
-                        
+
             // Wenn keine Bestellung existiert oder der letzte Wert kein gültiger Integer ist
-            if ($last_order === false || !is_numeric($last_order)) {
+            if ($last_order === false || ! is_numeric($last_order)) {
                 $next_number = 0;
             } else {
                 $next_number = intval($last_order) + 1;
@@ -36,16 +41,16 @@ class Order {
                     $next_number = 0;
                 }
             }
-            
+
             // Formatiere die Bestellnummer mit führenden Nullen
             $order_number = str_pad($next_number, 3, '0', STR_PAD_LEFT);
-            
+
             // Rest des bestehenden Codes bleibt gleich
             $order_items = [];
             $total_amount = 0;
-            
+
             $wpdb->query('START TRANSACTION');
-            
+
             foreach ($data['items'] as $item_id => $item_data) {
                 $quantity = intval($item_data['quantity']);
                 if ($quantity > 0) {
@@ -63,36 +68,37 @@ class Order {
                             'quantity' => $quantity,
                             'notes' => sanitize_textarea_field($item_data['notes'] ?? ''),
                             'general_notes' => sanitize_textarea_field($data['general_notes'] ?? ''),
-                            'order_date' => current_time('mysql')
+                            'order_date' => current_time('mysql'),
                         ],
                         ['%d', '%d', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s']
                     );
-                    
+
                     if ($inserted === false) {
                         error_log($wpdb->last_error); // TODO!
+
                         throw new \Exception('Fehler beim Speichern der Bestellung');
                     }
-                    
+
                     // Hole Item-Details für die Bestätigung
                     $item_details = $wpdb->get_row($wpdb->prepare(
                         "SELECT title, price FROM {$wpdb->prefix}menu_items WHERE id = %d",
                         $item_id
                     ));
-                    
+
                     if ($item_details) {
                         $order_items[] = [
                             'title' => $item_details->title,
                             'quantity' => $quantity,
                             'price' => $item_details->price,
-                            'notes' => $item_data['notes'] ?? ''
+                            'notes' => $item_data['notes'] ?? '',
                         ];
                         $total_amount += $quantity * $item_details->price;
                     }
                 }
             }
-            
+
             $wpdb->query('COMMIT');
-            
+
             return [
                 'success' => true,
                 'order_number' => $order_number,
@@ -100,51 +106,53 @@ class Order {
                 'total_amount' => $total_amount,
                 'customer_name' => $data['customer_name'],
                 'customer_phone' => $data['customer_phone'],
-                'pickup_time' => $data['pickup_time']
+                'pickup_time' => $data['pickup_time'],
             ];
-            
+
         } catch (\Exception $e) {
             $wpdb->query('ROLLBACK');
+
             return new \WP_Error('order_creation_failed', $e->getMessage());
         }
     }
 
     /**
      * Holt Bestellungen mit optionalen Filtern
-     * 
+     *
      * @param array $filters Filteroptionen
      * @return array
      */
-    public static function getOrders($filters = []) {
+    public static function getOrders($filters = [])
+    {
         global $wpdb;
-        
+
         $where_clauses = [];
         $where_values = [];
-        
+
         // Datum Filter
-        if (!empty($filters['date']) && $filters['date'] !== 'all') {
+        if (! empty($filters['date']) && $filters['date'] !== 'all') {
             $where_clauses[] = "DATE(o.order_date) = %s";
             $where_values[] = $filters['date'];
         }
-        
+
         // Bestellnummer Filter
-        if (!empty($filters['order_number'])) {
+        if (! empty($filters['order_number'])) {
             $where_clauses[] = "o.order_number LIKE %s";
             $where_values[] = '%' . $wpdb->esc_like($filters['order_number']) . '%';
         }
-        
+
         // Name Filter
-        if (!empty($filters['customer_name'])) {
+        if (! empty($filters['customer_name'])) {
             $where_clauses[] = "o.customer_name LIKE %s";
             $where_values[] = '%' . $wpdb->esc_like($filters['customer_name']) . '%';
         }
 
         // Telefon Filter
-        if (!empty($filters['customer_phone'])) {
+        if (! empty($filters['customer_phone'])) {
             $where_clauses[] = "o.customer_phone LIKE %s";
             $where_values[] = '%' . $wpdb->esc_like($filters['customer_phone']) . '%';
         }
-        
+
         $query = "
             SELECT 
                 o.*,
@@ -156,35 +164,40 @@ class Order {
             FROM {$wpdb->prefix}menu_orders o
             JOIN {$wpdb->prefix}menu_items mi ON o.menu_item_id = mi.id
         ";
-        
-        if (!empty($where_clauses)) {
+
+        if (! empty($where_clauses)) {
             $query .= " WHERE " . implode(' AND ', $where_clauses);
         }
-        
+
         $query .= " ORDER BY o.order_date DESC, o.order_number, mi.item_type, mi.title";
-        
-        if (!empty($where_values)) {
+
+        if (! empty($where_values)) {
             $orders = $wpdb->get_results($wpdb->prepare($query, $where_values));
         } else {
             $orders = $wpdb->get_results($query);
         }
-        
+
         return $orders;
     }
 
     /**
      * Holt Bestellstatistiken für einen Zeitraum
-     * 
+     *
      * @param string $start_date
      * @param string $end_date
      * @return array
      */
-    public static function getOrderStats($start_date = null, $end_date = null) {
+    public static function getOrderStats($start_date = null, $end_date = null)
+    {
         global $wpdb;
-        
-        if (!$start_date) $start_date = date('Y-m-d');
-        if (!$end_date) $end_date = date('Y-m-d');
-        
+
+        if (! $start_date) {
+            $start_date = date('Y-m-d');
+        }
+        if (! $end_date) {
+            $end_date = date('Y-m-d');
+        }
+
         $stats = $wpdb->get_results($wpdb->prepare("
             SELECT 
                 DATE(o.order_date) as date,
@@ -197,19 +210,20 @@ class Order {
             GROUP BY DATE(o.order_date)
             ORDER BY date DESC
         ", $start_date, $end_date));
-        
+
         return $stats;
     }
 
     /**
      * Holt eine einzelne Bestellung anhand der Bestellnummer
-     * 
+     *
      * @param string $order_number
      * @return object|null
      */
-    public static function getOrderByNumber($order_number) {
+    public static function getOrderByNumber($order_number)
+    {
         global $wpdb;
-        
+
         return $wpdb->get_results($wpdb->prepare("
             SELECT 
                 o.*,
@@ -225,13 +239,14 @@ class Order {
 
     /**
      * Löscht eine Bestellung
-     * 
+     *
      * @param string $order_number
      * @return bool
      */
-    public static function deleteOrder($order_number) {
+    public static function deleteOrder($order_number)
+    {
         global $wpdb;
-        
+
         return $wpdb->delete(
             $wpdb->prefix . 'menu_orders',
             ['order_number' => $order_number],
@@ -241,14 +256,15 @@ class Order {
 
     /**
      * Aktualisiert den Status einer Bestellung
-     * 
+     *
      * @param string $order_number
      * @param string $status
      * @return bool
      */
-    public static function updateOrderStatus($order_number, $status) {
+    public static function updateOrderStatus($order_number, $status)
+    {
         global $wpdb;
-        
+
         return $wpdb->update(
             $wpdb->prefix . 'menu_orders',
             ['status' => $status],

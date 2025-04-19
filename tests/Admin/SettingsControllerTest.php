@@ -1,48 +1,49 @@
 <?php
+
 namespace DailyMenuManager\Tests\Admin;
 
+use Brain\Monkey\Functions;
 use DailyMenuManager\Admin\SettingsController;
 use DailyMenuManager\Models\Settings;
 use Mockery;
 use PHPUnit\Framework\TestCase;
-use Brain\Monkey\Functions;
 
 class SettingsControllerTest extends TestCase
 {
     use \BrainMonkeySetup;
 
-        public function test_format_price_with_euro_comma_right()
-        {
-            // Mock static method calls
-            $settings = Mockery::mock('overload:' . Settings::class);
-            $settings->shouldReceive('init')->andReturn(null);
-            $settings->shouldReceive('getInstance')->andReturn($settings);
-            $settings->shouldReceive('get')
-                ->with('price_format')
-                ->andReturn('symbol_comma_right');
-            $settings->shouldReceive('get')
-                ->with('currency')
-                ->andReturn('EUR');
+    public function test_format_price_with_euro_comma_right()
+    {
+        // Mock static method calls
+        $settings = Mockery::mock('overload:' . Settings::class);
+        $settings->shouldReceive('init')->andReturn(null);
+        $settings->shouldReceive('getInstance')->andReturn($settings);
+        $settings->shouldReceive('get')
+            ->with('price_format')
+            ->andReturn('symbol_comma_right');
+        $settings->shouldReceive('get')
+            ->with('currency')
+            ->andReturn('EUR');
 
-            $formattedPrice = SettingsController::formatPrice(9.99);
-            $this->assertEquals('9,99 €', $formattedPrice);
-        }
+        $formattedPrice = SettingsController::formatPrice(9.99);
+        $this->assertEquals('9,99 €', $formattedPrice);
+    }
 
-        public function test_format_price_with_usd_dot_left()
-        {
-            $settings = Mockery::mock('overload:' . Settings::class);
-            $settings->shouldReceive('init')->andReturn(null);
-            $settings->shouldReceive('getInstance')->andReturn($settings);
-            $settings->shouldReceive('get')
-                ->with('price_format')
-                ->andReturn('symbol_dot_left');
-            $settings->shouldReceive('get')
-                ->with('currency')
-                ->andReturn('USD');
+    public function test_format_price_with_usd_dot_left()
+    {
+        $settings = Mockery::mock('overload:' . Settings::class);
+        $settings->shouldReceive('init')->andReturn(null);
+        $settings->shouldReceive('getInstance')->andReturn($settings);
+        $settings->shouldReceive('get')
+            ->with('price_format')
+            ->andReturn('symbol_dot_left');
+        $settings->shouldReceive('get')
+            ->with('currency')
+            ->andReturn('USD');
 
-            $formattedPrice = SettingsController::formatPrice(9.99);
-            $this->assertEquals('$ 9.99', $formattedPrice);
-        }
+        $formattedPrice = SettingsController::formatPrice(9.99);
+        $this->assertEquals('$ 9.99', $formattedPrice);
+    }
 
     public function test_format_price_with_custom_currency()
     {
@@ -79,7 +80,7 @@ class SettingsControllerTest extends TestCase
     public function test_get_consumption_types_with_defaults()
     {
         Functions\expect('__')
-            ->andReturnUsing(function($text) { return $text; });
+            ->andReturnUsing(function ($text) { return $text; });
 
         $settings = Mockery::mock('overload:' . Settings::class);
         $settings->shouldReceive('init')->andReturn(null);
@@ -101,7 +102,7 @@ class SettingsControllerTest extends TestCase
     public function test_get_menu_properties_with_defaults()
     {
         Functions\expect('__')
-            ->andReturnUsing(function($text) { return $text; });
+            ->andReturnUsing(function ($text) { return $text; });
 
         $settings = Mockery::mock('overload:' . Settings::class);
         $settings->shouldReceive('init')->andReturn(null);

@@ -1,17 +1,19 @@
 <?php
+
 namespace DailyMenuManager\Controller\Admin;
 
 use DailyMenuManager\Models\Menu;
-use DailyMenuManager\Models\Settings;
 
-class MenuController {
+class MenuController
+{
     private static $instance = null;
-    
-    public static function init() {
+
+    public static function init()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
-        
+
         add_action('admin_menu', [self::class, 'addAdminMenu']);
 
     }
@@ -19,7 +21,8 @@ class MenuController {
     /**
      * Fügt Menüeinträge zum WordPress Admin hinzu
      */
-    public static function addAdminMenu() {
+    public static function addAdminMenu()
+    {
         add_menu_page(
             __('Daily Menu Manager', 'daily-menu-manager'),
             __('Daily Menu', 'daily-menu-manager'),
@@ -34,9 +37,10 @@ class MenuController {
     /**
      * Zeigt die Hauptseite des Menü-Managers
      */
-    public static function displayMenuPage() {
+    public static function displayMenuPage()
+    {
         $menu_model = new \DailyMenuManager\Models\Menu();
-        
+
         // Speichern des Menüs wenn das Formular abgeschickt wurde
         if (isset($_POST['save_menu']) && check_admin_referer('save_menu_nonce')) {
             $result = $menu_model->saveMenu($_POST);
@@ -56,14 +60,14 @@ class MenuController {
                 );
             }
         }
-    
+
         // Hole das ausgewählte Datum oder setze das aktuelle Datum
         $selected_date = isset($_GET['menu_date']) ? sanitize_text_field($_GET['menu_date']) : current_time('Y-m-d');
-        
+
         // Hole das aktuelle Menü
         $current_menu = $menu_model->getMenuForDate($selected_date);
         $menu_items = $current_menu ? $menu_model->getMenuItems($current_menu->id) : [];
-    
+
         // Template laden
         require_once DMM_PLUGIN_DIR . 'includes/Views/admin-menu-page.php';
     }
@@ -71,10 +75,11 @@ class MenuController {
     /**
      * AJAX Handler für die Sortierung der Menüeinträge
      */
-    public static function handleSaveMenuOrder() {
+    public static function handleSaveMenuOrder()
+    {
         check_ajax_referer('daily_menu_admin_nonce');
-        
-        if (!current_user_can('manage_options')) {
+
+        if (! current_user_can('manage_options')) {
             wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);
         }
 
@@ -96,10 +101,11 @@ class MenuController {
     /**
      * AJAX Handler für das Kopieren eines Menüs
      */
-    public static function handleCopyMenu() {
+    public static function handleCopyMenu()
+    {
         check_ajax_referer('daily_menu_admin_nonce');
-        
-        if (!current_user_can('manage_options')) {
+
+        if (! current_user_can('manage_options')) {
             wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);
         }
 
@@ -108,7 +114,7 @@ class MenuController {
         $selectedDate = sanitize_text_field($_POST["selectedDate"]);
         $currentDate = sanitize_text_field($_POST["currentDate"]);
 
-        if (!$currentDate) {
+        if (! $currentDate) {
             wp_send_json_error(['message' => __('Invalid parameters.', 'daily-menu-manager')]);
         }
 
@@ -116,10 +122,10 @@ class MenuController {
         if ($type == "from") {
             $items = $menu->getMenuForDate($selectedDate);
 
-            if (!$items) {
+            if (! $items) {
                 wp_send_json_error(['message' => __('No menu exists for this date.', 'daily-menu-manager')]);
                 exit();
-            } 
+            }
 
             $result = $menu->copyMenu(intval($items->id), $currentDate);
 
@@ -128,12 +134,12 @@ class MenuController {
             } else {
                 wp_send_json_success([
                     'message' => __('Menu copied successfully.', 'daily-menu-manager'),
-                    'new_menu_id' => $result
+                    'new_menu_id' => $result,
                 ]);
-            } 
-        } else if ($type == "to") {
+            }
+        } elseif ($type == "to") {
 
-            if (!$currentDate || !$menu_id) {
+            if (! $currentDate || ! $menu_id) {
                 wp_send_json_error(['message' => __('Invalid parameters, menu ID missing', 'daily-menu-manager')]);
             }
 
@@ -144,16 +150,16 @@ class MenuController {
             } else {
                 wp_send_json_success([
                     'message' => __('Menu copied successfully.', 'daily-menu-manager'),
-                    'new_menu_id' => $result
+                    'new_menu_id' => $result,
                 ]);
-            } 
+            }
         } else {
             wp_send_json_error(['message' => __('Invalid parameters.', 'daily-menu-manager')]);
         }
 
         $menu = new Menu();
         $items = $menu->getMenuForDate($selectedDate);
-        
+
         // Check if a menu already exists for the target date
         if ($menu->menuExists($currentDate)) {
             wp_send_json_error(['message' => __('A menu already exists for this date.', 'daily-menu-manager')]);
@@ -166,7 +172,7 @@ class MenuController {
         } else {
             wp_send_json_success([
                 'message' => __('Menu copied successfully.', 'daily-menu-manager'),
-                'new_menu_id' => $result
+                'new_menu_id' => $result,
             ]);
         }
     }
@@ -174,15 +180,16 @@ class MenuController {
     /**
      * AJAX Handler für das Löschen eines Menüeintrags
      */
-    public static function handleDeleteMenuItem() {
+    public static function handleDeleteMenuItem()
+    {
         check_ajax_referer('daily_menu_admin_nonce');
-        
-        if (!current_user_can('manage_options')) {
+
+        if (! current_user_can('manage_options')) {
             wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);
         }
 
         $item_id = intval($_POST['item_id']);
-        if (!$item_id) {
+        if (! $item_id) {
             wp_send_json_error(['message' => __('Invalid menu item ID.', 'daily-menu-manager')]);
         }
 
@@ -203,27 +210,28 @@ class MenuController {
     /**
      * AJAX Handler für das Duplizieren eines Menüeintrags
      */
-    public static function handleDuplicateMenuItem() {
+    public static function handleDuplicateMenuItem()
+    {
         check_ajax_referer('daily_menu_admin_nonce');
-        
-        if (!current_user_can('manage_options')) {
+
+        if (! current_user_can('manage_options')) {
             wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);
         }
 
         $item_id = intval($_POST['item_id']);
-        if (!$item_id) {
+        if (! $item_id) {
             wp_send_json_error(['message' => __('Invalid menu item ID.', 'daily-menu-manager')]);
         }
 
         global $wpdb;
-        
+
         // Get the original item
         $original_item = $wpdb->get_row($wpdb->prepare(
             "SELECT * FROM {$wpdb->prefix}menu_items WHERE id = %d",
             $item_id
         ));
 
-        if (!$original_item) {
+        if (! $original_item) {
             wp_send_json_error(['message' => __('Menu item not found.', 'daily-menu-manager')]);
         }
 
@@ -237,7 +245,7 @@ class MenuController {
             'available_quantity' => $original_item->available_quantity,
             'properties' => $original_item->properties,
             'allergens' => $original_item->allergens,
-            'sort_order' => $original_item->sort_order + 1
+            'sort_order' => $original_item->sort_order + 1,
         ];
 
         // Insert the duplicate
@@ -277,29 +285,30 @@ class MenuController {
 
         wp_send_json_success([
             'message' => __('Menu item duplicated successfully.', 'daily-menu-manager'),
-            'html' => $html
+            'html' => $html,
         ]);
     }
 
     /**
      * AJAX Handler for getting menu data
      */
-    public static function handleGetMenuData() {
+    public static function handleGetMenuData()
+    {
         check_ajax_referer('daily-menu-manager');
-        
-        if (!current_user_can('manage_options')) {
+
+        if (! current_user_can('manage_options')) {
             wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);
         }
 
         $date = isset($_GET['date']) ? sanitize_text_field($_GET['date']) : current_time('Y-m-d');
-        
+
         $menu = new \DailyMenuManager\Models\Menu();
         $current_menu = $menu->getMenuForDate($date);
         $menu_items = $current_menu ? $menu->getMenuItems($current_menu->id) : [];
-        
+
         wp_send_json_success([
             'menu' => $current_menu,
-            'items' => $menu_items
+            'items' => $menu_items,
         ]);
     }
 
@@ -307,65 +316,69 @@ class MenuController {
     /**
      * AJAX Handler for getting today's menu
      */
-    public static function handleGetCurrentMenu() {
+    public static function handleGetCurrentMenu()
+    {
         check_ajax_referer('daily_menu_manager_nonce');
 
         sleep(2);
 
         $menu = new \DailyMenuManager\Models\Menu();
         $current_menu = $menu->getMenuForDate(current_time('Y-m-d'));
-        
-        if (!$current_menu) {
+
+        if (! $current_menu) {
             // TODO: Be able to enter a custom message
             wp_send_json_error(['message' => __('No menu available for today.', 'daily-menu-manager')]);
         }
-        
+
         $menu_items = $menu->getMenuItems($current_menu->id);
-        
+
         wp_send_json_success([
             'menu' => $current_menu,
-            'items' => $menu_items
+            'items' => $menu_items,
         ]);
     }
 
     /**
     * AJAX Handler zum Abrufen der verfügbaren Mengen
     */
-    public static function getAvailableQuantities() {
+    public static function getAvailableQuantities()
+    {
         check_ajax_referer('daily-menu-manager');
 
         $menu_id = isset($_POST['menu_id']) ? intval($_POST['menu_id']) : 0;
-        if (!$menu_id) {
+        if (! $menu_id) {
             wp_send_json_error(['message' => 'Keine Menü-ID angegeben']);
         }
-    
+
         $menu = new Menu();
         $items = $menu->getMenuItems($menu_id);
-        
+
         $quantities = [];
         foreach ($items as $item) {
             $quantities[$item->id] = $item->available_quantity;
         }
-        
+
         wp_send_json_success(['quantities' => $quantities]);
     }
 
     /**
      * AJAX Handler for saving menu data
      */
-    public static function handleSaveMenuData() {
+    public static function handleSaveMenuData()
+    {
         check_ajax_referer('daily-menu-manager');
-        
-        if (!current_user_can('manage_options')) {
+
+        if (! current_user_can('manage_options')) {
             wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);
         }
 
         $data = json_decode(file_get_contents('php://input'), true);
-        if (!$data) {
+        if (! $data) {
             wp_send_json_error(['message' => __('Invalid data received.', 'daily-menu-manager')]);
         }
 
         $menu = new \DailyMenuManager\Models\Menu();
+
         try {
             $result = $menu->saveMenu($data);
             if (is_wp_error($result)) {
@@ -373,7 +386,7 @@ class MenuController {
             } else {
                 wp_send_json_success([
                     'message' => __('Menu saved successfully.', 'daily-menu-manager'),
-                    'menu_id' => $result
+                    'menu_id' => $result,
                 ]);
             }
         } catch (\Exception $e) {
@@ -384,7 +397,8 @@ class MenuController {
     /**
      * Rendert ein einzelnes Menü-Item im Admin-Bereich
      */
-    public static function renderMenuItem($item = null) {
+    public static function renderMenuItem($item = null)
+    {
 
         // Hier sollten wir auch die Möglichkeit haben, neue Items zu rendern,
         // die also noch leer sind.
@@ -493,9 +507,9 @@ class MenuController {
                               name="menu_items[<?php echo esc_attr($item->id); ?>][description]"
                               class="menu-item-description"
                               rows="3"
-                              data-original-value="<?php echo esc_attr($item->description); ?>"><?php 
-                        echo esc_textarea($item->description); 
-                    ?></textarea>
+                              data-original-value="<?php echo esc_attr($item->description); ?>"><?php
+                        echo esc_textarea($item->description);
+        ?></textarea>
                     <span class="field-description">
                         <?php _e('Optional: Add ingredients or other details about this item', 'daily-menu-manager'); ?>
                     </span>
@@ -549,11 +563,11 @@ class MenuController {
                     <div class="options-grid">
                     <?php
 
-                        $allProps = SettingsController::getMenuProperties() ?? [];
+            $allProps = SettingsController::getMenuProperties() ?? [];
 
-                        //$props = json_decode($item->properties ?? '{}', true) ?? [];
-                        $props = $item->properties ?? [];
-                        foreach ($allProps as $key => $prop): ?>
+        //$props = json_decode($item->properties ?? '{}', true) ?? [];
+        $props = $item->properties ?? [];
+        foreach ($allProps as $key => $prop): ?>
                         <label class="checkbox-label">
                             <input type="checkbox" 
                                    name="menu_items[<?php echo esc_attr($item->id); ?>][properties][<?php echo $prop; ?>]"
@@ -572,9 +586,9 @@ class MenuController {
                     <textarea id="allergens_<?php echo esc_attr($item->id); ?>"
                               name="menu_items[<?php echo esc_attr($item->id); ?>][allergens]"
                               class="menu-item-allergens"
-                              rows="2"><?php 
-                        echo esc_textarea(isset($item->allergens) ? $item->allergens : ''); 
-                    ?></textarea>
+                              rows="2"><?php
+        echo esc_textarea(isset($item->allergens) ? $item->allergens : '');
+        ?></textarea>
                     <span class="field-description">
                         <?php _e('List any allergens present in this dish', 'daily-menu-manager'); ?>
                     </span>
@@ -610,23 +624,24 @@ class MenuController {
 
     /**
      * Holt die Konfiguration für einen bestimmten Menütyp
-     * 
+     *
      * @param string $type Der Menütyp (z.B. 'appetizer', 'main_course', 'dessert')
      * @return array Die Konfiguration für den Menütyp
      */
-    private static function getMenuTypeConfig($type) {
+    private static function getMenuTypeConfig($type)
+    {
         $menu_types = SettingsController::getMenuTypes();
-        
+
         // Wenn der Typ existiert, gib seine Konfiguration zurück
         if (isset($menu_types[$type])) {
             return $menu_types[$type];
         }
-        
+
         // Fallback für unbekannte Typen
         return [
             'label' => ucfirst(str_replace('_', ' ', $type)),
             'plural' => ucfirst(str_replace('_', ' ', $type)),
-            'enabled' => false
+            'enabled' => false,
         ];
     }
 
@@ -649,13 +664,14 @@ if (isset($menu_data['menu_items'])) {
                 'available_quantity' => intval($item_data['available_quantity']),
                 'properties' => sanitize_text_field($item_data['properties']),
                 'allergens' => sanitize_textarea_field($item_data['allergens']),
-                'sort_order' => $sort_order++
+                'sort_order' => $sort_order++,
             ],
             ['%d', '%s', '%s', '%s', '%f', '%d', '%s', '%s', '%d']
         );
-        
+
         if ($inserted === false) {
             error_log($wpdb->last_error);
+
             throw new \Exception('Fehler beim Speichern der Menüeinträge.' . $wpdb->last_error);
         }
     }
