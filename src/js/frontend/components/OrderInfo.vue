@@ -91,7 +91,7 @@ export default {
     },
     translations: {
       type: Object,
-      default: '{}'
+      default: {}
     }
   },
   data() {

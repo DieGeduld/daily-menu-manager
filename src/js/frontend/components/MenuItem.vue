@@ -17,7 +17,7 @@
         </div>
       </div>
     </div>
-    <div class="item-notes" :style="{ display: showNotes ? 'block' : 'none' }">
+    <div class="item-notes" :class="{ 'show-notes': showNotes }">
       <label :for="'notes_' + itemId">Hinweise:</label>
       <input 
         type="text" 
@@ -145,6 +145,14 @@ export default {
 }
 
 .item-notes {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease-in-out, margin-top 0.4s ease-in-out;
+  margin-top: 0;
+}
+
+.item-notes.show-notes {
+  max-height: 90px;
   margin-top: 10px;
 }
 

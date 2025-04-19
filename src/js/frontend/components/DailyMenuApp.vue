@@ -3,7 +3,6 @@
     <div class="menu-layout">
       <div class="menu-items-column">
         <h2>{{ title }} - {{ formattedDate }}</h2>
-        <p>Menü ID: {{ menuId }}</p>
         <p v-if="loading">Menü wird geladen...</p>
         <div v-else>
           <div class="menu-items-column">
