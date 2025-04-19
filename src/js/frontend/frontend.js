@@ -2,6 +2,8 @@
 import { createApp } from 'vue';
 import DailyMenuApp from './components/DailyMenuApp.vue';
 
+import '@/src/sass/frontend.scss'
+
 // Warten bis DOM geladen ist
 document.addEventListener('DOMContentLoaded', () => {
   // Finde den Mount-Punkt

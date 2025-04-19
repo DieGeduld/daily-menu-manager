@@ -1,7 +1,7 @@
 <template>
   <div class="menu-item" :data-item-available_quantity="availableQuantity" :data-item-id="itemId">
     <div class="menu-item-header">
-      <span class="menu-item-title">{{ title }}</span>
+      <span class="menu-item-title">{{ title }} ({{ availableQuantity }} available)</span>
       <span class="menu-item-price">{{ price }} €</span>
     </div>
     <div class="menu-item-footer">
@@ -10,18 +10,9 @@
       </p>
       <div class="menu-item-order">
         <div class="quantity-control">
-          <label :for="'quantity_' + itemId">Menge:</label>
+          <!-- <label :for="'quantity_' + itemId">Menge:</label> -->
           <button type="button" style="background: #cc1939" class="quantity-btn minus" @click="decreaseQuantity">-</button>
-          <input 
-            type="number" 
-            class="quantity-input" 
-            :name="'items[' + itemId + '][quantity]'" 
-            :id="'quantity_' + itemId" 
-            min="0" 
-            :max="availableQuantity" 
-            v-model="quantity" 
-            :data-price="price"
-          >
+          <div class="quantity" v-text="quantity"></div>  
           <button type="button" style="background: #cc1939" class="quantity-btn plus" @click="increaseQuantity">+</button>
         </div>
       </div>
@@ -61,7 +52,7 @@ export default {
     },
     availableQuantity: {
       type: Number,
-      default: 99
+      default: 0
     }
   },
   data() {
@@ -99,7 +90,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .menu-item {
   border-bottom: 1px solid #eee;
   padding: 15px 0;
@@ -161,5 +152,12 @@ export default {
   width: 100%;
   padding: 5px;
   margin-top: 5px;
+}
+
+.quantity {
+  font-size: 1.2em;
+  font-weight: bold;
+  width: 30px;
+  text-align: center;
 }
 </style>

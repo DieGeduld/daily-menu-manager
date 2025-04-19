@@ -1,23 +1,33 @@
 <template>
-  <div class="daily-menu-container">
-    <h2>{{ title }} - {{ formattedDate }}</h2>
-    <p>Menü ID: {{ menuId }}</p>
-    <p v-if="loading">Menü wird geladen...</p>
-    <div v-else>
-      <p v-if="error">{{ error }}</p>
-      <p v-else-if="menuItems.length === 0">Keine Menüpunkte verfügbar.</p>
-      <div v-else class="menu-items-list">
-        <!-- Hier wird die MenuItem-Komponente für jedes Element verwendet -->
-        <menu-item
-          v-for="item in menuItems"
-          :key="item.id"
-          :item-id="item.id"
-          :title="item.title"
-          :description="item.description"
-          :price="item.price"
-          :available-quantity="item.availableQuantity || 99"
-        />
+  <div id="menu-order-form" class="daily-menu-manager">
+    <div class="menu-layout">
+      <div class="menu-items-column">
+        <h2>{{ title }} - {{ formattedDate }}</h2>
+        <p>Menü ID: {{ menuId }}</p>
+        <p v-if="loading">Menü wird geladen...</p>
+        <div v-else>
+          <div class="menu-items-column">
+            <p v-if="error">{{ error }}</p>
+            <p v-else-if="menuItems.length === 0">Keine Menüpunkte verfügbar.</p>
+            <div v-else class="menu-items-list">
+              <menu-item
+                v-for="item in menuItems"
+                :key="item.id"
+                :item-id="item.id"
+                :title="item.title"
+                :description="item.description"
+                :price="item.price"
+                :available-quantity="item.available_quantity || 0"
+              />
+            </div>
+          </div>
+        </div>
       </div>
+      <div class="order-summary-column">
+        <h2>Bestellübersicht</h2>
+        <p>Hier wird die Bestellübersicht angezeigt.</p>
+        <OrderInfo/>
+        </div>
     </div>
   </div>
 </template>
@@ -26,11 +36,13 @@
 import { getMenuItems } from '../services/api.js';
 import { formatDate } from '../../common/helper.js';
 import MenuItem from './MenuItem.vue';
+import OrderInfo from './OrderInfo.vue';
 
 export default {
   name: 'DailyMenuApp',
   components: {
-    MenuItem // Registriere die Komponente
+    MenuItem,
+    OrderInfo
   },
   props: {
     menuId: {
