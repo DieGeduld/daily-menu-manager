@@ -1,9 +1,9 @@
 <template>
   <div class="order-info-column">
     <div class="order-summary">
-          <h3>{{ translations.order_summary || 'Order Summary' }}</h3>
+          <h3>{{ translations.orderSummary || 'Order Summary' }}</h3>
           <div class="order-total">
-              {{ translations.order_total || 'Total Amount' }}:
+              {{ translations.total || 'Total Amount' }}:
               <span id="total-amount">{{ totalPrice }}</span>
           </div>
       </div>
@@ -17,8 +17,8 @@
           </div>
           <div class="form-field">
               <label for="customer_phone">
-                  {{ translations.phonenumber || 'Phone Number' }}*
-                  {{ translations.for_possible_inquiries || '(For possible inquiries)' }}
+                  {{ translations.phoneNumber || 'Phone Number' }}*
+                  {{ translations.forPossibleInquiries || '(For possible inquiries)' }}
               </label>
               <input type="tel" 
                   name="customer_phone" 
@@ -31,30 +31,13 @@
               <label for="consumption_type">
                 {{ translations.pickup_or_eat_in || 'Pickup or Eat in' }}*
               </label>
-              <!-- <select name="consumption_type" id="consumption_type" required>
-                  <option value=""><?php _e('Please choose', 'daily-menu-manager'); ?></option>
-                  <?php foreach (SettingsController::getConsumptionTypes() as $type): ?>
-                      <option value="<?php echo esc_attr($type); ?>"><?php echo esc_html($type); ?></option>
-                  <?php endforeach; ?>
-              </select> -->
+              <!-- Consumption type select here -->
           </div>
           <div class="form-field">
               <label for="pickup_time">
                 {{ translations.pickup_time || "Pickup time" }}*
               </label>
-              <!-- <select name="pickup_time" id="pickup_time" required>
-                  <option value=""><?php _e('Please choose', 'daily-menu-manager'); ?></option>
-                  <?php
-                  $timeFormat = SettingsController::getTimeFormat();
-                  foreach (self::getAvailablePickupTimes() as $time) {
-                      $timeFormatted = SettingsController::formatTime($time);
-                      printf(
-                          '<option value="%s">%s</option>',
-                          esc_attr($time),
-                          esc_html($timeFormatted)
-                      );
-                  }
-              </select> -->
+              <!-- Pickup time select here -->
           </div>
           <div class="form-field">
               <label for="general_notes">
@@ -71,75 +54,84 @@
 </template>
 
 <script>
-import { getMenuItems } from '../services/api.js';
-import { formatDate } from '../../common/helper.js';
-import MenuItem from './MenuItem.vue';
-
 export default {
-  name: 'DailyMenuApp',
-  components: {
-    MenuItem // Registriere die Komponente
-  },
+  name: 'OrderInfo',
   props: {
-    menuId: {
-      type: [String, Number],
-      required: true
-    },
-    menuDate: {
-      type: String,
-      required: true
-    },
     translations: {
       type: Object,
-      default: {}
+      default: () => ({})
     }
   },
   data() {
     return {
-      loading: true,
-      error: null,
-      menuItems: []
-    };
-  },
-  computed: {
-    formattedDate() {
-
-    }
-  },
-  mounted() {
-    console.log('DailyMenuApp wurde geladen mit Menü ID:', this.menuId);
-    //this.fetchMenuItems();
-    this.translations = {
-      order_summary: 'Bestellübersicht',
-      order_total: 'Gesamtbetrag',
-      name: 'Name',
-      phonenumber: 'Telefonnummer',
-      for_possible_inquiries: '(Für eventuelle Rückfragen)',
-      pickup_or_eat_in: 'Abholung oder Vor Ort Essen',
-      pickup_time: 'Abholzeit',
-      order_notes: 'Bestellnotizen',
-      place_order: 'Bestellung aufgeben'
+      totalPrice: 0
     };
   },
   methods: {
-    // async fetchMenuItems() {
-    //   try {
-    //     this.loading = true;
-
-    //     const response = await getMenuItems();
-    //     this.menuItems = await response || [];
-
-    //   } catch (error) {
-    //     console.error('Fehler:', error);
-    //     this.error = 'Das Menü konnte nicht geladen werden. Bitte versuchen Sie es später erneut.';
-    //   } finally {
-    //     this.loading = false;
-    //   }
-    // }
+    calculateTotalPrice() {
+      this.totalPrice = 0.00.toFixed(2);
+    }
+  },
+  mounted() {
+    this.calculateTotalPrice();
   }
 };
 </script>
 
 <style lang="scss" scoped>
-
+.order-info-column {
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 5px;
+  
+  .order-summary {
+    margin-bottom: 20px;
+    
+    h3 {
+      margin-top: 0;
+    }
+    
+    .order-total {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+  }
+  
+  .customer-info {
+    .form-field {
+      margin-bottom: 15px;
+      
+      label {
+        display: block;
+        margin-bottom: 5px;
+      }
+      
+      input, select, textarea {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      
+      textarea {
+        min-height: 80px;
+      }
+    }
+  }
+  
+  .submit-order {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+}
 </style>

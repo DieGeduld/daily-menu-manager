@@ -163,7 +163,7 @@ class MenuRepository extends BaseRepository
 
         // Create new menu for target date
         $new_menu = new Menu([
-            'menu_date' => $target_date
+            'menu_date' => $target_date,
         ]);
 
         // Save the new menu

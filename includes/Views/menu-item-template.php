@@ -1,7 +1,7 @@
 <?php
 /**
  * Template for rendering a single menu item in the admin area
- * 
+ *
  * @var MenuItem $item The menu item to render
  * @var array $item_config The configuration for the menu type
  * @var bool $is_collapsed Whether the item is collapsed
@@ -12,7 +12,7 @@
 use DailyMenuManager\Controller\Admin\SettingsController;
 
 // Safety check in case $item is not defined
-if (!isset($item)) {
+if (! isset($item)) {
     return;
 }
 ?>
@@ -157,9 +157,9 @@ if (!isset($item)) {
             <div class="options-grid">
             <?php
                 $allProps = SettingsController::getMenuProperties() ?? [];
-                $props = $item->properties ?? [];
-                
-                foreach ($allProps as $prop): ?>
+$props = $item->properties ?? [];
+
+foreach ($allProps as $prop): ?>
                 <label class="checkbox-label">
                     <input type="checkbox" 
                            name="menu_items[<?php echo esc_attr($item->id); ?>][properties][<?php echo esc_attr($prop); ?>]"
@@ -179,8 +179,8 @@ if (!isset($item)) {
                       name="menu_items[<?php echo esc_attr($item->id); ?>][allergens]"
                       class="menu-item-allergens"
                       rows="2"><?php
-                echo esc_textarea($item->allergens);
-                ?></textarea>
+echo esc_textarea($item->allergens);
+?></textarea>
             <span class="field-description">
                 <?php _e('List any allergens present in this dish', 'daily-menu-manager'); ?>
             </span>

@@ -14,6 +14,8 @@ $config = new PhpCsFixer\Config();
 return $config->setRules([
         '@PSR12' => true,
         'array_syntax' => ['syntax' => 'short'],
+        'not_operator_with_space' => false,
+        'not_operator_with_successor_space' => false,
         'ordered_imports' => ['sort_algorithm' => 'alpha'],
         'no_unused_imports' => true,
         'not_operator_with_successor_space' => true,

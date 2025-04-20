@@ -19,16 +19,6 @@ class MenuController
         }
 
         add_action('admin_menu', [self::class, 'addAdminMenu']);
-
-        // Register AJAX handlers
-        add_action('wp_ajax_save_menu_order', [self::class, 'handleSaveMenuOrder']);
-        add_action('wp_ajax_copy_menu', [self::class, 'handleCopyMenu']);
-        add_action('wp_ajax_delete_menu_item', [self::class, 'handleDeleteMenuItem']);
-        add_action('wp_ajax_duplicate_menu_item', [self::class, 'handleDuplicateMenuItem']);
-        add_action('wp_ajax_get_menu_data', [self::class, 'handleGetMenuData']);
-        add_action('wp_ajax_get_current_menu', [self::class, 'handleGetCurrentMenu']);
-        add_action('wp_ajax_get_available_quantities', [self::class, 'getAvailableQuantities']);
-        add_action('wp_ajax_save_menu_data', [self::class, 'handleSaveMenuData']);
     }
 
     /**

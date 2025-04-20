@@ -4,6 +4,7 @@ includes:
 parameters:
   # Optional: WordPress-Level definieren
   level: 1
+  phpVersion: 70400
 
   paths:
     - daily-menu-manager.php

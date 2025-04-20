@@ -84,7 +84,7 @@ class AssetController
                     'translations' => [
                         'notes' => __('Notes for this item', 'daily-menu-manager'),
                         'available' => __('available', 'daily-menu-manager'),
-                        'orderTotal' => __('Order Total', 'daily-menu-manager'),
+                        'total' => __('Total', 'daily-menu-manager'),
                         'yourData' => __('Your Information', 'daily-menu-manager'),
                         'submit' => __('Place Order', 'daily-menu-manager'),
                         'submitting' => __('Submitting...', 'daily-menu-manager'),
@@ -99,6 +99,9 @@ class AssetController
                         'close' => __('Close', 'daily-menu-manager'),
                         'orderNumber' => __('Order Number', 'daily-menu-manager'),
                         'pickupInstructions' => __('Please mention this number when picking up.', 'daily-menu-manager'),
+                        'phoneNumber' => __('Phone Number', 'daily-menu-manager'),
+                        'orderDetails' => __('Order Details', 'daily-menu-manager'),
+                        'forPossibleInquiries' => __('(for possible inquiries)', 'daily-menu-manager'),
                     ],
                 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
             </script>

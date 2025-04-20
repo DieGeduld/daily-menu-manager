@@ -16,7 +16,7 @@ Feature Request:
 - Allergene (A, F, G)
 - Show Orders and only be able to cancel order
 - was passiert, wenn man 4 im warenkorb hat, und einer 1 bestellt?
-
+- Migrationen V20240322_AddSettingsTable -> V20240322_AddSettingsTable.php
 
 todo:
 - clean up handles, all in plugin.php

@@ -18,7 +18,7 @@ class ShortcodeController
         // Verhindert das Klonen der Instanz
     }
 
-    private static function getInstance()
+    private static function getInstance(): mixed
     {
         if (self::$instance === null) {
             self::$instance = new self();
@@ -27,7 +27,7 @@ class ShortcodeController
         return self::$instance;
     }
 
-    public static function init()
+    public static function init(): void
     {
         self::getInstance();
         add_shortcode('daily_menu', [self::class, 'renderMenu']);
@@ -39,7 +39,7 @@ class ShortcodeController
      * @param array $atts Shortcode Attribute
      * @return string HTML Output
      */
-    public static function renderMenu($atts = [])
+    public static function renderMenu($atts = []): string
     {
         // Shortcode Attribute mit Standardwerten
         $atts = shortcode_atts([

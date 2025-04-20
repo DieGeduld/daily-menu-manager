@@ -66,7 +66,7 @@ class Menu
             'id' => $this->id,
             'menu_date' => $this->menu_date,
             'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at
+            'updated_at' => $this->updated_at,
         ];
     }
 }

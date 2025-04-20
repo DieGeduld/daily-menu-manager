@@ -125,7 +125,7 @@ class MenuItemRepository implements RepositoryInterface
             // Update existing menu item
             $result = $this->wpdb->update(
                 $this->table_name,
-                    ['menu_id' => $data['menu_id'],
+                ['menu_id' => $data['menu_id'],
                     'item_type' => $data['item_type'],
                     'title' => $data['title'],
                     'description' => $data['description'],

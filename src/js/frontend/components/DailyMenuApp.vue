@@ -25,8 +25,8 @@
       <div class="order-summary-column">
         <h2>Bestellübersicht</h2>
         <p>Hier wird die Bestellübersicht angezeigt.</p>
-        <OrderInfo/>
-        </div>
+        <OrderInfo :translations="translations" />
+      </div>
     </div>
   </div>
 </template>
@@ -55,21 +55,26 @@ export default {
     title: {
       type: String,
       default: 'Tagesmenü'
-    }
+    },
   },
   data() {
     return {
       loading: true,
       error: null,
-      menuItems: []
+      menuItems: [],
+      translations: window.dailyMenuAjax.translations
     };
+  },
+  created() {
+
   },
   computed: {
     formattedDate() {
       if (!this.menuDate) return '';
       
       const date = new Date(this.menuDate);
-      return formatDate(date, window.dailyMenuAjax.dateFormat);
+      const dateFormat = window.dailyMenuAjax.dateFormat || 'DD.MM.YYYY';
+      return formatDate(date, dateFormat);
     }
   },
   mounted() {
@@ -82,7 +87,7 @@ export default {
         this.loading = true;
 
         const response = await getMenuItems();
-        this.menuItems = await response || [];
+        this.menuItems = response || [];
 
       } catch (error) {
         console.error('Fehler:', error);
@@ -101,6 +106,22 @@ export default {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
+}
+
+.menu-layout {
+  display: flex;
+  gap: 20px;
+}
+
+.menu-items-column {
+  flex: 2;
+}
+
+.order-summary-column {
+  flex: 1;
+  background-color: #f5f5f5;
+  padding: 15px;
+  border-radius: 5px;
 }
 
 .menu-items-list {
