@@ -9,15 +9,20 @@
             <p v-if="error">{{ error }}</p>
             <p v-else-if="menuItems.length === 0">Keine Menüpunkte verfügbar.</p>
             <div v-else class="menu-items-list">
-              <menu-item
-                v-for="item in menuItems"
-                :key="item.id"
-                :item-id="item.id"
-                :title="item.title"
-                :description="item.description"
-                :price="item.price"
-                :available-quantity="item.available_quantity || 0"
-              />
+              <!-- Gruppierte Menüanzeige -->
+              <div v-for="(items, itemType) in groupedMenuItems" :key="itemType" class="menu-group">
+                <!-- TODO: Adding Translations-->
+                <h3 class="menu-group-title">{{ itemType }}</h3>
+                <menu-item
+                  v-for="item in items"
+                  :key="item.id"
+                  :item-id="item.id"
+                  :title="item.title"
+                  :description="item.description"
+                  :price="item.price"
+                  :available-quantity="item.available_quantity || 0"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -75,6 +80,22 @@ export default {
       const date = new Date(this.menuDate);
       const dateFormat = window.dailyMenuAjax.dateFormat || 'DD.MM.YYYY';
       return formatDate(date, dateFormat);
+    },
+    // Neu hinzugefügte computed property für gruppierte Menüpunkte
+    groupedMenuItems() {
+      const grouped = {};
+      
+      this.menuItems.forEach(item => {
+        const itemType = item.item_type || 'Sonstiges'; // Fallback, falls kein item_type vorhanden ist
+        
+        if (!grouped[itemType]) {
+          grouped[itemType] = [];
+        }
+        
+        grouped[itemType].push(item);
+      });
+      
+      return grouped;
     }
   },
   mounted() {
@@ -127,5 +148,17 @@ export default {
 .menu-items-list {
   padding: 0;
   margin: 20px 0;
+}
+
+/* Neue Stile für die Gruppierung */
+.menu-group {
+  margin-bottom: 25px;
+}
+
+.menu-group-title {
+  border-bottom: 2px solid #eaeaea;
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+  color: #333;
 }
 </style>
