@@ -18,3 +18,4 @@ node_modules/
 
 # CS-Fixer
 /.php-cs-fixer.cache
+/phpstan-output.log

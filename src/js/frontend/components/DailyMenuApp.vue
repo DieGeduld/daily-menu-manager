@@ -3,28 +3,27 @@
     <div class="menu-layout">
       <div class="menu-items-column">
         <h2>{{ title }} - {{ formattedDate }}</h2>
+
         <p v-if="loading">Menü wird geladen...</p>
         <div v-else>
-          <div class="menu-items-column">
             <p v-if="error">{{ error }}</p>
-            <p v-else-if="menuItems.length === 0">Keine Menüpunkte verfügbar.</p>
+            <p v-else-if="this.currentMenudata.grouped_items.length === 0">Keine Menüpunkte verfügbar.</p>
+
             <div v-else class="menu-items-list">
-              <!-- Gruppierte Menüanzeige -->
-              <div v-for="(items, itemType) in groupedMenuItems" :key="itemType" class="menu-group">
-                <!-- TODO: Adding Translations-->
-                <h3 class="menu-group-title">{{ itemType }}</h3>
-                <menu-item
-                  v-for="item in items"
-                  :key="item.id"
-                  :item-id="item.id"
-                  :title="item.title"
-                  :description="item.description"
-                  :price="item.price"
-                  :available-quantity="item.available_quantity || 0"
-                />
+
+              <div v-for="(items, groupName) in this.currentMenudata.grouped_items" class="menu-group">
+                <h2 class="menu-group-title text-xl font-semibold mb-4">{{ groupName }}</h2>
+                  <menu-item
+                    v-for="item in items"
+                    :key="item.id"
+                    :item-id="item.id"
+                    :title="item.title"
+                    :description="item.description"
+                    :price="item.price"
+                    :available-quantity="item.available_quantity || 0"
+                  />
               </div>
             </div>
-          </div>
         </div>
       </div>
       <div class="order-summary-column">
@@ -67,6 +66,7 @@ export default {
       loading: true,
       error: null,
       menuItems: [],
+      currentMenudata: [],
       translations: window.dailyMenuAjax.translations
     };
   },
@@ -82,21 +82,6 @@ export default {
       return formatDate(date, dateFormat);
     },
     // Neu hinzugefügte computed property für gruppierte Menüpunkte
-    groupedMenuItems() {
-      const grouped = {};
-      
-      this.menuItems.forEach(item => {
-        const itemType = item.item_type || 'Sonstiges'; // Fallback, falls kein item_type vorhanden ist
-        
-        if (!grouped[itemType]) {
-          grouped[itemType] = [];
-        }
-        
-        grouped[itemType].push(item);
-      });
-      
-      return grouped;
-    }
   },
   mounted() {
     console.log('DailyMenuApp wurde geladen mit Menü ID:', this.menuId);
@@ -108,7 +93,7 @@ export default {
         this.loading = true;
 
         const response = await getMenuItems();
-        this.menuItems = response || [];
+        this.currentMenudata = response || [];
 
       } catch (error) {
         console.error('Fehler:', error);
@@ -122,11 +107,18 @@ export default {
 </script>
 
 <style scoped>
-.daily-menu-container {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
+
+@import '../../../fonts/SourceSans3.css';
+
+.daily-menu-manager {
+  @apply mx-auto p-4 font-source-sans bg-white rounded-lg shadow-md border border-gray-200 text-gray-800 text-sm;
+  .menu-items-column {
+    h2 {
+      @apply text-2xl text-gray-800 font-source-sans;
+      @apply font-semibold;
+      @apply mb-4;
+    }
+  }
 }
 
 .menu-layout {
@@ -150,9 +142,10 @@ export default {
   margin: 20px 0;
 }
 
-/* Neue Stile für die Gruppierung */
+/* Modified styles for menu-group */
 .menu-group {
   margin-bottom: 25px;
+  background-color: white; /* Direct CSS instead of @apply */
 }
 
 .menu-group-title {

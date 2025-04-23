@@ -90,7 +90,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 .menu-item {
   border-bottom: 1px solid #eee;
   padding: 15px 0;
@@ -167,5 +167,9 @@ export default {
   font-weight: bold;
   width: 30px;
   text-align: center;
+}
+
+.quantity-btn {
+  padding-bottom: 2px;
 }
 </style>

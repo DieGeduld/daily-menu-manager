@@ -7,7 +7,7 @@ Feature Request:
 - auto refresh auch im BE
 - vue.js
 - speisen, die es jeden Tag gibt
-- Amount: infinite 
+- Amount: infinite
 - Ab wann (noch Ax verfügbar) anzeigen?
 - email notification
 - define order states (pending, complete, etc...)
@@ -17,7 +17,9 @@ Feature Request:
 - Show Orders and only be able to cancel order
 - was passiert, wenn man 4 im warenkorb hat, und einer 1 bestellt?
 - Migrationen V20240322_AddSettingsTable -> V20240322_AddSettingsTable.php
+- Change order from Menu-Types
 
 todo:
+
 - clean up handles, all in plugin.php
 - menu.php aufteilen

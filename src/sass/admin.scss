@@ -6,3 +6,7 @@
 @use 'tables';
 @use 'notifications';
 @use 'utilities';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

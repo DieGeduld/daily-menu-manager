@@ -1,6 +1,6 @@
 /**
  * Holt die Menüelemente für ein bestimmtes Datum
- * 
+ *
  * @returns {Promise<Array>} - Die Menüelemente
  */
 export async function getMenuItems() {
@@ -9,20 +9,19 @@ export async function getMenuItems() {
     formData.append('action', 'get_current_menu');
     formData.append('_ajax_nonce', window.dailyMenuAjax.nonce);
 
-
     const response = await fetch(window.dailyMenuAjax.ajaxurl, {
       method: 'POST',
       body: formData,
-      credentials: 'same-origin'
+      credentials: 'same-origin',
     });
 
     const data = await response.json();
-    
+
     if (!data.success) {
       throw new Error(data.data || 'Error loading menu items');
     }
-    
-    return data.data.items || [];
+
+    return data.data || [];
   } catch (error) {
     console.error('API Error:', error);
     throw error;
@@ -31,7 +30,7 @@ export async function getMenuItems() {
 
 /**
  * Aktualisiert die verfügbaren Mengen der Menüelemente
- * 
+ *
  * @param {number|string} menuId - Die ID des Menüs
  * @param {string} ajaxUrl - WordPress AJAX URL
  * @param {string} nonce - Sicherheits-Token
@@ -46,15 +45,15 @@ export async function getAvailableQuantities() {
     const response = await fetch(window.dailyMenuAjax.ajaxurl, {
       method: 'POST',
       body: formData,
-      credentials: 'same-origin'
+      credentials: 'same-origin',
     });
 
     const data = await response.json();
-    
+
     if (!data.success) {
       throw new Error(data.data || 'Error loading available quantities');
     }
-    
+
     return data.data.quantities || {};
   } catch (error) {
     console.error('API Error:', error);
@@ -64,7 +63,7 @@ export async function getAvailableQuantities() {
 
 /**
  * Sendet eine Bestellung ab
- * 
+ *
  * @param {Object} orderData - Die Bestelldaten
  * @returns {Promise<Object>} - Die Antwortdaten
  */
@@ -78,7 +77,7 @@ export async function submitOrder(orderData) {
     formData.append('customer_phone', orderData.customer_phone);
     formData.append('pickup_time', orderData.pickup_time);
     formData.append('notes', orderData.notes);
-    
+
     // Bestellelemente hinzufügen
     orderData.items.forEach((item, index) => {
       formData.append(`items[${index}][id]`, item.id);
@@ -89,15 +88,15 @@ export async function submitOrder(orderData) {
     const response = await fetch(window.dailyMenuAjax.ajaxurl, {
       method: 'POST',
       body: formData,
-      credentials: 'same-origin'
+      credentials: 'same-origin',
     });
 
     const data = await response.json();
-    
+
     if (!data.success) {
       throw new Error(data.data || 'Error submitting order');
     }
-    
+
     return data.data || {};
   } catch (error) {
     console.error('API Error:', error);
@@ -107,7 +106,7 @@ export async function submitOrder(orderData) {
 
 /**
  * Hilfsfunktion für einfachere Formularübermittlung
- * 
+ *
  * @param {FormData|Object} formData - Die zu sendenden Formulardaten
  * @param {string} action - Die AJAX-Aktion
  * @returns {Promise<any>} - Die Antwortdaten
@@ -115,14 +114,14 @@ export async function submitOrder(orderData) {
 export async function sendRequest(formData, action) {
   try {
     const data = formData instanceof FormData ? formData : new FormData();
-    
+
     // Wenn es kein FormData-Objekt ist, Daten manuell hinzufügen
     if (!(formData instanceof FormData)) {
-      Object.keys(formData).forEach(key => {
+      Object.keys(formData).forEach((key) => {
         data.append(key, formData[key]);
       });
     }
-    
+
     // AJAX-Aktion und Nonce hinzufügen
     data.append('action', action);
     data.append('_ajax_nonce', window.dailyMenuAjax.nonce);
@@ -130,7 +129,7 @@ export async function sendRequest(formData, action) {
     const response = await fetch(window.dailyMenuAjax.ajaxurl, {
       method: 'POST',
       body: data,
-      credentials: 'same-origin'
+      credentials: 'same-origin',
     });
 
     return await response.json();

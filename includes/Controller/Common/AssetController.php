@@ -42,6 +42,14 @@ class AssetController
             '11.10.5'
         );
 
+        // Tailwind CSS
+        // wp_enqueue_style(
+        //     'tailwind',
+        //     'https://unpkg.com/tailwindcss@^3/dist/tailwind.min.css',
+        //     [],
+        //     '3'
+        // );
+
         // SweetAlert2 JS
         wp_register_script(
             'sweetalert2',
