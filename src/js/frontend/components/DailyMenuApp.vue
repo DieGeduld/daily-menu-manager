@@ -11,7 +11,7 @@
 
             <div v-else class="menu-items-list">
               <div v-for="(items, groupName) in currentMenudata.grouped_items" :key="groupName" class="menu-group">
-                <h2 class="menu-group-title text-xl font-semibold mb-4">{{ groupName }}</h2>
+                <h2 class="menu-group-title text-xl font-semibold mb-3">{{ groupName }}</h2>
                 <menu-item
                   v-for="item in items"
                   :key="item.id"
@@ -27,7 +27,6 @@
         </div>
       </div>
       <div class="order-summary-column">
-        <h2>Bestellübersicht</h2>
         <order-info :translations="translations" />
       </div>
     </div>

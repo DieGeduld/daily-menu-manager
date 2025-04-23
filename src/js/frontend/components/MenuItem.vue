@@ -16,9 +16,9 @@
       </p>
       <div class="menu-item-order">
         <div class="quantity-control">
-          <button type="button" style="background: #cc1939" class="quantity-btn minus" @click="decreaseQuantity" :disabled="!getQuantity">-</button>
+          <button type="button" class="quantity-btn minus" @click="decreaseQuantity" :disabled="!getQuantity">-</button>
           <div class="quantity" v-text="getQuantity"></div>  
-          <button type="button" style="background: #cc1939" class="quantity-btn plus" @click="increaseQuantity" :disabled="availableQuantity === 0">+</button>
+          <button type="button" class="quantity-btn plus" @click="increaseQuantity" :disabled="availableQuantity === 0 || getQuantity >= availableQuantity">+</button>
         </div>
       </div>
     </div>
@@ -135,13 +135,20 @@ export default {
 <style scoped>
 .menu-item {
   border-bottom: 1px solid #eee;
-  padding: 15px 0;
+  padding: 10px 0;
 }
 
 .menu-item-header {
   display: flex;
   justify-content: space-between;
   margin-bottom: 8px;
+}
+
+.menu-item-header.soldout {
+  color: #b1b1b1;
+  .menu-item-price {
+    color: #b1b1b1;
+  }
 }
 
 .menu-item-header.soldout .left {
@@ -192,11 +199,20 @@ export default {
   color: white;
   font-weight: bold;
   cursor: pointer;
+  user-select: none;
+  border: 1px solid #777;
+  color: #333;
+  &:hover {
+    background: #EEE;
+  } 
 }
 
 .quantity-btn:disabled {
-  background-color: #999 !important;
+  opacity: 0.3;
   cursor: not-allowed;
+  /* background-color: #ececec !important;
+  border: 1px solid #a4a4a4;
+  color: black; */
 }
 
 .item-notes {
