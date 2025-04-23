@@ -23,3 +23,7 @@ todo:
 
 - clean up handles, all in plugin.php
 - menu.php aufteilen
+
+Bug:
+Mehrer Items erstellen + speichern: es wird nur das letzte gespeichert
+Ein Item anlegen und direkt wieder löschen: Fehler, weil noch nicht in DB

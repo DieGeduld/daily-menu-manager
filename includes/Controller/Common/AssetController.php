@@ -110,12 +110,13 @@ class AssetController
                         'phoneNumber' => __('Phone Number', 'daily-menu-manager'),
                         'orderDetails' => __('Order Details', 'daily-menu-manager'),
                         'forPossibleInquiries' => __('(for possible inquiries)', 'daily-menu-manager'),
+                        'pickup_or_eat_in' => __('Pick up or eat in', 'daily-menu-manager'),
+                        'soldout' => __('Sold out', 'daily-menu-manager'),
                     ],
                 ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
             </script>
             <?php
         });
-
     }
 
     public static function enqueueAdminAssets($hook)

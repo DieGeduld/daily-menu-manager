@@ -1,19 +1,24 @@
 <template>
   <div class="menu-item" :data-item-available_quantity="availableQuantity" :data-item-id="itemId">
-    <div class="menu-item-header">
+    <div class="menu-item-header" v-if="availableQuantity > 0">
       <span class="menu-item-title">{{ title }} ({{ availableQuantity }} available)</span>
       <span class="menu-item-price">{{ price }} €</span>
     </div>
+    
+    <div class="menu-item-header soldout" v-else>
+      <div class="left"><span class="menu-item-title">{{ title }}</span><span>({{ translations.soldout }})</span></div>
+      <span class="menu-item-price">{{ price }} €</span>
+    </div>
+
     <div class="menu-item-footer">
       <p class="menu-item-description">
         {{ description }}
       </p>
       <div class="menu-item-order">
         <div class="quantity-control">
-          <!-- <label :for="'quantity_' + itemId">Menge:</label> -->
-          <button type="button" style="background: #cc1939" class="quantity-btn minus" @click="decreaseQuantity">-</button>
-          <div class="quantity" v-text="quantity"></div>  
-          <button type="button" style="background: #cc1939" class="quantity-btn plus" @click="increaseQuantity">+</button>
+          <button type="button" style="background: #cc1939" class="quantity-btn minus" @click="decreaseQuantity" :disabled="!getQuantity">-</button>
+          <div class="quantity" v-text="getQuantity"></div>  
+          <button type="button" style="background: #cc1939" class="quantity-btn plus" @click="increaseQuantity" :disabled="availableQuantity === 0">+</button>
         </div>
       </div>
     </div>
@@ -31,6 +36,9 @@
 </template>
 
 <script>
+import { useStore } from 'vuex'
+import { ref, computed, watch } from 'vue'
+
 export default {
   name: 'MenuItem',
   props: {
@@ -53,39 +61,73 @@ export default {
     availableQuantity: {
       type: Number,
       default: 0
-    }
-  },
-  data() {
-    return {
-      quantity: 0,
-      notes: '',
-      showNotes: false
-    }
-  },
-  methods: {
-    increaseQuantity() {
-      if (this.quantity < this.availableQuantity) {
-        this.quantity++;
-        this.showNotes = this.quantity > 0;
-        this.$emit('quantity-change', {
-          itemId: this.itemId,
-          quantity: this.quantity
-        });
-      }
     },
-    decreaseQuantity() {
-      if (this.quantity > 0) {
-        this.quantity--;
-        this.showNotes = this.quantity > 0;
-        this.$emit('quantity-change', {
-          itemId: this.itemId,
-          quantity: this.quantity
-        });
-      }
+    translations: {
+      type: Object,
+      default: () => ({})
     }
   },
-  mounted() {
-    console.log(`MenuItem ${this.itemId} wurde geladen.`);
+  setup(props) {
+    const store = useStore()
+    const notes = ref('')
+    const showNotes = ref(false)
+    
+    // Getter für die Artikelmenge aus dem Store
+    const getQuantity = computed(() => {
+      return store.getters.getItemQuantity(props.itemId)
+    })
+    
+    // Menge erhöhen
+    const increaseQuantity = () => {
+      if (getQuantity.value < props.availableQuantity) {
+        store.dispatch('updateItemQuantity', {
+          itemId: props.itemId,
+          quantity: getQuantity.value + 1,
+          notes: notes.value,
+          price: props.price,
+          title: props.title
+        })
+      }
+    }
+    
+    // Menge verringern
+    const decreaseQuantity = () => {
+      if (getQuantity.value > 0) {
+        store.dispatch('updateItemQuantity', {
+          itemId: props.itemId,
+          quantity: getQuantity.value - 1,
+          notes: notes.value,
+          price: props.price,
+          title: props.title
+        })
+      }
+    }
+    
+    // Beobachter für Quantity (zeigt Notizfeld)
+    watch(getQuantity, (newValue) => {
+      showNotes.value = newValue > 0
+    })
+    
+    // Beobachter für Notizen
+    watch(notes, (newValue) => {
+      if (getQuantity.value > 0) {
+        store.dispatch('updateItemQuantity', {
+          itemId: props.itemId,
+          quantity: getQuantity.value,
+          notes: newValue,
+          price: props.price,
+          title: props.title
+        })
+      }
+    })
+    
+    return {
+      notes,
+      showNotes,
+      getQuantity,
+      increaseQuantity,
+      decreaseQuantity
+    }
   }
 }
 </script>
@@ -100,6 +142,19 @@ export default {
   display: flex;
   justify-content: space-between;
   margin-bottom: 8px;
+}
+
+.menu-item-header.soldout .left {
+  display: flex;
+  gap: 10px;
+}
+
+.menu-item-header.soldout .menu-item-title {
+  text-decoration: line-through;
+}
+
+.menu-item-header.soldout .menu-item-price {
+  text-decoration: line-through;
 }
 
 .menu-item-title {
@@ -139,9 +194,9 @@ export default {
   cursor: pointer;
 }
 
-.quantity-input {
-  width: 40px;
-  text-align: center;
+.quantity-btn:disabled {
+  background-color: #999 !important;
+  cursor: not-allowed;
 }
 
 .item-notes {

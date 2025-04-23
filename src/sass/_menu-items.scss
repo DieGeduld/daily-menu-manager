@@ -139,6 +139,9 @@
 .menu-item-title-area {
 	flex-grow: 1;
 	margin-right: 10px;
+  .menu-item-title-preview {
+    font-weight: bold;
+  }
 }
 
 .menu-item-actions {

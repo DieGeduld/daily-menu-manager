@@ -45,6 +45,7 @@
     "gettext-parser": "^8.0.0",
     "notyf": "^3.10.0",
     "pinia": "^2.1.7",
-    "sweetalert2": "^11.19.1"
+    "sweetalert2": "^11.19.1",
+    "vuex": "^4.1.0"
   }
 }
