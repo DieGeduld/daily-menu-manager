@@ -2,7 +2,7 @@
   <div id="menu-order-form" class="daily-menu-manager">
     <div class="menu-layout">
       <div class="menu-items-column">
-        <h2>{{ title }} - {{ formattedDate }}</h2>
+        <h2 class="menu-title">{{ title }} - {{ formattedDate }}</h2>
 
         <p class="loading" v-if="loading">Menü wird geladen...</p>
         <div v-else>
@@ -11,7 +11,7 @@
 
             <div v-else class="menu-items-list">
               <div v-for="(items, groupName) in currentMenudata.grouped_items" :key="groupName" class="menu-group">
-                <h2 class="menu-group-title text-xl font-semibold mb-3">{{ groupName }}</h2>
+                <h2 class="menu-group-title text-xl font-semibold">{{ groupName }}</h2>
                 <menu-item
                   v-for="item in items"
                   :key="item.id"
@@ -114,10 +114,9 @@ export default {
   margin: 0 auto;
   padding: 1rem;
   font-family: 'Source Sans 3', sans-serif;
-  background-color: white;
+  background-color: #F5F6F6;
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  border: 1px solid #e5e7eb;
   color: #1f2937;
   font-size: 0.875rem;
 }
@@ -135,17 +134,29 @@ export default {
 
 .menu-items-column {
   flex: 2;
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 3px 3px 7px #00000022;
 }
 
-.menu-items-column h2 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #1f2937;
-  margin-bottom: 1rem;
+h2.menu-title {
+  padding: 20px 20px 0;
 }
+
+h2.menu-group-title {
+  padding: 10px 20px;
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #E74551;
+
+}
+
 
 .order-summary-column {
   flex: 1;
+  box-shadow: 3px 3px 7px #00000022;
+  background: white;
 }
 
 .order-summary-column h2 {
@@ -160,16 +171,25 @@ export default {
   margin: 1.25rem 0;
 }
 
-.menu-group {
-  margin-bottom: 1.5rem;
-  background-color: white;
+.menu-item {
+  padding: 10px 20px;
+  border-bottom: 1px solid #c6c6c6;
+  &:nth-child(even) {
+    background: #F5F6F7;
+  }
+  &:hover {
+    background: #ededed;
+  }
+  &:nth-child(1) {
+    border-top: 1px solid #c6c6c6
+  }
 }
 
-.menu-group-title {
-  border-bottom: 2px solid #eaeaea;
-  padding-bottom: 0.5rem;
-  margin-bottom: 1rem;
-  color: #333;
+
+.menu-group {
+  &:not(:last-child) {
+    margin-bottom: 1.5rem;
+  }
 }
 
 @media (max-width: 768px) {

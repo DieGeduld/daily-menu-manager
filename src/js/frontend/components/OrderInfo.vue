@@ -6,8 +6,8 @@
       <div v-if="cartItems.length > 0" class="order-items">
         <div v-for="item in cartItems" :key="item.id" class="order-item">
           <div class="item-details">
+            <span class="item-quantity">{{ item.quantity }} x</span>
             <span class="item-title">{{ item.title }}</span>
-            <span class="item-quantity">x {{ item.quantity }}</span>
             <span class="item-price">{{ (item.price * item.quantity).toFixed(2) }} €</span>
           </div>
           <div v-if="item.notes" class="item-notes">
@@ -28,7 +28,7 @@
     <div class="customer-info">
       <div class="form-field">
         <label for="customer_name">
-          {{ translations.name || 'Name' }}*
+          {{ translations.name || 'Name' }}<span class="asterisk">*</span>
         </label>
         <input 
           type="text" 
@@ -40,7 +40,7 @@
       
       <div class="form-field">
         <label for="customer_phone">
-          {{ translations.phoneNumber || 'Phone Number' }}*
+          {{ translations.phoneNumber || 'Phone Number' }}<span class="asterisk">*</span>
           {{ translations.forPossibleInquiries || '(For possible inquiries)' }}
         </label>
         <input 
@@ -54,18 +54,30 @@
       </div>
 
       <div class="form-field">
-        <label for="consumption_type">
-          {{ translations.pickup_or_eat_in || 'Pickup or Eat in' }}*
+        <label>
+          {{ translations.pickup_or_eat_in || 'Pickup or Eat in' }}<span class="asterisk">*</span>
         </label>
-        <select id="consumption_type" v-model="customerInfo.consumptionType" required>
-          <option value="pickup">{{ translations.pickup || 'Pickup' }}</option>
-          <option value="dine-in">{{ translations.dine_in || 'Eat in' }}</option>
-        </select>
+        <div class="button-group consumptionType-group">
+          <button 
+            type="button" 
+            :class="{ active: customerInfo.consumptionType === 'pickup' }" 
+            @click="customerInfo.consumptionType = 'pickup'"
+          >
+            {{ translations.pickup || 'Pickup' }}
+          </button>
+          <button 
+            type="button" 
+            :class="{ active: customerInfo.consumptionType === 'dine-in' }" 
+            @click="customerInfo.consumptionType = 'dine-in'"
+          >
+            {{ translations.dine_in || 'Eat in' }}
+          </button>
+        </div>
       </div>
       
       <div class="form-field">
         <label for="pickup_time">
-          {{ translations.pickup_time || "Pickup time" }}*
+          {{ translations.pickup_time || "Pickup time" }}<span class="asterisk">*</span>
         </label>
         <select id="pickup_time" v-model="customerInfo.pickupTime" required>
           <option value="" disabled>{{ translations.select_pickup_time || "Select a pickup time" }}</option>
@@ -95,7 +107,7 @@
     <button 
       type="button" 
       class="submit-order" 
-      :style="{ background: '#cc1939' }" 
+      :style="{ background: '#E74551' }" 
       @click="submitOrder"
       :disabled="!isValidOrder"
     >
@@ -163,9 +175,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.asterisk {
+  color: #E74551;
+}
+
+
 .order-info-column {
   padding: 20px;
-  background: #f9f9f9;
   border-radius: 5px;
   position: sticky;
   top: 0;
@@ -187,6 +204,24 @@ export default {
         .item-details {
           display: flex;
           justify-content: space-between;
+          align-items: center;
+
+          .item-title {
+            text-overflow: ellipsis;
+            flex: 1;
+          }
+          
+          .quantity-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 10px;
+          }
+          
+          .item-quantity {
+            display: block;
+            margin: 0 15px 0 0;
+          }
         }
         
         .item-notes {
@@ -212,6 +247,50 @@ export default {
   }
   
   .customer-info {
+
+    input, textarea {
+      box-shadow: none;
+    }
+    
+    .consumptionType-group {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      button {
+        width: 100%;
+        padding: 10px;
+        cursor: pointer;
+        font-weight: bold;
+
+        &:first-child {
+          border-top-left-radius: 8px;
+          border-bottom-left-radius: 8px;
+          &:not(.active) {
+            border-right: none;
+          } 
+        }
+        
+        &:last-child {
+          border-top-right-radius: 8px;
+          border-bottom-right-radius: 8px;
+          &:not(.active) {
+            border-left: none;
+          } 
+        }
+
+        &.active {
+          background: #E74551;
+          color: white;
+        } 
+        &:not(.active) {
+          color: #333;
+          border: 1px solid #ddd;
+          background: white;
+        } 
+      } 
+    }
+    
     .form-field {
       margin-bottom: 15px;
       
@@ -225,6 +304,11 @@ export default {
         padding: 8px;
         border: 1px solid #ddd;
         border-radius: 4px;
+        font-size: 15px;
+        // &[required] {
+        //   border: 1px solid #E74551;
+        // }
+
       }
       
       textarea {

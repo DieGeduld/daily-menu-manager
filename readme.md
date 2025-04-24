@@ -18,6 +18,7 @@ Feature Request:
 - was passiert, wenn man 4 im warenkorb hat, und einer 1 bestellt?
 - Migrationen V20240322_AddSettingsTable -> V20240322_AddSettingsTable.php
 - Change order from Menu-Types
+- ab wann wird "noch x avaibale" angezeigt?
 
 todo:
 

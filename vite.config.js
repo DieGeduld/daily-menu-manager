@@ -4,23 +4,24 @@ import { resolve } from 'path';
 import legacy from '@vitejs/plugin-legacy';
 
 export default defineConfig({
+  mode: 'development',
   plugins: [
     vue(),
     legacy({
-      targets: ['defaults', 'not IE 11']
-    })
+      targets: ['defaults', 'not IE 11'],
+    }),
   ],
   resolve: {
     alias: {
-      '@': resolve(__dirname, '.')
-    }
+      '@': resolve(__dirname, '.'),
+    },
   },
   css: {
     preprocessorOptions: {
       scss: {
         // If you have global variables
-      }
-    }
+      },
+    },
   },
   build: {
     outDir: 'dist',
@@ -29,14 +30,14 @@ export default defineConfig({
     rollupOptions: {
       input: {
         admin: resolve(__dirname, 'src/js/admin/admin.js'),
-        frontend: resolve(__dirname, 'src/js/frontend/frontend.js')
+        frontend: resolve(__dirname, 'src/js/frontend/frontend.js'),
       },
       output: {
         format: 'es',
         entryFileNames: '[name].js',
         chunkFileNames: '[name]-[hash].js',
-        assetFileNames: '[name].[ext]'
-      }
-    }
-  }
+        assetFileNames: '[name].[ext]',
+      },
+    },
+  },
 });

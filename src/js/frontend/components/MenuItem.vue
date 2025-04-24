@@ -1,12 +1,15 @@
 <template>
-  <div class="menu-item" :data-item-available_quantity="availableQuantity" :data-item-id="itemId">
+  <div 
+  :data-item-available_quantity="availableQuantity" 
+  :class="{'menu-item': true, 'soldout': availableQuantity == 0}" 
+  :data-item-id="itemId">
     <div class="menu-item-header" v-if="availableQuantity > 0">
       <span class="menu-item-title">{{ title }} ({{ availableQuantity }} available)</span>
       <span class="menu-item-price">{{ price }} €</span>
     </div>
     
     <div class="menu-item-header soldout" v-else>
-      <div class="left"><span class="menu-item-title">{{ title }}</span><span>({{ translations.soldout }})</span></div>
+      <div class="left"><span class="menu-item-title">{{ title }}</span><span class="badge badge-secondary">{{ translations.soldout }}</span></div>
       <span class="menu-item-price">{{ price }} €</span>
     </div>
 
@@ -110,7 +113,6 @@ export default {
     
     // Beobachter für Notizen
     watch(notes, (newValue) => {
-      if (getQuantity.value > 0) {
         store.dispatch('updateItemQuantity', {
           itemId: props.itemId,
           quantity: getQuantity.value,
@@ -118,7 +120,6 @@ export default {
           price: props.price,
           title: props.title
         })
-      }
     })
     
     return {
@@ -133,6 +134,7 @@ export default {
 </script>
 
 <style scoped>
+
 .menu-item {
   border-bottom: 1px solid #eee;
   padding: 10px 0;
@@ -142,12 +144,21 @@ export default {
   display: flex;
   justify-content: space-between;
   margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.badge {
+  align-self: center;
+  background: #E74551;
 }
 
 .menu-item-header.soldout {
   color: #b1b1b1;
   .menu-item-price {
     color: #b1b1b1;
+  }
+  .menu-item-order {
+    opacity: 0.3;
   }
 }
 
@@ -166,7 +177,7 @@ export default {
 
 .menu-item-title {
   font-weight: bold;
-  font-size: 1.1em;
+  font-size: 18px;
 }
 
 .menu-item-price {
@@ -177,6 +188,7 @@ export default {
 .menu-item-description {
   color: #666;
   margin-bottom: 8px;
+  font-size: 14px;
 }
 
 .menu-item-footer {
@@ -188,32 +200,33 @@ export default {
 .quantity-control {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 0px;
+  border: 1px solid #666;
+  border-radius: 20px;
+  overflow: hidden;
+
+  .quantity-btn {
+    width: 30px;
+    height: 30px;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+    padding-bottom: 2px;
+    color: #333;
+    &:not(:disabled)&:hover {
+      color: white;
+      background: #e74551;
+    } 
+  }
+
+  .quantity-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
 }
 
-.quantity-btn {
-  width: 30px;
-  height: 30px;
-  border: none;
-  border-radius: 50%;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  user-select: none;
-  border: 1px solid #777;
-  color: #333;
-  &:hover {
-    background: #EEE;
-  } 
-}
-
-.quantity-btn:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-  /* background-color: #ececec !important;
-  border: 1px solid #a4a4a4;
-  color: black; */
-}
 
 .item-notes {
   max-height: 0;
@@ -231,16 +244,13 @@ export default {
   width: 100%;
   padding: 5px;
   margin-top: 5px;
+  box-shadow: none;
 }
 
 .quantity {
   font-size: 1.2em;
   font-weight: bold;
-  width: 30px;
   text-align: center;
-}
-
-.quantity-btn {
-  padding-bottom: 2px;
+  padding: 0 2px;
 }
 </style>
