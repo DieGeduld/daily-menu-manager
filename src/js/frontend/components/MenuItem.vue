@@ -206,7 +206,7 @@ export default {
   overflow: hidden;
 
   .quantity-btn {
-    width: 30px;
+    width: 25px;
     height: 30px;
     border: none;
     color: white;
@@ -251,6 +251,6 @@ export default {
   font-size: 1.2em;
   font-weight: bold;
   text-align: center;
-  padding: 0 2px;
+  padding: 0 3px;
 }
 </style>

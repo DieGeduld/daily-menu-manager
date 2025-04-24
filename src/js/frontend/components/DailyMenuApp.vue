@@ -155,9 +155,15 @@ h2.menu-group-title {
 
 .order-summary-column {
   flex: 1;
-  box-shadow: 3px 3px 7px #00000022;
-  background: white;
+  background: #F5F6F6;
 }
+
+
+.order-info-column {
+  box-shadow: 3px 3px 7px #00000022;
+  background: #fff;
+}
+
 
 .order-summary-column h2 {
   font-size: 1.25rem;
@@ -177,9 +183,9 @@ h2.menu-group-title {
   &:nth-child(even) {
     background: #F5F6F7;
   }
-  &:hover {
+  /* &:hover {
     background: #ededed;
-  }
+  } */
   &:nth-child(1) {
     border-top: 1px solid #c6c6c6
   }

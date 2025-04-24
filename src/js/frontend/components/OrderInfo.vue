@@ -185,7 +185,7 @@ export default {
   padding: 20px;
   border-radius: 5px;
   position: sticky;
-  top: 0;
+  top: 20px;
   
   .order-summary {
     margin-bottom: 20px;
