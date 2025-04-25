@@ -181,7 +181,7 @@ h2.menu-group-title {
   padding: 10px 20px;
   border-bottom: 1px solid #c6c6c6;
   &:nth-child(even) {
-    background: #F5F6F7;
+    background: #fafafa;
   }
   /* &:hover {
     background: #ededed;

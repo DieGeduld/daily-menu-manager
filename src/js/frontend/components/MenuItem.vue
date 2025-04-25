@@ -186,7 +186,7 @@ export default {
 }
 
 .menu-item-description {
-  color: #666;
+  color: #333;
   margin-bottom: 8px;
   font-size: 14px;
 }
