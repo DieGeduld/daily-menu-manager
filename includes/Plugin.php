@@ -28,7 +28,7 @@ class Plugin
 
     private function __construct()
     {
-        if (! $this->initialized) {
+        if (!$this->initialized) {
             $this->initializePlugin();
         }
     }
@@ -36,7 +36,6 @@ class Plugin
     private function initializePlugin(): void
     {
         $this->initializeComponents();
-        $this->checkForUpdates();
         $this->initialized = true;
     }
 
@@ -63,28 +62,11 @@ class Plugin
 
     private function initAdminComponents(): void
     {
-
     }
 
     private function initFrontendComponents(): void
     {
         ShortcodeController::init();
-    }
-
-    private function checkForUpdates(): void
-    {
-        $installed_version = get_option('daily_menu_manager_version');
-
-        if ($installed_version !== DMM_VERSION) {
-            self::addAdminNotice(
-                sprintf(
-                    __('Daily Menu Manager needs database update from version %s to %s. Please visit the settings page to run the update.', 'daily-menu-manager'),
-                    $installed_version,
-                    DMM_VERSION
-                ),
-                'warning'
-            );
-        }
     }
 
     public static function addAdminNotice(string $message, string $type = 'success'): void
