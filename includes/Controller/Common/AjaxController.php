@@ -26,6 +26,8 @@ class AjaxController
         add_action('wp_ajax_submit_order', [OrderController::class, 'handleOrder']);
         add_action('wp_ajax_get_available_quantities', [MenuController::class, 'getAvailableQuantities']);
         add_action('wp_ajax_get_current_menu', [MenuController::class, 'handleGetCurrentMenu']);
+
+        add_action('wp_enqueue_scripts', [self::class, 'enqueue_daily_menu_manager_scripts']);
     }
 
     public static function registerAdminAjaxHandlers(): void
@@ -43,6 +45,38 @@ class AjaxController
 
         foreach ($admin_handlers as $action => $callback) {
             add_action('wp_ajax_' . $action, $callback);
+        }
+    }
+
+    public static function enqueue_daily_menu_manager_scripts()
+    {
+        $is_dev = false;
+
+        // Prüfen, ob der Vite-Devserver läuft
+        $handle = @fsockopen('localhost', 5173);
+        if ($handle) {
+            $is_dev = true;
+            fclose($handle);
+        }
+
+        if ($is_dev) {
+            // Entwicklung: Lade direkt vom Vite-Server
+            wp_enqueue_script(
+                'daily-menu-manager',
+                'http://localhost:5173/src/js/frontend/frontend.js', // <<< ganz wichtig: genau der Pfad!
+                [],
+                null,
+                true
+            );
+        } else {
+            // Produktion: Lade aus dem gebauten Dist-Ordner
+            wp_enqueue_script(
+                'daily-menu-manager',
+                get_stylesheet_directory_uri() . '/wp-content/daily-menu-manager/dist/frontend.js', // <<< Dein Build-Output
+                [],
+                '1.0.0',
+                true
+            );
         }
     }
 }

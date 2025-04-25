@@ -2,6 +2,7 @@
 
 namespace DailyMenuManager\Database;
 
+use DailyMenuManager\Service\LoggingService;
 use Exception;
 
 /**
@@ -32,11 +33,14 @@ class MigrationManager
      */
     private $config;
 
+    private $loggerService;
+
     /**
      * MigrationManager constructor.
      */
     public function __construct(array $config = [])
     {
+        $this->loggerService = new LoggingService();
         $this->migrationsPath = DMM_PLUGIN_DIR . 'includes/Database/migrations/';
         $this->currentVersion = get_option('daily_menu_manager_version', '0.0.0');
         $this->config = array_merge([
@@ -72,7 +76,7 @@ class MigrationManager
             KEY status (status)
         ) $charsetCollate;";
 
-        if (! function_exists('dbDelta')) {
+        if (!function_exists('dbDelta')) {
             require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         }
         dbDelta($sql);
@@ -161,19 +165,19 @@ class MigrationManager
             return $this->loadedMigrations[$file];
         }
 
-        if (! file_exists($file)) {
+        if (!file_exists($file)) {
             throw new Exception("Migration file not found: $file");
         }
 
         require_once $file;
         $className = $this->getMigrationClassName($file);
 
-        if (! class_exists($className)) {
+        if (!class_exists($className)) {
             throw new Exception("Migration class $className not found in file $file");
         }
 
         $migration = new $className();
-        if (! $migration instanceof Migration) {
+        if (!$migration instanceof Migration) {
             throw new Exception("Class $className must extend Migration");
         }
 
@@ -193,7 +197,7 @@ class MigrationManager
     {
         $migration = $this->getMigrationInstance($file);
 
-        if (! $migration->canAutorun() && ! $manualExecution) {
+        if (!$migration->canAutorun() && !$manualExecution) {
             $migration->logMigration("Autorun is disabled for automatic migration {$migration->getVersion()}");
 
             return false;
@@ -208,7 +212,7 @@ class MigrationManager
      */
     private function validateMigrationVersion($version)
     {
-        if (! preg_match('/^\d+\.\d+\.\d+$/', $version)) {
+        if (!preg_match('/^\d+\.\d+\.\d+$/', $version)) {
             throw new Exception("Invalid migration version format: $version");
         }
     }
@@ -221,7 +225,7 @@ class MigrationManager
         global $wpdb;
         $migrations = $this->discoverMigrations();
         $batch = $this->getNextBatchNumber();
-        $this->log("Starting migrations batch #$batch");
+        $this->loggerService->info("Starting migrations batch #$batch");
 
         // Start transaction
         $wpdb->query('START TRANSACTION');
@@ -243,36 +247,37 @@ class MigrationManager
                 $file = $this->findMigrationFile($version);
 
                 if ($this->shouldRunMigration($version)) {
-                    $this->log("Running migration $version");
+                    $this->loggerService->info("Running migration $version");
                     $this->recordMigrationStart($version, $batch);
 
                     try {
                         if ($this->executeMigration($file, $manualExecution)) {
                             $this->recordMigrationSuccess($version);
-                            $this->log("Successfully completed migration $version");
+                            $this->currentVersion = $version;
+                            update_option('daily_menu_manager_version', $version);
+                            $this->loggerService->info("Successfully completed migration $version");
                         } else {
-                            $this->log("Skipping migration $version - autorun disabled");
+                            $this->loggerService->info("Skipping migration $version - autorun disabled");
                             $this->recordMigrationSkip($version, $batch);
 
                             break;
                         }
                     } catch (\Exception $e) {
-                        $this->log($e->getMessage());
+                        $this->loggerService->error($e->getMessage());
                         $this->recordMigrationError($version, $e->getMessage());
 
                         throw $e;
                     }
                 } else {
-                    $this->log("Skipping migration $version - already executed");
+                    $this->loggerService->info("Skipping migration $version - already executed");
                 }
             }
 
             $wpdb->query('COMMIT');
-            $this->log("All migrations completed successfully");
-
+            $this->loggerService->info("All migrations completed successfully");
         } catch (\Exception $e) {
             $wpdb->query('ROLLBACK');
-            $this->log("Migration failed, rolling back changes: " . $e->getMessage());
+            $this->loggerService->error("Migration failed, rolling back changes: " . $e->getMessage());
 
             throw $e;
         }
@@ -289,7 +294,7 @@ class MigrationManager
 
         // Für jeden Knoten im Graphen
         foreach ($graph as $node => $edges) {
-            if (! isset($visited[$node])) {
+            if (!isset($visited[$node])) {
                 $this->visit($node, $graph, $visited, $temp, $sorted);
             }
         }
@@ -305,7 +310,7 @@ class MigrationManager
         if (isset($temp[$node])) {
             throw new Exception("Circular dependency detected: $node");
         }
-        if (! isset($visited[$node])) {
+        if (!isset($visited[$node])) {
             $temp[$node] = true;
 
             if (isset($graph[$node])) {
@@ -356,8 +361,7 @@ class MigrationManager
             $version
         ));
 
-        if (! $versionExists) {
-
+        if (!$versionExists) {
             $wpdb->insert(
                 $wpdb->prefix . 'dmm_migration_status',
                 [
@@ -368,9 +372,7 @@ class MigrationManager
                     'is_dry_run' => 0,
                 ]
             );
-
         } else {
-
             $wpdb->update(
                 $wpdb->prefix . 'dmm_migration_status',
                 [
@@ -437,7 +439,7 @@ class MigrationManager
             $version
         ));
 
-        return ! $status || $status === 'failed' || $status === 'skipped';
+        return !$status || $status === 'failed' || $status === 'skipped';
     }
 
     private function checkDependencies($version)
@@ -454,7 +456,7 @@ class MigrationManager
             }
         }
 
-        if (! $migrationFile) {
+        if (!$migrationFile) {
             throw new Exception("Migration file for version $version not found");
         }
 
@@ -462,7 +464,7 @@ class MigrationManager
         $dependencies = $migration->getDependencies();
 
         foreach ($dependencies as $dependency) {
-            if (! $this->isMigrationCompleted($dependency)) {
+            if (!$this->isMigrationCompleted($dependency)) {
                 throw new Exception("Dependency not satisfied: $dependency");
             }
         }
@@ -480,13 +482,6 @@ class MigrationManager
         ));
 
         return $status === 'completed';
-    }
-
-    private function log($message)
-    {
-        if ($this->config['debug']) {
-            error_log("DailyMenuManager Migration: $message");
-        }
     }
 
     public function getBatchSize()

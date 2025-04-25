@@ -8,8 +8,6 @@ class V170AddMenuImage extends Migration
 {
     protected int $batchSize = 100;
 
-    protected bool $autorun = false;
-
     public function up(): void
     {
         $table_name = $this->wpdb->prefix . 'menu_items';
@@ -86,7 +84,7 @@ class V170AddMenuImage extends Migration
         $table = $wpdb->prefix . 'daily_menu_manager_menus';
         $table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$table}'") === $table;
 
-        if (! $table_exists) {
+        if (!$table_exists) {
             throw new \RuntimeException("Required table {$table} does not exist");
         }
 

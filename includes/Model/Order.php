@@ -33,7 +33,7 @@ class Order
             );
 
             // Wenn keine Bestellung existiert oder der letzte Wert kein gültiger Integer ist
-            if ($last_order === false || ! is_numeric($last_order)) {
+            if ($last_order === false || !is_numeric($last_order)) {
                 $next_number = 0;
             } else {
                 $next_number = intval($last_order) + 1;
@@ -108,7 +108,6 @@ class Order
                 'customer_phone' => $data['customer_phone'],
                 'pickup_time' => $data['pickup_time'],
             ];
-
         } catch (\Exception $e) {
             $wpdb->query('ROLLBACK');
 
@@ -117,11 +116,11 @@ class Order
     }
 
     /**
-     * Holt Bestellungen mit optionalen Filtern
-     *
-     * @param array $filters Filteroptionen
-     * @return array
-     */
+ * Holt Bestellungen mit optionalen Filtern
+ *
+ * @param array $filters Filteroptionen
+ * @return array
+ */
     public static function getOrders($filters = [])
     {
         global $wpdb;
@@ -129,49 +128,52 @@ class Order
         $where_clauses = [];
         $where_values = [];
 
-        // Datum Filter
-        if (! empty($filters['date']) && $filters['date'] !== 'all') {
+        // Datum Filter mit explizitem Format
+        if (!empty($filters['date']) && $filters['date'] !== 'all') {
+            // Konvertiere beide Datumsformate in das Format YYYY-MM-DD für den Vergleich
             $where_clauses[] = "DATE(o.order_date) = %s";
             $where_values[] = $filters['date'];
         }
 
+        //SELECT DATE(order_date) from wp_menu_orders where DATE(order_date) = '2025-04-25'
+
         // Bestellnummer Filter
-        if (! empty($filters['order_number'])) {
+        if (!empty($filters['order_number'])) {
             $where_clauses[] = "o.order_number LIKE %s";
             $where_values[] = '%' . $wpdb->esc_like($filters['order_number']) . '%';
         }
 
         // Name Filter
-        if (! empty($filters['customer_name'])) {
+        if (!empty($filters['customer_name'])) {
             $where_clauses[] = "o.customer_name LIKE %s";
             $where_values[] = '%' . $wpdb->esc_like($filters['customer_name']) . '%';
         }
 
         // Telefon Filter
-        if (! empty($filters['customer_phone'])) {
+        if (!empty($filters['customer_phone'])) {
             $where_clauses[] = "o.customer_phone LIKE %s";
             $where_values[] = '%' . $wpdb->esc_like($filters['customer_phone']) . '%';
         }
 
         $query = "
-            SELECT 
-                o.*,
-                mi.title as menu_item_title,
-                mi.price,
-                mi.item_type,
-                COUNT(*) OVER (PARTITION BY o.order_number) as items_in_order,
-                MIN(o.id) OVER (PARTITION BY o.order_number) as first_item_in_order
-            FROM {$wpdb->prefix}menu_orders o
-            JOIN {$wpdb->prefix}menu_items mi ON o.menu_item_id = mi.id
+        SELECT 
+            o.*,
+            mi.title as menu_item_title,
+            mi.price,
+            mi.item_type,
+            COUNT(*) OVER (PARTITION BY o.order_number) as items_in_order,
+            MIN(o.id) OVER (PARTITION BY o.order_number) as first_item_in_order
+        FROM {$wpdb->prefix}menu_orders o
+        JOIN {$wpdb->prefix}menu_items mi ON o.menu_item_id = mi.id
         ";
 
-        if (! empty($where_clauses)) {
+        if (!empty($where_clauses)) {
             $query .= " WHERE " . implode(' AND ', $where_clauses);
         }
 
         $query .= " ORDER BY o.order_date DESC, o.order_number, mi.item_type, mi.title";
 
-        if (! empty($where_values)) {
+        if (!empty($where_values)) {
             $orders = $wpdb->get_results($wpdb->prepare($query, $where_values));
         } else {
             $orders = $wpdb->get_results($query);
@@ -191,10 +193,10 @@ class Order
     {
         global $wpdb;
 
-        if (! $start_date) {
+        if (!$start_date) {
             $start_date = date('Y-m-d');
         }
-        if (! $end_date) {
+        if (!$end_date) {
             $end_date = date('Y-m-d');
         }
 

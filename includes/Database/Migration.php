@@ -3,6 +3,7 @@
 namespace DailyMenuManager\Database;
 
 use DailyMenuManager\Contracts\Database\MigrationInterface;
+use DailyMenuManager\Service\LoggingService;
 
 /**
  * Class Migration
@@ -18,13 +19,16 @@ abstract class Migration implements MigrationInterface
 
     protected $wpdb;
 
+    protected $logger;
+
     protected bool $autorun = true;
 
     public function __construct()
     {
         global $wpdb;
         $this->wpdb = $wpdb;
-        $this->logMigration("Running migration {$this->getVersion()}");
+        $this->logger = new LoggingService();
+        $this->logger->info("Running migration {$this->getVersion()}");
     }
 
     public function canAutorun(): bool
@@ -35,12 +39,13 @@ abstract class Migration implements MigrationInterface
     public function up(): void
     {
         if ($this->wpdb->last_error) {
-            $this->logMigration("Failed to run migration {$this->getVersion()}: {$this->wpdb->last_error}");
+            $this->logger->error("Failed to run migration {$this->getVersion()}", [
+                'error' => $this->wpdb->last_error,
+            ]);
 
             throw new \Exception("Failed to run migration {$this->getVersion()}: {$this->wpdb->last_error}");
         } else {
-            $this->logMigration("Successfully ran migration {$this->getVersion()}");
-
+            $this->logger->info("Successfully ran migration {$this->getVersion()}");
         }
     }
 
@@ -60,7 +65,7 @@ abstract class Migration implements MigrationInterface
     {
         global $wpdb;
 
-        if (! $this->batchSize) {
+        if (!$this->batchSize) {
             throw new \Exception('Batch size must be set before running batch operations');
         }
 
@@ -87,31 +92,9 @@ abstract class Migration implements MigrationInterface
     {
         global $wpdb;
 
-        return ! empty($wpdb->get_results($wpdb->prepare(
+        return !empty($wpdb->get_results($wpdb->prepare(
             "SHOW COLUMNS FROM $tableName LIKE %s",
             $columnName
         )));
-    }
-
-    public function logMigration(string $message): void
-    {
-        $logFile = DMM_PLUGIN_DIR . 'logs/errors.log';
-
-        if (! file_exists(dirname($logFile))) {
-            mkdir(dirname($logFile), 0777, true);
-        }
-
-        if (! file_exists($logFile)) {
-            touch($logFile);
-        }
-
-        if (defined('WP_DEBUG') && WP_DEBUG) {
-            $class = get_class($this);
-            error_log(
-                "[" . date("Y-m-d H:i:s") . "] {$class}: {$message}",
-                3,
-                DMM_PLUGIN_DIR . 'logs/errors.log'
-            );
-        }
     }
 }
