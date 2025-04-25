@@ -3,14 +3,17 @@ import vue from '@vitejs/plugin-vue';
 import { resolve } from 'path';
 import legacy from '@vitejs/plugin-legacy';
 
-export default defineConfig({
-  mode: 'development',
+export default defineConfig(({ mode }) => ({
   plugins: [
     vue(),
     legacy({
       targets: ['defaults', 'not IE 11'],
     }),
   ],
+  define: {
+    __VUE_OPTIONS_API__: true,
+    __VUE_PROD_DEVTOOLS__: mode === 'development', // nur in Dev true
+  },
   resolve: {
     alias: {
       '@': resolve(__dirname, '.'),
@@ -18,14 +21,11 @@ export default defineConfig({
   },
   css: {
     preprocessorOptions: {
-      scss: {
-        // If you have global variables
-      },
+      scss: {},
     },
   },
   build: {
     outDir: 'dist',
-    // Enable source maps for easier debugging
     sourcemap: true,
     rollupOptions: {
       input: {
@@ -40,4 +40,4 @@ export default defineConfig({
       },
     },
   },
-});
+}));

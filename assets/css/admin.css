@@ -131,6 +131,9 @@
   flex-grow: 1;
   margin-right: 10px;
 }
+.menu-item-title-area .menu-item-title-preview {
+  font-weight: bold;
+}
 
 .menu-item-actions {
   display: flex;
@@ -429,5 +432,9 @@ table {
   width: 40px;
   height: 34px;
 }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /*# sourceMappingURL=admin.css.map */

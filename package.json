@@ -15,7 +15,9 @@
     "dev": "concurrently \"npm run sass:watch\" \"vite\"",
     "build": "vite build",
     "build:watch": "vite build --watch",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:debug": "vite build --mode development",
+    "preview:debug": "vite preview"
   },
   "keywords": [],
   "author": "",
