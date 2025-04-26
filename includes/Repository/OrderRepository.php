@@ -202,17 +202,17 @@ class OrderRepository extends BaseRepository
      *
      * @return string The generated order number
      */
-    private function generateOrderNumber()
+    public function getNextOrderNumber()
     {
-        $prefix = 'ORD-';
-        $date = date('Ymd');
-        $random = wp_rand(1000, 9999);
+        $order_number = $this->wpdb->get_var(
+            "SELECT order_number FROM {$this->table_name} ORDER BY order_number DESC LIMIT 1"
+        );
 
-        $order_number = $prefix . $date . '-' . $random;
-
-        // Check if this order number already exists
-        if ($this->existsBy('order_number', $order_number)) {
-            return $this->generateOrderNumber();
+        if ($order_number === null) {
+            $order_number = '000001';
+        } else {
+            $order_number = (int)$order_number + 1;
+            $order_number = str_pad($order_number, 6, '0', STR_PAD_LEFT);
         }
 
         return $order_number;
