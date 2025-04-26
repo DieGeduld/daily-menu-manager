@@ -2,8 +2,11 @@
 
 namespace DailyMenuManager\Controller\Admin;
 
-use DailyMenuManager\Model\Menu;
+// use DailyMenuManager\Model\Menu;
 use DailyMenuManager\Model\Order;
+use DailyMenuManager\Repository\MenuItemRepository;
+use DailyMenuManager\Repository\OrderRepository;
+use DailyMenuManager\Service\OrderService;
 
 class OrderStatistics
 {
@@ -32,7 +35,6 @@ class OrderController
         }
 
         add_action('admin_menu', [self::class, 'addAdminMenu']);
-
     }
 
     /**
@@ -76,13 +78,13 @@ class OrderController
         ];
 
         // Berechne die Statistiken
-        if (! empty($orders)) {
+        if (!empty($orders)) {
             $counted_orders = [];
             $total_revenue = 0;
             $total_items = 0;
 
             foreach ($orders as $order) {
-                if (! isset($counted_orders[$order->order_number])) {
+                if (!isset($counted_orders[$order->order_number])) {
                     $counted_orders[$order->order_number] = true;
                 }
                 $total_revenue += ($order->price * $order->quantity);
@@ -105,7 +107,7 @@ class OrderController
     {
         check_ajax_referer('daily_menu_orders_nonce');
 
-        if (! current_user_can('manage_options')) {
+        if (!current_user_can('manage_options')) {
             wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);
         }
 
@@ -136,7 +138,7 @@ class OrderController
     {
         check_ajax_referer('daily_menu_orders_nonce'); //TODO: Only for admin
 
-        if (! current_user_can('manage_options')) {
+        if (!current_user_can('manage_options')) {
             wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);
         }
 
@@ -156,32 +158,246 @@ class OrderController
     }
 
     /**
-     * Verarbeitet eingehende Bestellungen via AJAX
+     * Handle order submission from the frontend
      */
-    public static function handleOrder()
+    public static function handleOrder(): void
     {
-        check_ajax_referer('menu_order_nonce');
+        check_ajax_referer('daily_menu_manager_nonce', 'nonce');
 
-        if (empty($_POST['items'])) {
-            wp_send_json_error(['message' => __('No dishes selected.', 'daily-menu-manager')]);
-        }
+        $response = [
+            'success' => false,
+            'message' => 'Error processing order',
+        ];
 
-        $order = new Order();
-        $result = $order->createOrder($_POST);
+        try {
+            // Get POST data
+            // todo: sanitize_text_field?
+            $data = $_POST;
 
-        if (is_wp_error($result)) {
-            wp_send_json_error([
-                'message' => $result->get_error_message(),
-            ]);
-        } else {
-            $menu = new Menu();
-            $update = $menu->updateAvailableQuantities($_POST['items']);
-            if (is_wp_error($update)) {
-                wp_send_json_error([
-                    'message' => __('Error updating available quantities: ', 'daily-menu-manager') . $update->get_error_message(),
-                ]);
+            // Validate required data
+            if (empty($data['items']) || empty($data['customerInfo'])) {
+                throw new \Exception('Incomplete order data');
             }
-            wp_send_json_success($result);
+
+            if (intval($data["menuId"]) !== self::getCurrentMenuId()) {
+                throw new \Exception('Wrong Date');
+            }
+
+            // Parse JSON data
+            $items = is_string($data['items']) ? json_decode(stripslashes($data['items']), true) : $data['items'];
+            $customerInfo = is_string($data['customerInfo']) ? json_decode(stripslashes($data['customerInfo']), true) : $data['customerInfo'];
+
+            // Validate customer info
+            if (!$customerInfo['name'] || !$customerInfo['phone'] || !$customerInfo['pickupTime']) {
+                throw new \Exception('Missing required customer information');
+            }
+
+            // Validate items
+            if (!is_array($items) || count($items) === 0) {
+                throw new \Exception('No items in order');
+            }
+
+            // Calculate and check total amount
+            $totalAmount = 0;
+            $sendTotalAmount = $data["totalPrice"];
+            foreach ($items as $item) {
+                if (!isset($item['price']) || !isset($item['quantity'])) {
+                    throw new \Exception('Invalid item data');
+                }
+                $totalAmount += floatval($item['price']) * intval($item['quantity']);
+            }
+
+            if (floatval($totalAmount) !== floatval($sendTotalAmount)) {
+                throw new \Exception('Total amount mismatch');
+            }
+
+            $menuId = self::getCurrentMenuId();
+
+            /* check if order items have only items from today */
+            foreach ($items as $item) {
+                if (self::getMenuIdFromMenuItemId(intval($item["menuItemId"])) !== $menuId) {
+                    throw new \Exception('Wrong Date');
+                }
+            }
+
+            // Create order in database
+            $orderData = [
+                'menu_id' => $menuId,
+                'customer_name' => sanitize_text_field($customerInfo['name']),
+                'customer_phone' => sanitize_text_field($customerInfo['phone']),
+                'consumption_type' => sanitize_text_field($customerInfo['consumptionType']),
+                'pickup_time' => sanitize_text_field($customerInfo['pickupTime']),
+                'customer_notes' => sanitize_textarea_field($customerInfo['notes'] ?? ''),
+                'items' => $items,
+                'total_amount' => $totalAmount,
+                'order_date' => current_time('mysql'),
+                'status' => 'pending',
+            ];
+
+            // Save order to database using OrderModel
+            $orderRepository = new OrderRepository();
+            $orderService = new OrderService($orderRepository);
+            $order = $orderService->createOrder($orderData);
+            $orderId = $order["orders"][0]->getId();
+
+            if (!$orderId) {
+                throw new \Exception('Failed to save order');
+            }
+
+            // Save order items with correct menu IDs
+            foreach ($items as $item) {
+                self::saveOrderItem($orderId, $item, $menuId);
+                self::updateItemStock($item['id'], $item['quantity']);
+            }
+
+            // Prepare success response
+            $response = [
+                'success' => true,
+                'message' => 'Order placed successfully',
+                'data' => [
+                    'order_id' => $orderId,
+                    'order_number' => $order["orders"][0]->getOrdernumber(),
+                    'items' => $items,
+                    'total_amount' => $totalAmount,
+                    'pickup_time' => $customerInfo['pickupTime'],
+                ],
+            ];
+
+            // Optional: Send confirmation email
+            self::sendOrderConfirmationEmail($orderData);
+        } catch (\Exception $e) {
+            $response = [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+
+            // Log error for debugging
+            error_log('Order submission error: ' . $e->getMessage());
         }
+
+        // Return JSON response
+        wp_send_json($response);
+        exit;
+    }
+
+    /**
+     * Save a single order item with correct IDs
+     */
+    private static function saveOrderItem($orderId, $item, $menuId): void
+    {
+        global $wpdb;
+
+        // Get menu_item_id from item or use default
+        $menuItemId = isset($item['menuItemId']) ? intval($item['menuItemId']) : 0;
+        if (empty($menuItemId) && isset($item['id'])) {
+            $menuItemId = intval($item['id']);
+        }
+
+        // Get item-specific menu ID if available
+        $menuId = isset($item['menuId']) ? intval($item['menuId']) : $menuId;
+
+        // Prepare order item data
+        $orderItemData = [
+            'order_id' => $orderId,
+            'menu_id' => $menuId,
+            'menu_item_id' => $menuItemId,
+            'quantity' => intval($item['quantity']),
+            'price' => floatval($item['price']),
+            'title' => sanitize_text_field($item['title']),
+            'notes' => isset($item['notes']) ? sanitize_textarea_field($item['notes']) : '',
+            'created_at' => current_time('mysql'),
+            'updated_at' => current_time('mysql'),
+        ];
+
+        // Insert into order_items table
+        $table = $wpdb->prefix . 'daily_menu_order_items';
+        $wpdb->insert($table, $orderItemData);
+    }
+
+    /**
+     * Get current active menu ID
+     */
+    private static function getCurrentMenuId(): int
+    {
+        $currentDate = current_time('Y-m-d');
+
+        // Get menu for current date
+        $menu = new \DailyMenuManager\Model\Menu();
+        $menu = $menu->getMenuForDate($currentDate);
+
+        if ($menu) {
+            return (is_numeric($menu->id)) ? intval($menu->id) : -1;
+        }
+
+        return -1;
+    }
+    /**
+     * Get menu id from menu item id
+     */
+    private static function getMenuIdFromMenuItemId($menuItemId): int
+    {
+        $menuItemRepository = new MenuItemRepository();
+        $menuItem = $menuItemRepository->findById($menuItemId);
+        if ($menuItem) {
+            return $menuItem->menu_id;
+        }
+
+        return 0;
+    }
+
+    /**
+     * Update item stock after order
+     */
+    private static function updateItemStock($itemId, $quantity): void
+    {
+        // Get current available quantity
+        $currentStock = get_post_meta($itemId, '_available_quantity', true);
+
+        // If stock management is enabled, update the stock
+        if ($currentStock !== '' && is_numeric($currentStock)) {
+            $newStock = max(0, intval($currentStock) - intval($quantity));
+            update_post_meta($itemId, '_available_quantity', $newStock);
+        }
+    }
+
+    /**
+     * Send order confirmation email
+     */
+    private static function sendOrderConfirmationEmail($orderData): bool
+    {
+        // Get admin email
+        $adminEmail = get_option('admin_email');
+        $siteName = get_bloginfo('name');
+
+        // Prepare customer email
+        $to = $adminEmail; // Could also send to customer if email is collected
+        $subject = sprintf('[%s] Neue Bestellung #%s', $siteName, $orderData['order_number']);
+
+        // Build email content
+        $message = "Neue Bestellung eingegangen:\n\n";
+        $message .= "Bestellnummer: " . $orderData['order_number'] . "\n";
+        $message .= "Kunde: " . $orderData['customer_name'] . "\n";
+        $message .= "Telefon: " . $orderData['customer_phone'] . "\n";
+        $message .= "Abholzeit: " . $orderData['pickup_time'] . "\n";
+        $message .= "Konsum: " . ($orderData['consumption_type'] === 'pickup' ? 'Abholung' : 'Vor Ort') . "\n";
+
+        if (!empty($orderData['customer_notes'])) {
+            $message .= "Anmerkungen: " . $orderData['customer_notes'] . "\n";
+        }
+
+        $message .= "\nBestellte Gerichte:\n";
+        foreach ($orderData['items'] as $item) {
+            $message .= "- " . $item['quantity'] . "x " . $item['title'] . " (" . number_format($item['price'] * $item['quantity'], 2) . " €)\n";
+            if (!empty($item['notes'])) {
+                $message .= "  Anmerkung: " . $item['notes'] . "\n";
+            }
+        }
+
+        $message .= "\nGesamtbetrag: " . number_format($orderData['total_amount'], 2) . " €\n";
+
+        // Send email
+        $headers = ['Content-Type: text/plain; charset=UTF-8'];
+
+        return wp_mail($to, $subject, $message, $headers);
     }
 }

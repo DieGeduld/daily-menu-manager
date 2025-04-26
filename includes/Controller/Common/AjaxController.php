@@ -60,6 +60,14 @@ class AjaxController
         }
 
         if ($is_dev) {
+            add_filter('script_loader_tag', function ($tag, $handle, $src) {
+                if ($handle === 'daily-menu-manager') {
+                    return '<script type="module" src="' . esc_url($src) . '"></script>';
+                }
+
+                return $tag;
+            }, 10, 3);
+
             // Entwicklung: Lade direkt vom Vite-Server
             wp_enqueue_script(
                 'daily-menu-manager',

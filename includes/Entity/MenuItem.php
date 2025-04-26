@@ -36,7 +36,7 @@ class MenuItem
 
         // Handle properties field which could be a JSON string or an array
         if (isset($data['properties'])) {
-            if (is_string($data['properties']) && ! empty($data['properties'])) {
+            if (is_string($data['properties']) && !empty($data['properties'])) {
                 $this->properties = json_decode($data['properties'], true);
             } else {
                 $this->properties = $data['properties'];

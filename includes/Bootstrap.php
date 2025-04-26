@@ -2,10 +2,15 @@
 
 namespace DailyMenuManager;
 
+use DailyMenuManager\Service\LoggingService;
+
 class Bootstrap
 {
+    private static $loggerService;
+
     public static function init(): void
     {
+        //self::$loggerService = new LoggingService();
         self::loadDependencies();
         self::registerHooks();
     }
@@ -55,7 +60,6 @@ class Bootstrap
             if (file_exists($mofile)) {
                 load_textdomain('daily-menu-manager', $mofile);
             }
-
         });
         // Initialize plugin after WordPress loads, but after translations
         add_action('init', function () {
@@ -87,11 +91,10 @@ class Bootstrap
                             )
                         );
                     });
-
                 } else {
                     add_action('admin_notices', function () {
                         printf(
-                            '<div class="error"><p>%s</p></div>',
+                            '<div class="notice notice-info"><p>%s</p></div>',
                             esc_html(
                                 sprintf(
                                     __('Daily Menu Manager successfully updated to version %s', 'daily-menu-manager'),
@@ -100,11 +103,9 @@ class Bootstrap
                             )
                         );
                     });
-                    update_option('daily_menu_manager_version', DMM_VERSION);
                 }
-
             } catch (\Exception $e) {
-                error_log('Daily Menu Manager update failed: ' . $e->getMessage());
+                self::$loggerService->logError('Daily Menu Manager update failed: ' . $e->getMessage());
                 add_action('admin_notices', function () use ($e) {
                     printf(
                         '<div class="error"><p>%s</p></div>',

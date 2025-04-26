@@ -39,7 +39,7 @@ abstract class BaseRepository implements RepositoryInterface
 
         $result = $this->wpdb->get_row($query, ARRAY_A);
 
-        if (! $result) {
+        if (!$result) {
             return null;
         }
 
@@ -147,7 +147,7 @@ abstract class BaseRepository implements RepositoryInterface
 
         $result = $this->wpdb->get_row($query, ARRAY_A);
 
-        if (! $result) {
+        if (!$result) {
             return null;
         }
 

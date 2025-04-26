@@ -38,7 +38,7 @@ class OrderRepository extends BaseRepository
      * Save an order
      *
      * @param Order $order The order to save
-     * @return Order The saved order with updated ID
+     * @return Order|WP_Error The saved order with updated ID or error
      */
     public function save($order)
     {
@@ -58,11 +58,12 @@ class OrderRepository extends BaseRepository
         unset($data['created_at']);
         unset($data['updated_at']);
 
-        if (empty($order->id)) {
+        if (empty($order->getId())) {
             // Insert new order
             $result = $this->wpdb->insert(
                 $this->table_name,
-                ['menu_id' => $data['menu_id'],
+                [
+                    'menu_id' => $data['menu_id'],
                     'menu_item_id' => $data['menu_item_id'],
                     'order_number' => $data['order_number'],
                     'customer_name' => $data['customer_name'],
@@ -74,7 +75,8 @@ class OrderRepository extends BaseRepository
                     'notes' => $data['notes'],
                     'general_notes' => $data['general_notes'],
                     'status' => $data['status'],
-                    'order_date' => $data['order_date']],
+                    'order_date' => $data['order_date'],
+                ],
                 [
                     '%d', // menu_id
                     '%d', // menu_item_id
@@ -96,24 +98,26 @@ class OrderRepository extends BaseRepository
                 return new \WP_Error('db_insert_error', $this->wpdb->last_error);
             }
 
-            $order->id = $this->wpdb->insert_id;
+            $order->setId($this->wpdb->insert_id);
         } else {
             // Update existing order
             $result = $this->wpdb->update(
                 $this->table_name,
-                ['menu_id' => $data['menu_id'],
-                'menu_item_id' => $data['menu_item_id'],
-                'order_number' => $data['order_number'],
-                'customer_name' => $data['customer_name'],
-                'customer_phone' => $data['customer_phone'],
-                'consumption_type' => $data['consumption_type'],
-                'pickup_time' => $data['pickup_time'],
-                'customer_email' => $data['customer_email'],
-                'quantity' => $data['quantity'],
-                'notes' => $data['notes'],
-                'general_notes' => $data['general_notes'],
-                'status' => $data['status'],
-                'order_date' => $data['order_date']],
+                [
+                    'menu_id' => $data['menu_id'],
+                    'menu_item_id' => $data['menu_item_id'],
+                    'order_number' => $data['order_number'],
+                    'customer_name' => $data['customer_name'],
+                    'customer_phone' => $data['customer_phone'],
+                    'consumption_type' => $data['consumption_type'],
+                    'pickup_time' => $data['pickup_time'],
+                    'customer_email' => $data['customer_email'],
+                    'quantity' => $data['quantity'],
+                    'notes' => $data['notes'],
+                    'general_notes' => $data['general_notes'],
+                    'status' => $data['status'],
+                    'order_date' => $data['order_date'],
+                ],
                 ['id' => $data['id']],
                 [
                     '%d', // menu_id
@@ -198,43 +202,256 @@ class OrderRepository extends BaseRepository
     }
 
     /**
-     * Generate a unique order number
+     * Generate a unique order number (3-digit format)
      *
      * @return string The generated order number
      */
-    public function getNextOrderNumber()
+    protected function generateOrderNumber()
     {
-        $order_number = $this->wpdb->get_var(
-            "SELECT order_number FROM {$this->table_name} ORDER BY order_number DESC LIMIT 1"
+        // Generiere fortlaufende Bestellnummer (000-999)
+        $last_order = $this->wpdb->get_var(
+            "SELECT MAX(CAST(SUBSTRING_INDEX(order_number, '-', -1) AS UNSIGNED)) 
+            FROM {$this->table_name}"
         );
 
-        if ($order_number === null) {
-            $order_number = '000001';
+        // Wenn keine Bestellung existiert oder der letzte Wert kein gültiger Integer ist
+        if ($last_order === false || !is_numeric($last_order)) {
+            $next_number = 0;
         } else {
-            $order_number = (int)$order_number + 1;
-            $order_number = str_pad($order_number, 6, '0', STR_PAD_LEFT);
+            $next_number = intval($last_order) + 1;
+            if ($next_number > 999) {
+                $next_number = 0;
+            }
         }
 
-        return $order_number;
+        // Formatiere die Bestellnummer mit führenden Nullen
+        return str_pad($next_number, 3, '0', STR_PAD_LEFT);
     }
 
     /**
-     * Update order status
+     * Create a new order with all related items
      *
-     * @param int $order_id The order ID
-     * @param string $status The new status
-     * @return bool Whether the update was successful
+     * @param array $data Order data including items
+     * @return array|WP_Error Order information or error
      */
-    public function updateStatus($order_id, $status)
+    public function createOrder($data)
     {
-        $result = $this->wpdb->update(
+        try {
+            $order_number = $this->generateOrderNumber();
+            $order_items = [];
+            $total_amount = 0;
+            $created_orders = [];
+
+            $this->wpdb->query('START TRANSACTION');
+
+            foreach ($data['items'] as $item_id => $item_data) {
+                $quantity = intval($item_data['quantity']);
+                if ($quantity > 0) {
+                    // Erstelle Order-Entity
+                    $order = new Order([
+                        'menu_id' => intval($data['menu_id']),
+                        'menu_item_id' => intval($data['menuItemId']),
+                        'order_number' => $order_number,
+                        'customer_name' => sanitize_text_field($data['customer_name']),
+                        'customer_phone' => sanitize_text_field($data['customer_phone']),
+                        'consumption_type' => sanitize_text_field($data['consumption_type']),
+                        'pickup_time' => sanitize_text_field($data['pickup_time']),
+                        'quantity' => $quantity,
+                        'notes' => sanitize_textarea_field($item_data['notes'] ?? ''),
+                        'general_notes' => sanitize_textarea_field($data['general_notes'] ?? ''),
+                        'order_date' => current_time('mysql'),
+                    ]);
+
+                    // Speichern der Order-Entity
+                    $saved_order = $this->save($order);
+                    if (is_wp_error($saved_order)) {
+                        //throw new \Exception($saved_order->get_error_message());
+                    }
+
+                    $created_orders[] = $saved_order;
+
+                    // Hole Item-Details für die Bestätigung
+                    $item_details = $this->wpdb->get_row($this->wpdb->prepare(
+                        "SELECT title, price FROM {$this->wpdb->prefix}menu_items WHERE id = %d",
+                        $item_id
+                    ));
+
+                    if ($item_details) {
+                        $order_items[] = [
+                            'title' => $item_details->title,
+                            'quantity' => $quantity,
+                            'price' => $item_details->price,
+                            'notes' => $item_data['notes'] ?? '',
+                        ];
+                        $total_amount += $quantity * $item_details->price;
+                    }
+                }
+            }
+
+            $this->wpdb->query('COMMIT');
+
+            return [
+                'success' => true,
+                'order_number' => $order_number,
+                'items' => $order_items,
+                'total_amount' => $total_amount,
+                'customer_name' => $data['customer_name'],
+                'customer_phone' => $data['customer_phone'],
+                'pickup_time' => $data['pickup_time'],
+                'orders' => $created_orders, // Füge die erstellten Order-Entities hinzu
+            ];
+        } catch (\Exception $e) {
+            $this->wpdb->query('ROLLBACK');
+
+            return new \WP_Error('order_creation_failed', $e->getMessage());
+        }
+    }
+
+    /**
+     * Get orders with optional filters
+     *
+     * @param array $filters Filter options
+     * @return array Orders matching the filters
+     */
+    public function getOrders($filters = [])
+    {
+        $where_clauses = [];
+        $where_values = [];
+
+        // Datum Filter mit explizitem Format
+        if (!empty($filters['date']) && $filters['date'] !== 'all') {
+            $where_clauses[] = "DATE(o.order_date) = %s";
+            $where_values[] = $filters['date'];
+        }
+
+        // Bestellnummer Filter
+        if (!empty($filters['order_number'])) {
+            $where_clauses[] = "o.order_number LIKE %s";
+            $where_values[] = '%' . $this->wpdb->esc_like($filters['order_number']) . '%';
+        }
+
+        // Name Filter
+        if (!empty($filters['customer_name'])) {
+            $where_clauses[] = "o.customer_name LIKE %s";
+            $where_values[] = '%' . $this->wpdb->esc_like($filters['customer_name']) . '%';
+        }
+
+        // Telefon Filter
+        if (!empty($filters['customer_phone'])) {
+            $where_clauses[] = "o.customer_phone LIKE %s";
+            $where_values[] = '%' . $this->wpdb->esc_like($filters['customer_phone']) . '%';
+        }
+
+        $query = "
+        SELECT 
+            o.*,
+            mi.title as menu_item_title,
+            mi.price,
+            mi.item_type,
+            COUNT(*) OVER (PARTITION BY o.order_number) as items_in_order,
+            MIN(o.id) OVER (PARTITION BY o.order_number) as first_item_in_order
+        FROM {$this->table_name} o
+        JOIN {$this->wpdb->prefix}menu_items mi ON o.menu_item_id = mi.id
+        ";
+
+        if (!empty($where_clauses)) {
+            $query .= " WHERE " . implode(' AND ', $where_clauses);
+        }
+
+        $query .= " ORDER BY o.order_date DESC, o.order_number, mi.item_type, mi.title";
+
+        if (!empty($where_values)) {
+            $orders = $this->wpdb->get_results($this->wpdb->prepare($query, $where_values));
+        } else {
+            $orders = $this->wpdb->get_results($query);
+        }
+
+        return $orders;
+    }
+
+    /**
+     * Get order statistics for a period
+     *
+     * @param string $start_date Start date in Y-m-d format
+     * @param string $end_date End date in Y-m-d format
+     * @return array Order statistics
+     */
+    public function getOrderStats($start_date = null, $end_date = null)
+    {
+        if (!$start_date) {
+            $start_date = date('Y-m-d');
+        }
+        if (!$end_date) {
+            $end_date = date('Y-m-d');
+        }
+
+        $stats = $this->wpdb->get_results($this->wpdb->prepare("
+            SELECT 
+                DATE(o.order_date) as date,
+                COUNT(DISTINCT o.order_number) as total_orders,
+                SUM(o.quantity * mi.price) as total_revenue,
+                COUNT(o.id) as total_items
+            FROM {$this->table_name} o
+            JOIN {$this->wpdb->prefix}menu_items mi ON o.menu_item_id = mi.id
+            WHERE DATE(o.order_date) BETWEEN %s AND %s
+            GROUP BY DATE(o.order_date)
+            ORDER BY date DESC
+        ", $start_date, $end_date));
+
+        return $stats;
+    }
+
+    /**
+     * Get a single order by order number
+     *
+     * @param string $order_number Order number
+     * @return array Order details
+     */
+    public function getOrderByNumber($order_number)
+    {
+        return $this->wpdb->get_results($this->wpdb->prepare("
+            SELECT 
+                o.*,
+                mi.title as menu_item_title,
+                mi.price,
+                mi.item_type
+            FROM {$this->table_name} o
+            JOIN {$this->wpdb->prefix}menu_items mi ON o.menu_item_id = mi.id
+            WHERE o.order_number = %s
+            ORDER BY mi.item_type, mi.title
+        ", $order_number));
+    }
+
+    /**
+     * Delete an order by order number
+     *
+     * @param string $order_number Order number
+     * @return bool Success or failure
+     */
+    public function deleteOrder($order_number)
+    {
+        return $this->wpdb->delete(
+            $this->table_name,
+            ['order_number' => $order_number],
+            ['%s']
+        );
+    }
+
+    /**
+     * Update order status by order number
+     *
+     * @param string $order_number Order number
+     * @param string $status New status
+     * @return bool Success or failure
+     */
+    public function updateOrderStatus($order_number, $status)
+    {
+        return $this->wpdb->update(
             $this->table_name,
             ['status' => $status],
-            ['id' => $order_id],
+            ['order_number' => $order_number],
             ['%s'],
-            ['%d']
+            ['%s']
         );
-
-        return $result !== false;
     }
 }

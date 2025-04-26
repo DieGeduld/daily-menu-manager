@@ -16,7 +16,6 @@ class Menu
      */
     private $table_name;
 
-
     public function __construct()
     {
         global $wpdb;
@@ -39,7 +38,7 @@ class Menu
     public static function createTables()
     {
         global $wpdb;
-        if (! function_exists('dbDelta')) {
+        if (!function_exists('dbDelta')) {
             require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         }
         $charset_collate = $wpdb->get_charset_collate();
@@ -101,7 +100,7 @@ class Menu
             ));
 
             // Erstelle oder aktualisiere Menü
-            if (! $menu_id) {
+            if (!$menu_id) {
                 $wpdb->insert(
                     $wpdb->prefix . 'daily_menus',
                     ['menu_date' => $menu_date],
@@ -126,12 +125,12 @@ class Menu
                 // Gehe durch alle übermittelten Menüeinträge, unabhängig vom Schlüsselnamen
                 foreach ($menu_data['menu_items'] as $key => $item_data) {
                     // Überspringe leere oder ungültige Einträge
-                    if (! is_array($item_data) || empty($item_data['title'])) {
+                    if (!is_array($item_data) || empty($item_data['title'])) {
                         continue;
                     }
 
-                    $props = ! empty($item_data["properties"]) ? wp_json_encode($item_data["properties"]) : null;
-                    $allergens = ! empty($item_data["allergens"]) ? sanitize_textarea_field($item_data["allergens"]) : null;
+                    $props = !empty($item_data["properties"]) ? wp_json_encode($item_data["properties"]) : null;
+                    $allergens = !empty($item_data["allergens"]) ? sanitize_textarea_field($item_data["allergens"]) : null;
 
                     $data = [
                         'menu_id' => $menu_id,
@@ -151,7 +150,7 @@ class Menu
                     // Wenn der Schlüssel mit "new-" beginnt, ist es wahrscheinlich ein neues Element
                     // Andernfalls prüfe auf die ID im Element selbst
                     $existing_id = null;
-                    if (isset($item_data['id']) && ! empty($item_data['id']) && is_numeric($item_data['id'])) {
+                    if (isset($item_data['id']) && !empty($item_data['id']) && is_numeric($item_data['id'])) {
                         $existing_id = intval($item_data['id']);
                     } elseif (is_numeric($key) && in_array($key, $existing_items)) {
                         $existing_id = intval($key);
@@ -182,7 +181,7 @@ class Menu
 
             // Lösche Menüeinträge, die nicht mehr in den übermittelten Daten enthalten sind
             foreach ($existing_items as $item_id) {
-                if (! in_array($item_id, $updated_item_ids)) {
+                if (!in_array($item_id, $updated_item_ids)) {
                     $wpdb->delete(
                         $wpdb->prefix . 'menu_items',
                         ['id' => $item_id],
@@ -207,7 +206,7 @@ class Menu
      * @param string $date
      * @return object|null
      */
-    public function getMenuForDate($date)
+    public function getMenuForDate($date) // static?
     {
         global $wpdb;
 
@@ -248,7 +247,7 @@ class Menu
     {
         global $wpdb;
 
-        if (! $menu_id) {
+        if (!$menu_id) {
             return [];
         }
 
@@ -261,7 +260,7 @@ class Menu
 
         // Decode JSON properties if they exist
         foreach ($items as &$item) {
-            if (! empty($item->properties)) {
+            if (!empty($item->properties)) {
                 $item->properties = json_decode($item->properties, true);
             }
         }
@@ -299,7 +298,6 @@ class Menu
             $wpdb->query('COMMIT');
 
             return true;
-
         } catch (\Exception $e) {
             $wpdb->query('ROLLBACK');
 
@@ -337,7 +335,6 @@ class Menu
             $wpdb->query('COMMIT');
 
             return true;
-
         } catch (\Exception $e) {
             $wpdb->query('ROLLBACK');
 
@@ -383,7 +380,6 @@ class Menu
         return $dates;
     }
 
-
     /**
      * Kopiert ein Menü auf ein anderes Datum
      *
@@ -405,7 +401,7 @@ class Menu
                 $new_date
             ));
 
-            if (! $existing_menu) {
+            if (!$existing_menu) {
                 $wpdb->insert(
                     $wpdb->prefix . 'daily_menus',
                     ['menu_date' => $new_date],
@@ -453,13 +449,11 @@ class Menu
                 // `allergens` text DEFAULT NULL,
                 // `created_at` datetime DEFAULT current_timestamp(),
                 // `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-
             }
 
             $wpdb->query('COMMIT');
 
             return $new_menu_id;
-
         } catch (\Exception $e) {
             $wpdb->query('ROLLBACK');
 
@@ -478,10 +472,10 @@ class Menu
     {
         global $wpdb;
 
-        if (! $start_date) {
+        if (!$start_date) {
             $start_date = date('Y-m-d');
         }
-        if (! $end_date) {
+        if (!$end_date) {
             $end_date = date('Y-m-d');
         }
 
@@ -532,7 +526,6 @@ class Menu
             $wpdb->query('COMMIT');
 
             return true;
-
         } catch (\Exception $e) {
             $wpdb->query('ROLLBACK');
 

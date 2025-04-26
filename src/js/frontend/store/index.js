@@ -1,3 +1,4 @@
+// src/store/index.js
 import { createStore } from 'vuex';
 
 export default createStore({
@@ -17,13 +18,11 @@ export default createStore({
 
   getters: {
     totalPrice(state) {
-      return (
-        state.cartItems
-          .reduce((total, item) => {
-            return total + item.price * item.quantity;
-          }, 0)
-          .toFixed(2) + ' €'
-      );
+      return state.cartItems
+        .reduce((total, item) => {
+          return total + item.price * item.quantity;
+        }, 0)
+        .toFixed(2); // + ' €'
     },
 
     getItemQuantity: (state) => (itemId) => {
@@ -120,7 +119,8 @@ export default createStore({
           nonce: window.dailyMenuAjax.nonce,
           items: JSON.stringify(cartItemsWithMenuId),
           customerInfo: JSON.stringify(state.customerInfo),
-          menuId: state.currentMenuId || window.currentMenuId || 0, // Fallback auf globale Variable
+          menuId:
+            state.currentMenuId || window.currentMenuId || $('#daily-menu-app').data('menu-id'),
           totalPrice: getters.totalPrice,
         };
 

@@ -10,6 +10,13 @@ export default defineConfig(({ mode }) => ({
       targets: ['defaults', 'not IE 11'],
     }),
   ],
+  server: {
+    cors: {
+      origin: '*', // ALLE erlauben, auch wibug.test
+    },
+    host: 'localhost',
+    port: 5173,
+  },
   define: {
     __VUE_OPTIONS_API__: true,
     __VUE_PROD_DEVTOOLS__: mode === 'development', // nur in Dev true

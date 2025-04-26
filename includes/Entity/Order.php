@@ -2,24 +2,21 @@
 
 namespace DailyMenuManager\Entity;
 
-class Order
+class Order extends AbstractEntity
 {
-    public $id;
-    public $menu_id;
-    public $menu_item_id;
-    public $order_number;
-    public $customer_name;
-    public $customer_phone;
-    public $consumption_type;
-    public $pickup_time;
-    public $customer_email;
-    public $quantity;
-    public $notes;
-    public $general_notes;
-    public $status;
-    public $order_date;
-    public $created_at;
-    public $updated_at;
+    protected $menu_id;
+    protected $menu_item_id;
+    protected $order_number;
+    protected $customer_name;
+    protected $customer_phone;
+    protected $consumption_type;
+    protected $pickup_time;
+    protected $customer_email;
+    protected $quantity;
+    protected $notes;
+    protected $general_notes;
+    protected $status;
+    protected $order_date;
 
     /**
      * Constructor to create an Order entity from array data
@@ -46,28 +43,30 @@ class Order
         $this->updated_at = $data['updated_at'] ?? null;
     }
 
+    // Spezifische Getter/Setter für Order
+
     /**
-     * Convert entity to array
+     * Get order number
      *
-     * @return array Order data as array
+     * @return string
      */
-    public function toArray()
+    public function getOrderNumber()
     {
-        return [
-            'id' => $this->id,
-            'menu_id' => $this->menu_id,
-            'menu_item_id' => $this->menu_item_id,
-            'order_number' => $this->order_number,
-            'customer_name' => $this->customer_name,
-            'customer_phone' => $this->customer_phone,
-            'consumption_type' => $this->consumption_type,
-            'pickup_time' => $this->pickup_time,
-            'customer_email' => $this->customer_email,
-            'quantity' => $this->quantity,
-            'notes' => $this->notes,
-            'general_notes' => $this->general_notes,
-            'status' => $this->status,
-            'order_date' => $this->order_date,
-        ];
+        return $this->order_number;
     }
+
+    /**
+     * Set order number
+     *
+     * @param string $orderNumber
+     * @return $this
+     */
+    public function setOrderNumber($orderNumber)
+    {
+        $this->order_number = $orderNumber;
+
+        return $this;
+    }
+
+    // Weitere spezifische Getter/Setter...
 }
