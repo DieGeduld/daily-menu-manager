@@ -51,14 +51,14 @@ class MenuController
 
             if (is_wp_error($result)) {
                 add_settings_error(
-                    'daily_menu_manager',
+                    'daily_dish_manager',
                     'save_error',
                     $result->get_error_message(),
                     'error'
                 );
             } else {
                 add_settings_error(
-                    'daily_menu_manager',
+                    'daily_dish_manager',
                     'save_success',
                     __('Menu saved successfully.', 'daily-menu-manager'),
                     'success'
@@ -90,7 +90,7 @@ class MenuController
      */
     public static function handleSaveMenuOrder()
     {
-        check_ajax_referer('daily_menu_admin_nonce');
+        check_ajax_referer('daily_dish_manager_admin_nonce');
 
         if (!current_user_can('manage_options')) {
             wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);
@@ -115,7 +115,7 @@ class MenuController
      */
     public static function handleCopyMenu()
     {
-        check_ajax_referer('daily_menu_admin_nonce');
+        check_ajax_referer('daily_dish_manager_admin_nonce');
 
         if (!current_user_can('manage_options')) {
             wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);
@@ -173,7 +173,7 @@ class MenuController
      */
     public static function handleDeleteMenuItem()
     {
-        check_ajax_referer('daily_menu_admin_nonce');
+        check_ajax_referer('daily_dish_manager_admin_nonce');
 
         if (!current_user_can('manage_options')) {
             wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);
@@ -198,7 +198,7 @@ class MenuController
      */
     public static function handleDuplicateMenuItem()
     {
-        check_ajax_referer('daily_menu_admin_nonce');
+        check_ajax_referer('daily_dish_manager_admin_nonce');
 
         if (!current_user_can('manage_options')) {
             wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);
@@ -256,7 +256,7 @@ class MenuController
      */
     public static function handleGetCurrentMenu()
     {
-        check_ajax_referer('daily_menu_manager_nonce');
+        check_ajax_referer('daily_dish_manager_nonce');
 
         //sleep(2); // Simulating processing time
 
@@ -272,7 +272,7 @@ class MenuController
             if (!isset($grouped_items[$menuTypePlural])) {
                 $grouped_items[$menuTypePlural] = [];
             }
-            $grouped_items[$menuTypePlural][] = $item;
+            $grouped_items[$menuTypePlural][] = $item->toArray();
         }
 
         if (!$current_menu) {

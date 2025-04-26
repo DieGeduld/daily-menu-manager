@@ -5,6 +5,7 @@ namespace DailyMenuManager\Controller\Admin;
 // use DailyMenuManager\Model\Menu;
 use DailyMenuManager\Model\Order;
 use DailyMenuManager\Repository\MenuItemRepository;
+use DailyMenuManager\Repository\OrderItemRepository;
 use DailyMenuManager\Repository\OrderRepository;
 use DailyMenuManager\Service\OrderService;
 
@@ -105,7 +106,7 @@ class OrderController
      */
     public static function handlePrintOrder()
     {
-        check_ajax_referer('daily_menu_orders_nonce');
+        check_ajax_referer('daily_dish_orders_nonce');
 
         if (!current_user_can('manage_options')) {
             wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);
@@ -136,7 +137,7 @@ class OrderController
      */
     public static function handleDeleteOrder()
     {
-        check_ajax_referer('daily_menu_orders_nonce'); //TODO: Only for admin
+        check_ajax_referer('daily_dish_orders_nonce'); //TODO: Only for admin
 
         if (!current_user_can('manage_options')) {
             wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);
@@ -162,7 +163,7 @@ class OrderController
      */
     public static function handleOrder(): void
     {
-        check_ajax_referer('daily_menu_manager_nonce', 'nonce');
+        check_ajax_referer('daily_dish_manager_nonce', 'nonce');
 
         $response = [
             'success' => false,
@@ -247,7 +248,7 @@ class OrderController
             // Save order items with correct menu IDs
             foreach ($items as $item) {
                 self::saveOrderItem($orderId, $item, $menuId);
-                self::updateItemStock($item['id'], $item['quantity']);
+                self::updateItemStock($item['id'], $item['quantity']); // id ?
             }
 
             // Prepare success response
@@ -285,33 +286,68 @@ class OrderController
      */
     private static function saveOrderItem($orderId, $item, $menuId): void
     {
-        global $wpdb;
-
         // Get menu_item_id from item or use default
-        $menuItemId = isset($item['menuItemId']) ? intval($item['menuItemId']) : 0;
-        if (empty($menuItemId) && isset($item['id'])) {
-            $menuItemId = intval($item['id']);
+        $menuItemId = intval($item['menuItemId']);
+
+        if (!$menuItemId) {
+            // throw new \Exception('Menu item ID not found');
+            return;
+        }
+
+        $price = isset($item['price']) ? floatval($item['price']) : false;
+
+        if (!$price) {
+            // throw new \Exception('Price not found');
+            return;
+        }
+        //TODO: Preis checken, ob er richtig ist, man könnte einen anderen abschicke
+
+        $menuItemRepository = new MenuItemRepository();
+        $menuItem = $menuItemRepository->findById($menuItemId);
+
+        if (!$menuItem) {
+            // throw new \Exception('Order item not found');
+            return;
+        } else {
+            if ($menuItem->getPrice() != $price) {
+                // throw new \Exception('Price mismatch');
+                return;
+            }
+        }
+
+        $menuItemId = intval($menuItemId);
+
+        if (!$menuItemId) {
+            // throw new \Exception('Menu item ID not found');
+            return;
+        }
+
+        $quantity = isset($item['quantity']) ? intval($item['quantity']) : false;
+
+        if (!$quantity) {
+            // throw new \Exception('Quantity not found');
+            return;
         }
 
         // Get item-specific menu ID if available
-        $menuId = isset($item['menuId']) ? intval($item['menuId']) : $menuId;
+        $menuId = isset($item['menuId']) ? intval($item['menuId']) : false;
 
-        // Prepare order item data
+        if (!$menuId) {
+            // throw new \Exception('Menu ID not found');
+            return;
+        }
+
         $orderItemData = [
             'order_id' => $orderId,
-            'menu_id' => $menuId,
             'menu_item_id' => $menuItemId,
-            'quantity' => intval($item['quantity']),
-            'price' => floatval($item['price']),
+            'quantity' => $quantity,
+            'price' => $price,
             'title' => sanitize_text_field($item['title']),
             'notes' => isset($item['notes']) ? sanitize_textarea_field($item['notes']) : '',
-            'created_at' => current_time('mysql'),
-            'updated_at' => current_time('mysql'),
         ];
 
-        // Insert into order_items table
-        $table = $wpdb->prefix . 'daily_menu_order_items';
-        $wpdb->insert($table, $orderItemData);
+        $orderItemRepository = new OrderItemRepository();
+        $menuItem = $orderItemRepository->save($orderItemData);
     }
 
     /**
@@ -351,13 +387,13 @@ class OrderController
     private static function updateItemStock($itemId, $quantity): void
     {
         // Get current available quantity
-        $currentStock = get_post_meta($itemId, '_available_quantity', true);
+        // $currentStock = get_post_meta($itemId, '_available_quantity', true);
 
-        // If stock management is enabled, update the stock
-        if ($currentStock !== '' && is_numeric($currentStock)) {
-            $newStock = max(0, intval($currentStock) - intval($quantity));
-            update_post_meta($itemId, '_available_quantity', $newStock);
-        }
+        // // If stock management is enabled, update the stock
+        // if ($currentStock !== '' && is_numeric($currentStock)) {
+        //     $newStock = max(0, intval($currentStock) - intval($quantity));
+        //     update_post_meta($itemId, '_available_quantity', $newStock);
+        // }
     }
 
     /**
@@ -365,6 +401,8 @@ class OrderController
      */
     private static function sendOrderConfirmationEmail($orderData): bool
     {
+        return true;
+
         // Get admin email
         $adminEmail = get_option('admin_email');
         $siteName = get_bloginfo('name');

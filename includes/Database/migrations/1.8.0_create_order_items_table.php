@@ -10,7 +10,7 @@ class V180CreateOrderItemsTable extends Migration
 
     public function up(): void
     {
-        $table_name = $this->wpdb->prefix . 'daily_menu_order_items';
+        $table_name = $this->wpdb->prefix . 'ddm_order_items';
 
         // Check if the table already exists
         $table_exists = $this->wpdb->get_results(
@@ -45,7 +45,7 @@ class V180CreateOrderItemsTable extends Migration
 
     public function down(): void
     {
-        $table_name = $this->wpdb->prefix . 'daily_menu_order_items';
+        $table_name = $this->wpdb->prefix . 'ddm_order_items';
 
         $this->wpdb->query("DROP TABLE IF EXISTS {$table_name}");
     }
@@ -72,7 +72,7 @@ class V180CreateOrderItemsTable extends Migration
 
     public function getAffectedTables(): array
     {
-        return [$this->wpdb->prefix . 'daily_menu_order_items'];
+        return [$this->wpdb->prefix . 'ddm_order_items'];
     }
 
     public function setBatchSize(int $size): void
@@ -82,7 +82,7 @@ class V180CreateOrderItemsTable extends Migration
 
     public function validatePrerequisites(): bool
     {
-        $orderTable = $this->wpdb->prefix . 'menu_orders';
+        $orderTable = $this->wpdb->prefix . 'ddm_orders';
         $order_table_exists = $this->wpdb->get_var("SHOW TABLES LIKE '{$orderTable}'") === $orderTable;
 
         if (!$order_table_exists) {

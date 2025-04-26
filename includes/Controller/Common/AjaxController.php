@@ -27,7 +27,7 @@ class AjaxController
         add_action('wp_ajax_get_available_quantities', [MenuController::class, 'getAvailableQuantities']);
         add_action('wp_ajax_get_current_menu', [MenuController::class, 'handleGetCurrentMenu']);
 
-        add_action('wp_enqueue_scripts', [self::class, 'enqueue_daily_menu_manager_scripts']);
+        add_action('wp_enqueue_scripts', [self::class, 'enqueue_daily_dish_manager_scripts']);
     }
 
     public static function registerAdminAjaxHandlers(): void
@@ -48,7 +48,7 @@ class AjaxController
         }
     }
 
-    public static function enqueue_daily_menu_manager_scripts()
+    public static function enqueue_daily_dish_manager_scripts()
     {
         $is_dev = false;
 

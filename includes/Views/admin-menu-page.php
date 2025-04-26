@@ -9,7 +9,7 @@ use DailyMenuManager\Controller\Admin\SettingsController;
 <div class="wrap">
     <h1><?php _e('Manage Daily Menu', 'daily-menu-manager'); ?></h1>
     
-    <?php settings_errors('daily_menu_manager'); ?>
+    <?php settings_errors('daily_dish_manager'); ?>
     
     <!-- Date Selection -->
     <div class="date-selection">

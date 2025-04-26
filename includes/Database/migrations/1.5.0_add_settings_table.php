@@ -26,11 +26,11 @@ class V150AddSettingsTable extends Migration
      */
     public function up(): void
     {
-        $table_name = $this->wpdb->prefix . 'menu_settings';
+        $table_name = $this->wpdb->prefix . 'ddm_menu_settings';
         $charset_collate = $this->wpdb->get_charset_collate();
 
         // Check if the table already exists
-        if (! $this->tableExists($table_name)) {
+        if (!$this->tableExists($table_name)) {
             $sql = "CREATE TABLE $table_name (
                 id mediumint(9) NOT NULL AUTO_INCREMENT,
                 setting_key varchar(100) NOT NULL,
@@ -41,7 +41,7 @@ class V150AddSettingsTable extends Migration
                 UNIQUE KEY setting_key (setting_key)
             ) $charset_collate;";
 
-            if (! function_exists('dbDelta')) {
+            if (!function_exists('dbDelta')) {
                 require_once ABSPATH . 'wp-admin/includes/upgrade.php';
             }
             dbDelta($sql);
@@ -81,7 +81,7 @@ class V150AddSettingsTable extends Migration
     {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'menu_settings';
+        $table_name = $wpdb->prefix . 'ddm_menu_settings';
 
         // Drop the table if it exists
         if ($this->tableExists($table_name)) {
@@ -123,7 +123,7 @@ class V150AddSettingsTable extends Migration
         global $wpdb;
 
         return [
-            "{$wpdb->prefix}menu_settings",
+            "{$wpdb->prefix}ddm_menu_settings",
         ];
     }
 

@@ -2,22 +2,22 @@
 
 namespace DailyMenuManager\Entity;
 
-class MenuItem
+class MenuItem extends AbstractEntity
 {
-    public $id;
-    public $menu_id;
-    public $item_type;
-    public $title;
-    public $description;
-    public $price;
-    public $available_quantity;
-    public $properties;
-    public $sort_order;
-    public $allergens;
-    public $image_url;
-    public $image_id;
-    public $created_at;
-    public $updated_at;
+    protected $id;
+    protected $menu_id;
+    protected $item_type;
+    protected $title;
+    protected $description;
+    protected $price;
+    protected $available_quantity;
+    protected $properties;
+    protected $sort_order;
+    protected $allergens;
+    protected $image_url;
+    protected $image_id;
+    protected $created_at;
+    protected $updated_at;
 
     /**
      * Constructor to create a MenuItem entity from array data
@@ -74,5 +74,15 @@ class MenuItem
             'image_url' => $this->image_url,
             'image_id' => $this->image_id,
         ];
+    }
+
+    public function getPrice()
+    {
+        return $this->price;
+    }
+
+    public function getTitle()
+    {
+        return $this->title;
     }
 }

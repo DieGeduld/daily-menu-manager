@@ -2,11 +2,10 @@
 
 namespace DailyMenuManager\Entity;
 
-class OrderItem
+class OrderItem //TODO
 {
     public $id;
     public $order_id;
-    public $menu_id;
     public $menu_item_id;
     public $quantity;
     public $price;
@@ -24,8 +23,7 @@ class OrderItem
     {
         $this->id = $data['id'] ?? null;
         $this->order_id = $data['order_id'] ?? null;
-        $this->menu_id = $data['menu_id'] ?? null;
-        $this->menu_item_id = $data['menu_item_id'] ?? null;
+        $this->menu_item_id = intval($data['menu_item_id']) ?? null;
         $this->quantity = $data['quantity'] ?? 1;
         $this->price = $data['price'] ?? 0.00;
         $this->title = $data['title'] ?? '';
@@ -41,10 +39,10 @@ class OrderItem
      */
     public function toArray()
     {
+        // TODO: check if everything is in
         return [
             'id' => $this->id,
             'order_id' => $this->order_id,
-            'menu_id' => $this->menu_id,
             'menu_item_id' => $this->menu_item_id,
             'quantity' => $this->quantity,
             'price' => $this->price,
@@ -63,5 +61,10 @@ class OrderItem
     public function getTotalPrice()
     {
         return $this->quantity * $this->price;
+    }
+
+    public function getQuantity()
+    {
+        return $this->quantity;
     }
 }

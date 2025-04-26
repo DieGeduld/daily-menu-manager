@@ -8,7 +8,7 @@
 use DailyMenuManager\Controller\Admin\SettingsController;
 use DailyMenuManager\Helper\DateUtils;
 
-if (! defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
 
@@ -24,11 +24,11 @@ $consumption_types = self::getConsumptionTypes();
 $menu_types = self::getMenuTypes();
 
 // Get database version info
-$current_version = get_option('daily_menu_manager_version', '0.0.0');
+$current_version = get_option('daily_dish_manager_version', '0.0.0');
 $needs_update = version_compare($current_version, DMM_VERSION, '<');
 
 // Display any settings errors
-settings_errors('daily_menu_properties');
+settings_errors('daily_dish_properties');
 ?>
 
 <div class="wrap">
@@ -46,14 +46,14 @@ settings_errors('daily_menu_properties');
         </ul>
         
         <form method="post" action="">
-            <?php wp_nonce_field('daily_menu_settings_nonce'); ?>
+            <?php wp_nonce_field('daily_dish_settings_nonce'); ?>
             
             <div id="tab-general">
                 <table class="form-table">
                     <tr valign="top">
                         <th scope="row"><?php _e('Currency', 'daily-menu-manager'); ?></th>
                         <td>
-                            <select name="daily_menu_currency" id="daily_menu_currency" class="regular-text">
+                            <select name="daily_dish_currency" id="daily_dish_currency" class="regular-text">
                                 <?php foreach ($available_currencies as $currency_code => $currency_name) : ?>
                                     <option value="<?php echo esc_attr($currency_code); ?>" <?php selected($currency, $currency_code); ?>>
                                         <?php echo esc_html($currency_name); ?>
@@ -61,10 +61,10 @@ settings_errors('daily_menu_properties');
                                 <?php endforeach; ?>
                             </select>
                             <div id="custom_currency_container" style="margin-top: 10px; <?php echo ($currency !== 'custom') ? 'display: none;' : ''; ?>">
-                                <label for="daily_menu_custom_currency_symbol"><?php _e('Custom currency symbol:', 'daily-menu-manager'); ?></label>
+                                <label for="daily_dish_custom_currency_symbol"><?php _e('Custom currency symbol:', 'daily-menu-manager'); ?></label>
                                 <input type="text" 
-                                    name="daily_menu_custom_currency_symbol" 
-                                    id="daily_menu_custom_currency_symbol"
+                                    name="daily_dish_custom_currency_symbol" 
+                                    id="daily_dish_custom_currency_symbol"
                                     value="<?php echo esc_attr($custom_currency_symbol); ?>" 
                                     class="regular-text" 
                                     placeholder="<?php echo SettingsController::getCurrencySymbol(); ?>" />
@@ -77,7 +77,7 @@ settings_errors('daily_menu_properties');
                     <tr valign="top">
                         <th scope="row"><?php _e('Price format', 'daily-menu-manager'); ?></th>
                         <td>
-                            <select name="daily_menu_price_format" class="regular-text">
+                            <select name="daily_dish_price_format" class="regular-text">
                                 <?php foreach ($available_price_formats as $format_key => $format_name) : ?>
                                     <option value="<?php echo esc_attr($format_key); ?>" <?php selected($price_format, $format_key); ?>>
                                         <?php
@@ -97,7 +97,7 @@ settings_errors('daily_menu_properties');
                     <tr valign="top">
                         <th scope="row"><?php _e('Time format', 'daily-menu-manager'); ?></th>
                         <td>
-                            <select name="daily_menu_time_format" class="regular-text">
+                            <select name="daily_dish_time_format" class="regular-text">
                                 <option value="H:i" <?php selected(self::getTimeFormat(), 'H:i'); ?>>
                                     <?php _e('24-hour format (14:30)', 'daily-menu-manager'); ?>
                                 </option>
@@ -117,11 +117,11 @@ settings_errors('daily_menu_properties');
                         <th scope="row"><?php _e('Menu properties', 'daily-menu-manager'); ?></th>
                         <td>
                             <div id="menu-properties-container">
-                                <?php if (! empty($properties)) : ?>
+                                <?php if (!empty($properties)) : ?>
                                     <?php foreach ($properties as $index => $property) : ?>
                                         <div class="property-row">
                                             <input type="text" 
-                                                name="daily_menu_properties[]" 
+                                                name="daily_dish_properties[]" 
                                                 value="<?php echo esc_attr($property); ?>" 
                                                 class="regular-text" />
                                             <button type="button" class="button remove-property"><?php _e('Remove', 'daily-menu-manager'); ?></button>
@@ -130,7 +130,7 @@ settings_errors('daily_menu_properties');
                                 <?php else : ?>
                                     <div class="property-row">
                                         <input type="text" 
-                                            name="daily_menu_properties[]" 
+                                            name="daily_dish_properties[]" 
                                             value="" 
                                             class="regular-text" />
                                         <button type="button" class="button remove-property"><?php _e('Remove', 'daily-menu-manager'); ?></button>
@@ -150,16 +150,16 @@ settings_errors('daily_menu_properties');
                         <th scope="row"><?php _e('Menu types', 'daily-menu-manager'); ?></th>
                         <td>
                             <div id="menu-types-container">
-                                <?php if (! empty($menu_types)) : ?>
+                                <?php if (!empty($menu_types)) : ?>
                                     <?php foreach ($menu_types as $type_key => $type_data) : ?>
                                         <div class="menu-type-row">
                                             <input type="text" 
-                                                name="daily_menu_types_labels[]" 
+                                                name="daily_dish_types_labels[]" 
                                                 value="<?php echo esc_attr($type_data['label']); ?>" 
                                                 class="regular-text menu-type-label" 
                                                 placeholder="<?php _e('Menu Type Name (Singular)', 'daily-menu-manager'); ?>" />
                                             <input type="text" 
-                                                name="daily_menu_types_plurals[]" 
+                                                name="daily_dish_types_plurals[]" 
                                                 value="<?php echo esc_attr($type_data['plural'] ?? ''); ?>" 
                                                 class="regular-text menu-type-plural" 
                                                 placeholder="<?php _e('Menu Type Name (Plural)', 'daily-menu-manager'); ?>" />
@@ -169,12 +169,12 @@ settings_errors('daily_menu_properties');
                                 <?php else : ?>
                                     <div class="menu-type-row">
                                         <input type="text" 
-                                            name="daily_menu_types_labels[]" 
+                                            name="daily_dish_types_labels[]" 
                                             value="" 
                                             class="regular-text menu-type-label" 
                                             placeholder="<?php _e('Menu Type Name (Singular)', 'daily-menu-manager'); ?>" />
                                         <input type="text" 
-                                            name="daily_menu_types_plurals[]" 
+                                            name="daily_dish_types_plurals[]" 
                                             value="" 
                                             class="regular-text menu-type-plural" 
                                             placeholder="<?php _e('Menu Type Name (Plural)', 'daily-menu-manager'); ?>" />
@@ -195,7 +195,7 @@ settings_errors('daily_menu_properties');
                         <th scope="row"><?php _e('Main color', 'daily-menu-manager'); ?></th>
                         <td>
                             <input type="color" 
-                                name="daily_menu_main_color" 
+                                name="daily_dish_main_color" 
                                 value="<?php echo esc_attr($main_color); ?>" 
                                 class="regular-text" />
                             <p class="description"><?php _e('Select a main color.', 'daily-menu-manager'); ?></p>
@@ -210,11 +210,11 @@ settings_errors('daily_menu_properties');
                         <th scope="row"><?php _e('Consumption types', 'daily-menu-manager'); ?></th>
                         <td>
                             <div id="consumption-types-container">
-                                <?php if (! empty($consumption_types)) : ?>
+                                <?php if (!empty($consumption_types)) : ?>
                                     <?php foreach ($consumption_types as $index => $type) : ?>
                                         <div class="consumption-type-row">
                                             <input type="text" 
-                                                name="daily_menu_consumption_types[]" 
+                                                name="daily_dish_consumption_types[]" 
                                                 value="<?php echo esc_attr($type); ?>" 
                                                 class="regular-text" />
                                             <button type="button" class="button remove-consumption-type"><?php _e('Remove', 'daily-menu-manager'); ?></button>
@@ -223,7 +223,7 @@ settings_errors('daily_menu_properties');
                                 <?php else : ?>
                                     <div class="consumption-type-row">
                                         <input type="text" 
-                                            name="daily_menu_consumption_types[]" 
+                                            name="daily_dish_consumption_types[]" 
                                             value="" 
                                             class="regular-text" />
                                         <button type="button" class="button remove-consumption-type"><?php _e('Remove', 'daily-menu-manager'); ?></button>
@@ -245,7 +245,7 @@ settings_errors('daily_menu_properties');
                             <?php $order_times = self::getOrderTimes(); ?>
                             <div class="order-times-container">
                                 <div class="order-time-field order-time-field-start-container">
-                                    <label for="daily_menu_order_times[start_time]"><?php _e('Start Time', 'daily-menu-manager'); ?></label>
+                                    <label for="daily_dish_order_times[start_time]"><?php _e('Start Time', 'daily-menu-manager'); ?></label>
                                     <input data-no-calendar="true" 
                                             data-alt-format="<?php echo esc_attr(self::getTimeFormat() == "g:i A" ? "h:i K" : self::getTimeFormat()); ?>"
                                             data-time_24hr="<?php echo esc_attr((self::getTimeFormat() == "H:i") ? 'true' : 'false'); ?>"
@@ -253,12 +253,12 @@ settings_errors('daily_menu_properties');
                                             data-date-format="H:i"
                                             data-enable-time=true
                                     type="time" 
-                                        name="daily_menu_order_times[start_time]" 
+                                        name="daily_dish_order_times[start_time]" 
                                         value="<?php echo esc_attr(DateUtils::convertTimeToFormat($order_times['start_time'], self::getTimeFormat())); ?>" 
                                         class="order-time-field-start" />
                                 </div>
                                 <div class="order-time-field order-time-field-end-container">
-                                    <label for="daily_menu_order_times[end_time]"><?php _e('End Time', 'daily-menu-manager'); ?></label>
+                                    <label for="daily_dish_order_times[end_time]"><?php _e('End Time', 'daily-menu-manager'); ?></label>
                                     <input data-no-calendar="true" 
                                             data-alt-format="<?php echo esc_attr(self::getTimeFormat() == "g:i A" ? "h:i K" : self::getTimeFormat()); ?>"
                                             data-time_24hr="<?php echo esc_attr((self::getTimeFormat() == "H:i") ? 'true' : 'false'); ?>"
@@ -266,14 +266,14 @@ settings_errors('daily_menu_properties');
                                             data-date-format="H:i"
                                             data-enable-time=true
                                     type="time" 
-                                        name="daily_menu_order_times[end_time]" 
+                                        name="daily_dish_order_times[end_time]" 
                                         value="<?php echo esc_attr(DateUtils::convertTimeToFormat($order_times['end_time'], self::getTimeFormat())); ?>" 
                                         class="order-time-field-end" />
                                 </div>
                                 <div class="order-time-field order-time-field-interval-container">
-                                    <label for="daily_menu_order_times[interval]"><?php _e('Time Interval (minutes)', 'daily-menu-manager'); ?></label>
+                                    <label for="daily_dish_order_times[interval]"><?php _e('Time Interval (minutes)', 'daily-menu-manager'); ?></label>
                                     <input type="number" 
-                                        name="daily_menu_order_times[interval]" 
+                                        name="daily_dish_order_times[interval]" 
                                         value="<?php echo esc_attr($order_times['interval']); ?>" 
                                         min="5"
                                         max="120"
@@ -329,7 +329,7 @@ jQuery(document).ready(function($) {
     $("#settings-tabs").tabs();
     
     // Show/hide custom currency input based on selection
-    $('#daily_menu_currency').on('change', function() {
+    $('#daily_dish_currency').on('change', function() {
         if ($(this).val() === 'custom') {
             $('#custom_currency_container').show();
         } else {
@@ -338,14 +338,14 @@ jQuery(document).ready(function($) {
     });
     
     // Live update price format example when currency or format changes
-    $('#daily_menu_currency, select[name="daily_menu_price_format"], #daily_menu_custom_currency_symbol').on('change keyup', function() {
+    $('#daily_dish_currency, select[name="daily_dish_price_format"], #daily_dish_custom_currency_symbol').on('change keyup', function() {
         updatePriceFormatExamples();
     });
     
     function updatePriceFormatExamples() {
-        const currencySelect = $('#daily_menu_currency');
+        const currencySelect = $('#daily_dish_currency');
         const selectedCurrency = currencySelect.val();
-        const customSymbol = $('#daily_menu_custom_currency_symbol').val();
+        const customSymbol = $('#daily_dish_custom_currency_symbol').val();
         
         // Update the examples in the dropdown options
         // This would ideally be done with AJAX, but for simplicity,
@@ -358,7 +358,7 @@ jQuery(document).ready(function($) {
     // Add property
     $('.add-property').on('click', function() {
         var newRow = '<div class="property-row">' +
-            '<input type="text" name="daily_menu_properties[]" value="" class="regular-text" />' +
+            '<input type="text" name="daily_dish_properties[]" value="" class="regular-text" />' +
             '<button type="button" class="button remove-property"><?php _e('Remove', 'daily-menu-manager'); ?></button>' +
             '</div>';
         $('#menu-properties-container').append(newRow);
@@ -376,7 +376,7 @@ jQuery(document).ready(function($) {
     // Add consumption type
     $('.add-consumption-type').on('click', function() {
         var newRow = '<div class="consumption-type-row">' +
-            '<input type="text" name="daily_menu_consumption_types[]" value="" class="regular-text" />' +
+            '<input type="text" name="daily_dish_consumption_types[]" value="" class="regular-text" />' +
             '<button type="button" class="button remove-consumption-type"><?php _e('Remove', 'daily-menu-manager'); ?></button>' +
             '</div>';
         $('#consumption-types-container').append(newRow);
@@ -394,8 +394,8 @@ jQuery(document).ready(function($) {
     // Add menu type
     $('.add-menu-type').on('click', function() {
         var newRow = '<div class="menu-type-row">' +
-            '<input type="text" name="daily_menu_types_labels[]" value="" class="regular-text menu-type-label" placeholder="<?php _e('Menu Type Name (Singular)', 'daily-menu-manager'); ?>" />' +
-            '<input type="text" name="daily_menu_types_plurals[]" value="" class="regular-text menu-type-plural" placeholder="<?php _e('Menu Type Name (Plural)', 'daily-menu-manager'); ?>" />' +
+            '<input type="text" name="daily_dish_types_labels[]" value="" class="regular-text menu-type-label" placeholder="<?php _e('Menu Type Name (Singular)', 'daily-menu-manager'); ?>" />' +
+            '<input type="text" name="daily_dish_types_plurals[]" value="" class="regular-text menu-type-plural" placeholder="<?php _e('Menu Type Name (Plural)', 'daily-menu-manager'); ?>" />' +
             '<button type="button" class="button remove-menu-type"><?php _e('Remove', 'daily-menu-manager'); ?></button>' +
             '</div>';
         $('#menu-types-container').append(newRow);

@@ -20,7 +20,7 @@ class Menu
     {
         global $wpdb;
         $this->wpdb = $wpdb;
-        $this->table_name = $wpdb->prefix . 'daily_menus';
+        $this->table_name = $wpdb->prefix . 'ddm_menus';
     }
 
     public static function init()
@@ -45,7 +45,7 @@ class Menu
 
         $tables = [
             // Haupttabelle für Tagesmenüs
-            "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}daily_menus (
+            "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}ddm_menus (
                 id mediumint(9) NOT NULL AUTO_INCREMENT,
                 menu_date date NOT NULL,
                 created_at datetime DEFAULT CURRENT_TIMESTAMP,
@@ -55,7 +55,7 @@ class Menu
             ) $charset_collate",
 
             // Tabelle für Menüeinträge
-            "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}menu_items (
+            "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}ddm_menu_items (
                 id mediumint(9) NOT NULL AUTO_INCREMENT,
                 menu_id mediumint(9) NOT NULL,
                 item_type varchar(50) NOT NULL,
@@ -95,14 +95,14 @@ class Menu
 
             // Prüfe ob Menü bereits existiert
             $menu_id = $wpdb->get_var($wpdb->prepare(
-                "SELECT id FROM {$wpdb->prefix}daily_menus WHERE menu_date = %s",
+                "SELECT id FROM {$wpdb->prefix}ddm_menus WHERE menu_date = %s",
                 $menu_date
             ));
 
             // Erstelle oder aktualisiere Menü
             if (!$menu_id) {
                 $wpdb->insert(
-                    $wpdb->prefix . 'daily_menus',
+                    $wpdb->prefix . 'ddm_menus',
                     ['menu_date' => $menu_date],
                     ['%s']
                 );
@@ -111,7 +111,7 @@ class Menu
 
             // Hole IDs der vorhandenen Menüeinträge für dieses Menü
             $existing_items = $wpdb->get_col($wpdb->prepare(
-                "SELECT id FROM {$wpdb->prefix}menu_items WHERE menu_id = %d",
+                "SELECT id FROM {$wpdb->prefix}ddm_menu_items WHERE menu_id = %d",
                 $menu_id
             ));
 
@@ -161,7 +161,7 @@ class Menu
                         $updated_item_ids[] = $existing_id;
 
                         $wpdb->update(
-                            $wpdb->prefix . 'menu_items',
+                            $wpdb->prefix . 'ddm_menu_items',
                             $data,
                             ['id' => $existing_id],
                             $formats,
@@ -170,7 +170,7 @@ class Menu
                     } else {
                         // Füge neuen Eintrag hinzu
                         $wpdb->insert(
-                            $wpdb->prefix . 'menu_items',
+                            $wpdb->prefix . 'ddm_menu_items',
                             $data,
                             $formats
                         );
@@ -183,7 +183,7 @@ class Menu
             foreach ($existing_items as $item_id) {
                 if (!in_array($item_id, $updated_item_ids)) {
                     $wpdb->delete(
-                        $wpdb->prefix . 'menu_items',
+                        $wpdb->prefix . 'ddm_menu_items',
                         ['id' => $item_id],
                         ['%d']
                     );
@@ -211,7 +211,7 @@ class Menu
         global $wpdb;
 
         $menu = $wpdb->get_row($wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}daily_menus WHERE menu_date = %s",
+            "SELECT * FROM {$wpdb->prefix}ddm_menus WHERE menu_date = %s",
             $date
         ));
 
@@ -252,7 +252,7 @@ class Menu
         }
 
         $items = $wpdb->get_results($wpdb->prepare(
-            "SELECT * FROM {$wpdb->prefix}menu_items 
+            "SELECT * FROM {$wpdb->prefix}ddm_menu_items 
             WHERE menu_id = %d 
             ORDER BY sort_order ASC",
             $menu_id
@@ -283,7 +283,7 @@ class Menu
 
             foreach ($item_orders as $item_id => $position) {
                 $updated = $wpdb->update(
-                    $wpdb->prefix . 'menu_items',
+                    $wpdb->prefix . 'ddm_menu_items',
                     ['sort_order' => intval($position)],
                     ['id' => intval($item_id)],
                     ['%d'],
@@ -320,14 +320,14 @@ class Menu
 
             // Lösche alle Menüeinträge
             $wpdb->delete(
-                $wpdb->prefix . 'menu_items',
+                $wpdb->prefix . 'ddm_menu_items',
                 ['menu_id' => $menu_id],
                 ['%d']
             );
 
             // Lösche das Menü selbst
             $wpdb->delete(
-                $wpdb->prefix . 'daily_menus',
+                $wpdb->prefix . 'ddm_menus',
                 ['id' => $menu_id],
                 ['%d']
             );
@@ -353,7 +353,7 @@ class Menu
         global $wpdb;
 
         $exists = $wpdb->get_var($wpdb->prepare(
-            "SELECT COUNT(*) FROM {$wpdb->prefix}daily_menus WHERE menu_date = %s",
+            "SELECT COUNT(*) FROM {$wpdb->prefix}ddm_menus WHERE menu_date = %s",
             $date
         ));
 
@@ -371,8 +371,8 @@ class Menu
 
         $dates = $wpdb->get_col("
             SELECT DISTINCT dm.menu_date
-            FROM {$wpdb->prefix}daily_menus dm
-            INNER JOIN {$wpdb->prefix}menu_items mi
+            FROM {$wpdb->prefix}ddm_menus dm
+            INNER JOIN {$wpdb->prefix}ddm_menu_items mi
                 ON dm.id = mi.menu_id
             ORDER BY dm.menu_date ASC
         ");
@@ -397,13 +397,13 @@ class Menu
             // Erstelle neues Menü
             // Prüfe ob Menü bereits existiert
             $existing_menu = $wpdb->get_var($wpdb->prepare(
-                "SELECT id FROM {$wpdb->prefix}daily_menus WHERE menu_date = %s",
+                "SELECT id FROM {$wpdb->prefix}ddm_menus WHERE menu_date = %s",
                 $new_date
             ));
 
             if (!$existing_menu) {
                 $wpdb->insert(
-                    $wpdb->prefix . 'daily_menus',
+                    $wpdb->prefix . 'ddm_menus',
                     ['menu_date' => $new_date],
                     ['%s']
                 );
@@ -433,7 +433,7 @@ class Menu
                 }
 
                 $wpdb->insert(
-                    $wpdb->prefix . 'menu_items',
+                    $wpdb->prefix . 'ddm_menu_items',
                     $item_array,
                     ['%d', '%s', '%s', '%s', '%f', '%d', '%s', '%s', '%d']
                 );
@@ -488,9 +488,9 @@ class Menu
                 AVG(mi.price) as avg_price,
                 SUM(mi.available_quantity) as total_available_items,
                 COUNT(DISTINCT o.order_number) as total_orders
-            FROM {$wpdb->prefix}daily_menus dm
-            LEFT JOIN {$wpdb->prefix}menu_items mi ON dm.id = mi.menu_id
-            LEFT JOIN {$wpdb->prefix}menu_orders o ON dm.id = o.menu_id
+            FROM {$wpdb->prefix}ddm_menus dm
+            LEFT JOIN {$wpdb->prefix}ddm_menu_items mi ON dm.id = mi.menu_id
+            LEFT JOIN {$wpdb->prefix}ddm_orders o ON dm.id = o.menu_id
             WHERE dm.menu_date BETWEEN %s AND %s
             GROUP BY dm.menu_date
             ORDER BY dm.menu_date DESC
@@ -512,7 +512,7 @@ class Menu
 
             foreach ($order_items as $item_id => $item) {
                 $updated = $wpdb->query($wpdb->prepare(
-                    "UPDATE {$wpdb->prefix}menu_items SET available_quantity = available_quantity - %d WHERE id = %d AND available_quantity >= %d",
+                    "UPDATE {$wpdb->prefix}ddm_menu_items SET available_quantity = available_quantity - %d WHERE id = %d AND available_quantity >= %d",
                     $item["quantity"],
                     $item_id,
                     $item["quantity"]
@@ -545,7 +545,7 @@ class Menu
         global $wpdb;
 
         $updated = $wpdb->update(
-            $wpdb->prefix . 'menu_items',
+            $wpdb->prefix . 'ddm_menu_items',
             ['allergens' => sanitize_textarea_field($allergens)],
             ['id' => intval($item_id)],
             ['%s'],
@@ -567,7 +567,7 @@ class Menu
         global $wpdb;
 
         $updated = $wpdb->update(
-            $wpdb->prefix . 'menu_items',
+            $wpdb->prefix . 'ddm_menu_items',
             ['available_quantity' => intval($quantity)],
             ['id' => intval($item_id)],
             ['%d'],

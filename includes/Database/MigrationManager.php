@@ -42,7 +42,7 @@ class MigrationManager
     {
         $this->loggerService = new LoggingService();
         $this->migrationsPath = DMM_PLUGIN_DIR . 'includes/Database/migrations/';
-        $this->currentVersion = get_option('daily_menu_manager_version', '0.0.0');
+        $this->currentVersion = get_option('daily_dish_manager_version', '0.0.0');
         $this->config = array_merge([
             'batchSize' => 1000,
             'debug' => defined('WP_DEBUG') && WP_DEBUG,
@@ -102,7 +102,7 @@ class MigrationManager
     // {
     //     $this->validateMigrationVersion($version);
     //     $this->currentVersion = $version;
-    //     update_option('daily_menu_manager_db_version', $version);
+    //     update_option('daily_dish_manager_db_version', $version);
     // }
 
     /**
@@ -254,7 +254,7 @@ class MigrationManager
                         if ($this->executeMigration($file, $manualExecution)) {
                             $this->recordMigrationSuccess($version);
                             $this->currentVersion = $version;
-                            update_option('daily_menu_manager_version', $version);
+                            update_option('daily_dish_manager_version', $version);
                             $this->loggerService->info("Successfully completed migration $version");
                         } else {
                             $this->loggerService->info("Skipping migration $version - autorun disabled");

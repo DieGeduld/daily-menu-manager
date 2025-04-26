@@ -61,8 +61,8 @@ export default createStore({
         // Füge neues Item hinzu
         state.cartItems.push({
           id: itemId,
-          menuId: menuId || state.currentMenuId, // Verwende übergebene menuId oder die aktuelle
-          menuItemId: menuItemId || itemId, // Verwende übergebene menuItemId oder itemId als Fallback
+          menuId: menuId || state.currentMenuId,
+          menuItemId: menuItemId || itemId,
           quantity,
           notes,
           price: parseFloat(price),
@@ -109,8 +109,11 @@ export default createStore({
       if (getters.isValidOrder) {
         // Stelle sicher, dass die menuId in jedem Item gesetzt ist
         const cartItemsWithMenuId = state.cartItems.map((item) => ({
-          ...item,
-          menuId: item.menuId || state.currentMenuId || parseInt(window.currentMenuId, 10) || 0,
+          menuItemId: item.menuItemId || item.id, // <- immer menuItemId verwenden!
+          quantity: item.quantity,
+          notes: item.notes,
+          price: item.price,
+          title: item.title,
         }));
 
         // Prepare order data from state

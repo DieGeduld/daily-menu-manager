@@ -26,12 +26,12 @@ class V140AddProperties extends Migration
      */
     public function up(): void
     {
-        $table_name = $this->wpdb->prefix . 'menu_items';
+        $table_name = $this->wpdb->prefix . 'ddm_menu_items';
         $column_name = 'properties';
 
         // Check if the column already exists
         $column_exists = $this->wpdb->get_results($this->wpdb->prepare(
-            "SHOW COLUMNS FROM `{$this->wpdb->prefix}menu_items` LIKE %s",
+            "SHOW COLUMNS FROM `{$this->wpdb->prefix}ddm_menu_items` LIKE %s",
             $column_name
         ));
 
@@ -49,7 +49,7 @@ class V140AddProperties extends Migration
     {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'menu_items';
+        $table_name = $wpdb->prefix . 'ddm_menu_items';
         $column_name = 'properties';
 
         // Check if the column exists
@@ -97,7 +97,7 @@ class V140AddProperties extends Migration
         global $wpdb;
 
         return [
-            "{$wpdb->prefix}menu_items",
+            "{$wpdb->prefix}ddm_menu_items",
         ];
     }
 
@@ -107,7 +107,7 @@ class V140AddProperties extends Migration
     public function validatePrerequisites(): bool
     {
         global $wpdb;
-        $table_name = $wpdb->prefix . 'menu_items';
+        $table_name = $wpdb->prefix . 'ddm_menu_items';
 
         if (! $this->tableExists($table_name)) {
             throw new \RuntimeException("Table '$table_name' does not exist");

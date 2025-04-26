@@ -26,13 +26,13 @@ class V100InitialTables extends Migration
      */
     public function up(): void
     {
-        if (! function_exists('dbDelta')) {
+        if (!function_exists('dbDelta')) {
             require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         }
         $charset_collate = $this->wpdb->get_charset_collate();
 
-        // Create daily_menus table
-        $sql_daily_menus = "CREATE TABLE IF NOT EXISTS {$this->wpdb->prefix}daily_menus (
+        // Create ddm_menus table
+        $sql_ddm_menus = "CREATE TABLE IF NOT EXISTS {$this->wpdb->prefix}ddm_menus (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             menu_date date NOT NULL,
             created_at datetime DEFAULT CURRENT_TIMESTAMP,
@@ -42,7 +42,7 @@ class V100InitialTables extends Migration
         ) $charset_collate;";
 
         // Create menu_items table
-        $sql_menu_items = "CREATE TABLE IF NOT EXISTS {$this->wpdb->prefix}menu_items (
+        $sql_menu_items = "CREATE TABLE IF NOT EXISTS {$this->wpdb->prefix}ddm_menu_items (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             menu_id mediumint(9) NOT NULL,
             item_type varchar(50) NOT NULL,
@@ -58,10 +58,9 @@ class V100InitialTables extends Migration
         ) $charset_collate;";
 
         // Create menu_orders table
-        $sql_menu_orders = "CREATE TABLE IF NOT EXISTS {$this->wpdb->prefix}menu_orders (
+        $sql_menu_orders = "CREATE TABLE IF NOT EXISTS {$this->wpdb->prefix}ddm_orders (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             menu_id mediumint(9) NOT NULL,
-            menu_item_id mediumint(9) NOT NULL,
             order_number varchar(50) NOT NULL,
             customer_name varchar(100) NOT NULL,
             customer_phone varchar(50) NOT NULL,
@@ -69,7 +68,6 @@ class V100InitialTables extends Migration
             customer_email varchar(100),
             quantity int NOT NULL DEFAULT 1,
             notes text,
-            general_notes text,
             status varchar(50) DEFAULT 'pending',
             order_date datetime NOT NULL,
             created_at datetime DEFAULT CURRENT_TIMESTAMP,
@@ -80,7 +78,7 @@ class V100InitialTables extends Migration
         ) $charset_collate;";
 
         // Execute the SQL statements
-        dbDelta($sql_daily_menus);
+        dbDelta($sql_ddm_menus);
         dbDelta($sql_menu_items);
         dbDelta($sql_menu_orders);
 
@@ -94,9 +92,9 @@ class V100InitialTables extends Migration
     {
         global $wpdb;
 
-        $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}daily_menus");
-        $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}menu_items");
-        $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}menu_orders");
+        $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}ddm_menus");
+        $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}ddm_menu_items");
+        $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}ddm_orders");
         $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}dmm_migration_status");
     }
 
@@ -134,9 +132,9 @@ class V100InitialTables extends Migration
         global $wpdb;
 
         return [
-            "{$wpdb->prefix}daily_menus",
-            "{$wpdb->prefix}menu_items",
-            "{$wpdb->prefix}menu_orders",
+            "{$wpdb->prefix}ddm_menus",
+            "{$wpdb->prefix}ddm_menu_items",
+            "{$wpdb->prefix}ddm_orders",
             "{$wpdb->prefix}dmm_migration_status",
         ];
     }

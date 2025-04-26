@@ -2,7 +2,7 @@
 
 namespace DailyMenuManager\Entity;
 
-class Menu
+class Menu extends AbstractEntity
 {
     public $id;
     public $menu_date;

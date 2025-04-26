@@ -26,7 +26,7 @@ class Installer
     public static function run_updates()
     {
         // Get the stored version
-        $installed_version = get_option('daily_menu_manager_version');
+        $installed_version = get_option('daily_dish_manager_version');
         $plugin_version = DMM_VERSION; // Define this in your main plugin file
 
         // If versions don't match, run migrations
@@ -36,7 +36,7 @@ class Installer
             try {
                 $migration_manager->runMigrations();
                 // Update the stored version after successful migration
-                update_option('daily_menu_manager_version', $plugin_version);
+                update_option('daily_dish_manager_version', $plugin_version);
             } catch (\Exception $e) {
                 // Log error and maybe show admin notice
                 error_log('Daily Menu Manager migration failed: ' . $e->getMessage());
@@ -69,7 +69,6 @@ class Installer
         self::removeUploadDirectory();
     }
 
-
     /**
      * Erstellt die Standard-Plugin-Optionen
      */
@@ -85,8 +84,8 @@ class Installer
     {
         $roles = ['administrator', 'editor'];
         $capabilities = [
-            'manage_daily_menu' => true,
-            'edit_daily_menu' => true,
+            'manage_daily_dish' => true,
+            'edit_daily_dish' => true,
             'view_orders' => true,
             'manage_orders' => true,
         ];
@@ -109,7 +108,7 @@ class Installer
         $upload_dir = wp_upload_dir();
         $plugin_upload_dir = $upload_dir['basedir'] . '/daily-menu-manager';
 
-        if (! file_exists($plugin_upload_dir)) {
+        if (!file_exists($plugin_upload_dir)) {
             wp_mkdir_p($plugin_upload_dir);
 
             // Erstelle .htaccess zum Schutz des Verzeichnisses
@@ -126,8 +125,8 @@ class Installer
      */
     private static function removeScheduledEvents()
     {
-        wp_clear_scheduled_hook('daily_menu_manager_daily_cleanup');
-        wp_clear_scheduled_hook('daily_menu_manager_order_reminder');
+        wp_clear_scheduled_hook('daily_dish_manager_daily_cleanup');
+        wp_clear_scheduled_hook('daily_dish_manager_order_reminder');
     }
 
     /**
@@ -137,10 +136,10 @@ class Installer
     {
         global $wpdb;
 
-        $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}daily_menus");
-        $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}menu_items");
-        $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}menu_orders");
-        $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}menu_settings");
+        $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}ddm_menus");
+        $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}ddm_menu_items");
+        $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}ddm_orders");
+        $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}ddm_menu_settings");
         $wpdb->query("DROP TABLE IF EXISTS {$wpdb->prefix}dmm_migration_status");
     }
 
@@ -149,16 +148,16 @@ class Installer
      */
     private static function removeOptions()
     {
-        delete_option('daily_menu_manager_version');
-        //delete_option('daily_menu_manager_settings');
-        delete_option('daily_menu_manager_notices');
+        delete_option('daily_dish_manager_version');
+        //delete_option('daily_dish_manager_settings');
+        delete_option('daily_dish_manager_notices');
 
         // Entferne alle Transients
         global $wpdb;
         $wpdb->query(
             "DELETE FROM {$wpdb->options} 
-             WHERE option_name LIKE '%_transient_daily_menu_%' 
-             OR option_name LIKE '%_transient_timeout_daily_menu_%'"
+             WHERE option_name LIKE '%_transient_daily_dish_%' 
+             OR option_name LIKE '%_transient_timeout_daily_dish_%'"
         );
     }
 
@@ -169,8 +168,8 @@ class Installer
     {
         $roles = ['administrator', 'editor'];
         $capabilities = [
-            'manage_daily_menu',
-            'edit_daily_menu',
+            'manage_daily_dish',
+            'edit_daily_dish',
             'view_orders',
             'manage_orders',
         ];
@@ -237,7 +236,7 @@ class Installer
         // Erforderliche PHP-Erweiterungen
         $required_extensions = ['mysqli', 'json'];
         foreach ($required_extensions as $ext) {
-            if (! extension_loaded($ext)) {
+            if (!extension_loaded($ext)) {
                 $errors[] = sprintf(
                     'The PHP extension %s is required.',
                     $ext
@@ -254,7 +253,7 @@ class Installer
      */
     public static function updateDatabase()
     {
-        $installed_version = get_option('daily_menu_manager_version');
+        $installed_version = get_option('daily_dish_manager_version');
 
         if ($installed_version !== DMM_VERSION) {
             self::createTables();
@@ -277,7 +276,7 @@ class Installer
             $migrationManager->runMigrations();
 
             // Aktualisiere die gespeicherte Datenbankversion
-            update_option('daily_menu_manager_version', DMM_VERSION);
+            update_option('daily_dish_manager_version', DMM_VERSION);
 
             return true;
         } catch (\Exception $e) {

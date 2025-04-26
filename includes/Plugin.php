@@ -71,9 +71,9 @@ class Plugin
 
     public static function addAdminNotice(string $message, string $type = 'success'): void
     {
-        $notices = get_option('daily_menu_manager_notices', []);
+        $notices = get_option('daily_dish_manager_notices', []);
         $notices[] = compact('message', 'type');
-        update_option('daily_menu_manager_notices', $notices);
+        update_option('daily_dish_manager_notices', $notices);
     }
 
     public static function log(string $message, $data = null): void

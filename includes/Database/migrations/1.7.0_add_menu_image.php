@@ -10,7 +10,7 @@ class V170AddMenuImage extends Migration
 
     public function up(): void
     {
-        $table_name = $this->wpdb->prefix . 'menu_items';
+        $table_name = $this->wpdb->prefix . 'ddm_menu_items';
         $column_name = 'image_id';
         $column_name2 = 'image_url';
 
@@ -37,7 +37,7 @@ class V170AddMenuImage extends Migration
     {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'daily_menu_manager_menus';
+        $table_name = $wpdb->prefix . 'daily_dish_manager_menus';
 
         $sql = "ALTER TABLE {$table_name} 
                 DROP COLUMN image_id,
@@ -70,7 +70,7 @@ class V170AddMenuImage extends Migration
     {
         global $wpdb;
 
-        return [$wpdb->prefix . 'daily_menu_manager_menus'];
+        return [$wpdb->prefix . 'daily_dish_manager_menus'];
     }
 
     public function setBatchSize(int $size): void
@@ -81,7 +81,7 @@ class V170AddMenuImage extends Migration
     public function validatePrerequisites(): bool
     {
         global $wpdb;
-        $table = $wpdb->prefix . 'daily_menu_manager_menus';
+        $table = $wpdb->prefix . 'daily_dish_manager_menus';
         $table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$table}'") === $table;
 
         if (!$table_exists) {

@@ -30,7 +30,7 @@ class ShortcodeController
     public static function init(): void
     {
         self::getInstance();
-        add_shortcode('daily_menu', [self::class, 'renderMenu']);
+        add_shortcode('daily_dish', [self::class, 'renderMenu']);
     }
 
     /**
@@ -51,7 +51,7 @@ class ShortcodeController
             'layout' => 'grid',
             'items_per_page' => 0,
             'order_form_position' => 'right',
-        ], $atts, 'daily_menu');
+        ], $atts, 'daily_dish');
 
         // Hole das Menü
         $menu = new Menu();

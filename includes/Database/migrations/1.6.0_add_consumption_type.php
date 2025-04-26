@@ -26,12 +26,12 @@ class V160AddConsumptionType extends Migration
      */
     public function up(): void
     {
-        $table_name = $this->wpdb->prefix . 'menu_orders';
+        $table_name = $this->wpdb->prefix . 'ddm_orders';
         $column_name = 'consumption_type';
 
         // Check if the column already exists
         $column_exists = $this->wpdb->get_results($this->wpdb->prepare(
-            "SHOW COLUMNS FROM `{$this->wpdb->prefix}menu_items` LIKE %s",
+            "SHOW COLUMNS FROM `{$this->wpdb->prefix}ddm_menu_items` LIKE %s",
             $column_name
         ));
 
@@ -72,7 +72,7 @@ class V160AddConsumptionType extends Migration
     {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'menu_settings';
+        $table_name = $wpdb->prefix . 'ddm_menu_settings';
 
         // Drop the table if it exists
         if ($this->tableExists($table_name)) {
@@ -114,7 +114,7 @@ class V160AddConsumptionType extends Migration
         global $wpdb;
 
         return [
-            "{$wpdb->prefix}menu_settings",
+            "{$wpdb->prefix}ddm_menu_settings",
         ];
     }
 

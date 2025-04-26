@@ -29,7 +29,7 @@ class Order
             // Generiere fortlaufende Bestellnummer (000-999)
             $last_order = $wpdb->get_var(
                 "SELECT MAX(CAST(SUBSTRING_INDEX(order_number, '-', -1) AS UNSIGNED)) 
-                FROM {$wpdb->prefix}menu_orders"
+                FROM {$wpdb->prefix}ddm_orders"
             );
 
             // Wenn keine Bestellung existiert oder der letzte Wert kein gültiger Integer ist
@@ -56,10 +56,9 @@ class Order
                 if ($quantity > 0) {
                     // Einzelnes Bestellitem speichern
                     $inserted = $wpdb->insert(
-                        $wpdb->prefix . 'menu_orders',
+                        $wpdb->prefix . 'ddm_orders',
                         [
                             'menu_id' => intval($data['menu_id']),
-                            'menu_item_id' => $item_id,
                             'order_number' => $order_number,
                             'customer_name' => sanitize_text_field($data['customer_name']),
                             'customer_phone' => sanitize_text_field($data['customer_phone']),
@@ -67,7 +66,6 @@ class Order
                             'pickup_time' => sanitize_text_field($data['pickup_time']),
                             'quantity' => $quantity,
                             'notes' => sanitize_textarea_field($item_data['notes'] ?? ''),
-                            'general_notes' => sanitize_textarea_field($data['general_notes'] ?? ''),
                             'order_date' => current_time('mysql'),
                         ],
                         ['%d', '%d', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s']
@@ -81,7 +79,7 @@ class Order
 
                     // Hole Item-Details für die Bestätigung
                     $item_details = $wpdb->get_row($wpdb->prepare(
-                        "SELECT title, price FROM {$wpdb->prefix}menu_items WHERE id = %d",
+                        "SELECT title, price FROM {$wpdb->prefix}ddm_menu_items WHERE id = %d",
                         $item_id
                     ));
 
@@ -135,7 +133,7 @@ class Order
             $where_values[] = $filters['date'];
         }
 
-        //SELECT DATE(order_date) from wp_menu_orders where DATE(order_date) = '2025-04-25'
+        //SELECT DATE(order_date) from wp_ddm_orders where DATE(order_date) = '2025-04-25'
 
         // Bestellnummer Filter
         if (!empty($filters['order_number'])) {
@@ -163,9 +161,9 @@ class Order
             mi.item_type,
             COUNT(*) OVER (PARTITION BY o.order_number) as items_in_order,
             MIN(o.id) OVER (PARTITION BY o.order_number) as first_item_in_order
-        FROM {$wpdb->prefix}menu_orders o
-        JOIN {$wpdb->prefix}menu_items mi ON o.menu_item_id = mi.id
-        ";
+        FROM {$wpdb->prefix}ddm_orders o
+        JOIN {$wpdb->prefix}ddm_menu_items mi ON o.menu_item_id = mi.id
+        "; // Todo: wie können wir nicht mehr über menu_item_id joinen, ordes hat das nicht mehr
 
         if (!empty($where_clauses)) {
             $query .= " WHERE " . implode(' AND ', $where_clauses);
@@ -206,8 +204,8 @@ class Order
                 COUNT(DISTINCT o.order_number) as total_orders,
                 SUM(o.quantity * mi.price) as total_revenue,
                 COUNT(o.id) as total_items
-            FROM {$wpdb->prefix}menu_orders o
-            JOIN {$wpdb->prefix}menu_items mi ON o.menu_item_id = mi.id
+            FROM {$wpdb->prefix}ddm_orders o
+            JOIN {$wpdb->prefix}ddm_menu_items mi ON o.menu_item_id = mi.id
             WHERE DATE(o.order_date) BETWEEN %s AND %s
             GROUP BY DATE(o.order_date)
             ORDER BY date DESC
@@ -232,8 +230,8 @@ class Order
                 mi.title as menu_item_title,
                 mi.price,
                 mi.item_type
-            FROM {$wpdb->prefix}menu_orders o
-            JOIN {$wpdb->prefix}menu_items mi ON o.menu_item_id = mi.id
+            FROM {$wpdb->prefix}ddm_orders o
+            JOIN {$wpdb->prefix}ddm_menu_items mi ON o.menu_item_id = mi.id
             WHERE o.order_number = %s
             ORDER BY mi.item_type, mi.title
         ", $order_number));
@@ -250,7 +248,7 @@ class Order
         global $wpdb;
 
         return $wpdb->delete(
-            $wpdb->prefix . 'menu_orders',
+            $wpdb->prefix . 'ddm_orders',
             ['order_number' => $order_number],
             ['%s']
         );
@@ -268,7 +266,7 @@ class Order
         global $wpdb;
 
         return $wpdb->update(
-            $wpdb->prefix . 'menu_orders',
+            $wpdb->prefix . 'ddm_orders',
             ['status' => $status],
             ['order_number' => $order_number],
             ['%s'],

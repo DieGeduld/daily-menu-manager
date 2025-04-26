@@ -11,7 +11,7 @@ class OrderItemRepository extends BaseRepository
      */
     public function __construct()
     {
-        parent::__construct('daily_menu_order_items', OrderItem::class);
+        parent::__construct('ddm_order_items', OrderItem::class);
     }
 
     /**
@@ -59,16 +59,14 @@ class OrderItemRepository extends BaseRepository
                 $this->table_name,
                 [
                     'order_id' => $data['order_id'],
-                    'menu_id' => $data['menu_id'],
                     'menu_item_id' => $data['menu_item_id'],
                     'quantity' => $data['quantity'],
                     'price' => $data['price'],
-                    'title' => $data['title'],
+                    'title' => $data['title'] ?? "nix??",
                     'notes' => $data['notes'],
                 ],
                 [
                     '%d', // order_id
-                    '%d', // menu_id
                     '%d', // menu_item_id
                     '%d', // quantity
                     '%f', // price
@@ -88,7 +86,6 @@ class OrderItemRepository extends BaseRepository
                 $this->table_name,
                 [
                     'order_id' => $data['order_id'],
-                    'menu_id' => $data['menu_id'],
                     'menu_item_id' => $data['menu_item_id'],
                     'quantity' => $data['quantity'],
                     'price' => $data['price'],
@@ -98,7 +95,6 @@ class OrderItemRepository extends BaseRepository
                 ['id' => $data['id']],
                 [
                     '%d', // order_id
-                    '%d', // menu_id
                     '%d', // menu_item_id
                     '%d', // quantity
                     '%f', // price
@@ -137,17 +133,6 @@ class OrderItemRepository extends BaseRepository
         }
 
         return $orderItems;
-    }
-
-    /**
-     * Find order items by menu ID
-     *
-     * @param int $menu_id The menu ID
-     * @return array Array of OrderItem objects
-     */
-    public function findByMenuId($menu_id)
-    {
-        return $this->findBy('menu_id', $menu_id);
     }
 
     /**

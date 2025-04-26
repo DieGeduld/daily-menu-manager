@@ -77,7 +77,7 @@ class AssetController
             <script>
                 window.dailyMenuAjax = <?php echo json_encode([
                     'ajaxurl' => admin_url('admin-ajax.php'),
-                    'nonce' => wp_create_nonce('daily_menu_manager_nonce'),
+                    'nonce' => wp_create_nonce('daily_dish_manager_nonce'),
                     'messages' => [
                         'orderSuccess' => __('Your order has been successfully placed!', 'daily-menu-manager'),
                         'orderError' => __('There was an error placing your order. Please try again.', 'daily-menu-manager'),
@@ -219,7 +219,7 @@ class AssetController
             'dailyMenuAdmin',
             [
                 'ajaxurl' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('daily_menu_admin_nonce'),
+                'nonce' => wp_create_nonce('daily_dish_manager_admin_nonce'),
                 'messages' => [
                     'copySuccess' => __('Menu was copied successfully!', 'daily-menu-manager'),
                     'copyError' => __('Error copying menu.', 'daily-menu-manager'),

@@ -72,7 +72,7 @@ class Bootstrap
 
     public static function checkForUpdates(): void
     {
-        $installed_version = get_option('daily_menu_manager_version');
+        $installed_version = get_option('daily_dish_manager_version');
 
         if ($installed_version !== DMM_VERSION) {
             try {

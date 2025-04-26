@@ -3,6 +3,7 @@
 namespace DailyMenuManager\Repository;
 
 use DailyMenuManager\Entity\Order;
+use DailyMenuManager\Entity\OrderItem;
 
 class OrderRepository extends BaseRepository
 {
@@ -11,7 +12,7 @@ class OrderRepository extends BaseRepository
      */
     public function __construct()
     {
-        parent::__construct('menu_orders', Order::class);
+        parent::__construct('ddm_orders', Order::class);
     }
 
     /**
@@ -64,31 +65,25 @@ class OrderRepository extends BaseRepository
                 $this->table_name,
                 [
                     'menu_id' => $data['menu_id'],
-                    'menu_item_id' => $data['menu_item_id'],
                     'order_number' => $data['order_number'],
                     'customer_name' => $data['customer_name'],
                     'customer_phone' => $data['customer_phone'],
                     'consumption_type' => $data['consumption_type'],
                     'pickup_time' => $data['pickup_time'],
                     'customer_email' => $data['customer_email'],
-                    'quantity' => $data['quantity'],
                     'notes' => $data['notes'],
-                    'general_notes' => $data['general_notes'],
                     'status' => $data['status'],
                     'order_date' => $data['order_date'],
                 ],
                 [
                     '%d', // menu_id
-                    '%d', // menu_item_id
                     '%s', // order_number
                     '%s', // customer_name
                     '%s', // customer_phone
                     '%s', // consumption_type
                     '%s', // pickup_time
                     '%s', // customer_email
-                    '%d', // quantity
                     '%s', // notes
-                    '%s', // general_notes
                     '%s', // status
                     '%s',  // order_date
                 ]
@@ -105,32 +100,26 @@ class OrderRepository extends BaseRepository
                 $this->table_name,
                 [
                     'menu_id' => $data['menu_id'],
-                    'menu_item_id' => $data['menu_item_id'],
                     'order_number' => $data['order_number'],
                     'customer_name' => $data['customer_name'],
                     'customer_phone' => $data['customer_phone'],
                     'consumption_type' => $data['consumption_type'],
                     'pickup_time' => $data['pickup_time'],
                     'customer_email' => $data['customer_email'],
-                    'quantity' => $data['quantity'],
                     'notes' => $data['notes'],
-                    'general_notes' => $data['general_notes'],
                     'status' => $data['status'],
                     'order_date' => $data['order_date'],
                 ],
                 ['id' => $data['id']],
                 [
                     '%d', // menu_id
-                    '%d', // menu_item_id
                     '%s', // order_number
                     '%s', // customer_name
                     '%s', // customer_phone
                     '%s', // consumption_type
                     '%s', // pickup_time
                     '%s', // customer_email
-                    '%d', // quantity
                     '%s', // notes
-                    '%s', // general_notes
                     '%s', // status
                     '%s',  // order_date
                 ],
@@ -154,17 +143,6 @@ class OrderRepository extends BaseRepository
     public function findByMenuId($menu_id)
     {
         return $this->findBy('menu_id', $menu_id);
-    }
-
-    /**
-     * Find orders by menu item ID
-     *
-     * @param int $menu_item_id The menu item ID
-     * @return array Array of Order objects
-     */
-    public function findByMenuItemId($menu_item_id)
-    {
-        return $this->findBy('menu_item_id', $menu_item_id);
     }
 
     /**
@@ -244,47 +222,57 @@ class OrderRepository extends BaseRepository
 
             $this->wpdb->query('START TRANSACTION');
 
-            foreach ($data['items'] as $item_id => $item_data) {
-                $quantity = intval($item_data['quantity']);
+            $order_data = new Order([
+                'menu_id' => intval($data['menu_id']),
+                'menu_item_id' => intval($data['menuItemId']),
+                'order_number' => $order_number,
+                'customer_name' => sanitize_text_field($data['customer_name']),
+                'customer_phone' => sanitize_text_field($data['customer_phone']),
+                'consumption_type' => sanitize_text_field($data['consumption_type']),
+                'pickup_time' => sanitize_text_field($data['pickup_time']),
+                'notes' => sanitize_textarea_field($item['notes'] ?? ''),
+                'general_notes' => sanitize_textarea_field($data['general_notes'] ?? ''),
+                'order_date' => current_time('mysql'),
+            ]);
+
+            // Speichern der Order-Entity
+            $order = $this->save($order_data);
+            if (is_wp_error($order)) {
+                //throw new \Exception($saved_order->get_error_message());
+            }
+
+            $order_items = [];
+            $total_amount = 0;
+
+            foreach ($data['items'] as $item) {
+                $quantity = intval($item['quantity']);
                 if ($quantity > 0) {
-                    // Erstelle Order-Entity
-                    $order = new Order([
-                        'menu_id' => intval($data['menu_id']),
-                        'menu_item_id' => intval($data['menuItemId']),
-                        'order_number' => $order_number,
-                        'customer_name' => sanitize_text_field($data['customer_name']),
-                        'customer_phone' => sanitize_text_field($data['customer_phone']),
-                        'consumption_type' => sanitize_text_field($data['consumption_type']),
-                        'pickup_time' => sanitize_text_field($data['pickup_time']),
+                    $created_orders[] = $order;
+
+                    $menuItemRepository = new MenuItemRepository();
+                    $menuItem = $menuItemRepository->findById($item['menuItemId']);
+
+                    if (!$menuItem) {
+                        throw new \Exception('Menu item not found');
+                    }
+
+                    // Title auch speichern?
+                    $order_item_data = [
+                        'order_id' => $order->id,
                         'quantity' => $quantity,
-                        'notes' => sanitize_textarea_field($item_data['notes'] ?? ''),
-                        'general_notes' => sanitize_textarea_field($data['general_notes'] ?? ''),
-                        'order_date' => current_time('mysql'),
-                    ]);
+                        'menu_item_id' => $menuItem->getId(),
+                        'title' => $menuItem->getTitle(),
+                        'price' => $menuItem->getPrice(),
+                        'notes' => isset($item['notes']) ? sanitize_textarea_field($item['notes']) : '',
+                    ];
 
-                    // Speichern der Order-Entity
-                    $saved_order = $this->save($order);
-                    if (is_wp_error($saved_order)) {
-                        //throw new \Exception($saved_order->get_error_message());
-                    }
+                    $orderItem = new OrderItem($order_item_data);
 
-                    $created_orders[] = $saved_order;
+                    $orderItemRepository = new OrderItemRepository();
+                    $order_item = $orderItemRepository->save($orderItem);
 
-                    // Hole Item-Details für die Bestätigung
-                    $item_details = $this->wpdb->get_row($this->wpdb->prepare(
-                        "SELECT title, price FROM {$this->wpdb->prefix}menu_items WHERE id = %d",
-                        $item_id
-                    ));
-
-                    if ($item_details) {
-                        $order_items[] = [
-                            'title' => $item_details->title,
-                            'quantity' => $quantity,
-                            'price' => $item_details->price,
-                            'notes' => $item_data['notes'] ?? '',
-                        ];
-                        $total_amount += $quantity * $item_details->price;
-                    }
+                    $order_items[] = $order_item;
+                    $total_amount += $order_item->getTotalPrice();
                 }
             }
 
@@ -351,7 +339,7 @@ class OrderRepository extends BaseRepository
             COUNT(*) OVER (PARTITION BY o.order_number) as items_in_order,
             MIN(o.id) OVER (PARTITION BY o.order_number) as first_item_in_order
         FROM {$this->table_name} o
-        JOIN {$this->wpdb->prefix}menu_items mi ON o.menu_item_id = mi.id
+        JOIN {$this->wpdb->prefix}ddm_menu_items mi ON o.menu_item_id = mi.id
         ";
 
         if (!empty($where_clauses)) {
@@ -392,7 +380,7 @@ class OrderRepository extends BaseRepository
                 SUM(o.quantity * mi.price) as total_revenue,
                 COUNT(o.id) as total_items
             FROM {$this->table_name} o
-            JOIN {$this->wpdb->prefix}menu_items mi ON o.menu_item_id = mi.id
+            JOIN {$this->wpdb->prefix}ddm_menu_items mi ON o.menu_item_id = mi.id
             WHERE DATE(o.order_date) BETWEEN %s AND %s
             GROUP BY DATE(o.order_date)
             ORDER BY date DESC
@@ -416,7 +404,7 @@ class OrderRepository extends BaseRepository
                 mi.price,
                 mi.item_type
             FROM {$this->table_name} o
-            JOIN {$this->wpdb->prefix}menu_items mi ON o.menu_item_id = mi.id
+            JOIN {$this->wpdb->prefix}ddm_menu_items mi ON o.menu_item_id = mi.id
             WHERE o.order_number = %s
             ORDER BY mi.item_type, mi.title
         ", $order_number));

@@ -14,9 +14,9 @@ class MenuRepository extends BaseRepository
      */
     public function __construct()
     {
-        parent::__construct('daily_menus', Menu::class);
+        parent::__construct('ddm_menus', Menu::class);
         global $wpdb;
-        $this->items_table_name = $wpdb->prefix . 'menu_items';
+        $this->items_table_name = $wpdb->prefix . 'ddm_menu_items';
     }
 
     /**

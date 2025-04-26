@@ -26,7 +26,7 @@ class V110AddGeneralNotes extends Migration
      */
     public function up(): void
     {
-        $table_name = $this->wpdb->prefix . 'menu_orders';
+        $table_name = $this->wpdb->prefix . 'ddm_orders';
         $column_name = 'general_notes';
 
         // Check if the column already exists
@@ -49,7 +49,7 @@ class V110AddGeneralNotes extends Migration
     {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'menu_orders';
+        $table_name = $wpdb->prefix . 'ddm_orders';
         $column_name = 'general_notes';
 
         // Check if the column exists
@@ -58,7 +58,7 @@ class V110AddGeneralNotes extends Migration
             $column_name
         ));
 
-        if (! empty($column_exists)) {
+        if (!empty($column_exists)) {
             $wpdb->query("ALTER TABLE $table_name DROP COLUMN $column_name");
         }
     }
@@ -76,7 +76,7 @@ class V110AddGeneralNotes extends Migration
      */
     public function getDescription(): string
     {
-        return 'Adds general_notes column to menu_orders table';
+        return 'Adds general_notes column to ddm_orders table';
     }
 
     /**
@@ -97,7 +97,7 @@ class V110AddGeneralNotes extends Migration
         global $wpdb;
 
         return [
-            "{$wpdb->prefix}menu_orders",
+            "{$wpdb->prefix}ddm_orders",
         ];
     }
 
@@ -107,9 +107,9 @@ class V110AddGeneralNotes extends Migration
     public function validatePrerequisites(): bool
     {
         global $wpdb;
-        $table_name = $wpdb->prefix . 'menu_orders';
+        $table_name = $wpdb->prefix . 'ddm_orders';
 
-        if (! $this->tableExists($table_name)) {
+        if (!$this->tableExists($table_name)) {
             throw new \RuntimeException("Table '$table_name' does not exist");
         }
 
@@ -142,7 +142,7 @@ class V110AddGeneralNotes extends Migration
         global $wpdb;
 
         return [
-            "{$wpdb->prefix}menu_orders",
+            "{$wpdb->prefix}ddm_orders",
         ];
     }
 }

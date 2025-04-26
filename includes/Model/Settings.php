@@ -28,7 +28,7 @@ class Settings
     private function __construct()
     {
         global $wpdb;
-        $this->table = $wpdb->prefix . 'menu_settings';
+        $this->table = $wpdb->prefix . 'ddm_menu_settings';
     }
 
     /**

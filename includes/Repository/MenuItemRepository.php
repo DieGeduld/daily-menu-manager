@@ -17,7 +17,7 @@ class MenuItemRepository implements RepositoryInterface
     {
         global $wpdb;
         $this->wpdb = $wpdb;
-        $this->table_name = $wpdb->prefix . 'menu_items';
+        $this->table_name = $wpdb->prefix . 'ddm_menu_items';
     }
 
     /**
@@ -26,7 +26,7 @@ class MenuItemRepository implements RepositoryInterface
      * @param int $id The menu item ID
      * @return MenuItem|null The menu item or null if not found
      */
-    public function findById($id)
+    public function findById($id): ?MenuItem
     {
         $query = $this->wpdb->prepare(
             "SELECT * FROM {$this->table_name} WHERE id = %d",
@@ -35,7 +35,7 @@ class MenuItemRepository implements RepositoryInterface
 
         $result = $this->wpdb->get_row($query, ARRAY_A);
 
-        if (! $result) {
+        if (!$result) {
             return null;
         }
 
@@ -221,7 +221,7 @@ class MenuItemRepository implements RepositoryInterface
     {
         // Get the original item
         $original_item = $this->findById($item_id);
-        if (! $original_item) {
+        if (!$original_item) {
             return new \WP_Error(
                 'item_not_found',
                 __('Menu item not found.', 'daily-menu-manager')
@@ -281,7 +281,7 @@ class MenuItemRepository implements RepositoryInterface
      */
     public function updateItemOrder($item_order)
     {
-        if (empty($item_order) || ! is_array($item_order)) {
+        if (empty($item_order) || !is_array($item_order)) {
             return false;
         }
 

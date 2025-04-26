@@ -26,7 +26,7 @@ class V130AddAvailableQuantity extends Migration
      */
     public function up(): void
     {
-        $table_name = $this->wpdb->prefix . 'menu_items';
+        $table_name = $this->wpdb->prefix . 'ddm_menu_items';
         $column_name = 'available_quantity';
 
         // Check if the column already exists
@@ -47,7 +47,7 @@ class V130AddAvailableQuantity extends Migration
     {
         global $wpdb;
 
-        $table_name = $wpdb->prefix . 'menu_items';
+        $table_name = $wpdb->prefix . 'ddm_menu_items';
         $column_name = 'available_quantity';
 
         // Check if the column exists
@@ -56,7 +56,7 @@ class V130AddAvailableQuantity extends Migration
             $column_name
         ));
 
-        if (! empty($column_exists)) {
+        if (!empty($column_exists)) {
             $wpdb->query("ALTER TABLE $table_name DROP COLUMN $column_name");
         }
     }
@@ -95,7 +95,7 @@ class V130AddAvailableQuantity extends Migration
         global $wpdb;
 
         return [
-            "{$wpdb->prefix}menu_items",
+            "{$wpdb->prefix}ddm_menu_items",
         ];
     }
 
@@ -105,9 +105,9 @@ class V130AddAvailableQuantity extends Migration
     public function validatePrerequisites(): bool
     {
         global $wpdb;
-        $table_name = $wpdb->prefix . 'menu_items';
+        $table_name = $wpdb->prefix . 'ddm_menu_items';
 
-        if (! $this->tableExists($table_name)) {
+        if (!$this->tableExists($table_name)) {
             throw new \RuntimeException("Table '$table_name' does not exist");
         }
 

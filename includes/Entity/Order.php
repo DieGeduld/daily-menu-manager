@@ -5,16 +5,13 @@ namespace DailyMenuManager\Entity;
 class Order extends AbstractEntity
 {
     protected $menu_id;
-    protected $menu_item_id;
     protected $order_number;
     protected $customer_name;
     protected $customer_phone;
     protected $consumption_type;
     protected $pickup_time;
     protected $customer_email;
-    protected $quantity;
     protected $notes;
-    protected $general_notes;
     protected $status;
     protected $order_date;
 
@@ -27,16 +24,13 @@ class Order extends AbstractEntity
     {
         $this->id = $data['id'] ?? null;
         $this->menu_id = $data['menu_id'] ?? null;
-        $this->menu_item_id = $data['menu_item_id'] ?? null;
         $this->order_number = $data['order_number'] ?? '';
         $this->customer_name = $data['customer_name'] ?? '';
         $this->customer_phone = $data['customer_phone'] ?? '';
         $this->consumption_type = $data['consumption_type'] ?? null;
         $this->pickup_time = $data['pickup_time'] ?? null;
         $this->customer_email = $data['customer_email'] ?? null;
-        $this->quantity = $data['quantity'] ?? 1;
         $this->notes = $data['notes'] ?? null;
-        $this->general_notes = $data['general_notes'] ?? null;
         $this->status = $data['status'] ?? 'pending';
         $this->order_date = $data['order_date'] ?? null;
         $this->created_at = $data['created_at'] ?? null;
@@ -67,6 +61,4 @@ class Order extends AbstractEntity
 
         return $this;
     }
-
-    // Weitere spezifische Getter/Setter...
 }

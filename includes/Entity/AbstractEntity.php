@@ -59,14 +59,30 @@ abstract class AbstractEntity
      */
     public function __get($name)
     {
+        // First try the standard getter (e.g., getName for $name)
         $method = 'get' . ucfirst($name);
         if (method_exists($this, $method)) {
             return $this->$method();
         }
 
+        // For snake_case properties, convert to camelCase getter
+        // e.g., menu_item -> getMenuItem
+        if (strpos($name, '_') !== false) {
+            $parts = explode('_', $name);
+            $camelCase = $parts[0];
+            for ($i = 1; $i < count($parts); $i++) {
+                $camelCase .= ucfirst($parts[$i]);
+            }
+
+            $method = 'get' . ucfirst($camelCase);
+            if (method_exists($this, $method)) {
+                return $this->$method();
+            }
+        }
+
+        // Fall back to direct property access
         return isset($this->$name) ? $this->$name : null;
     }
-
     /**
      * Convert entity to array
      *
