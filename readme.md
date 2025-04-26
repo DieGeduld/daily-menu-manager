@@ -19,6 +19,7 @@ Feature Request:
 - Migrationen V20240322_AddSettingsTable -> V20240322_AddSettingsTable.php
 - Change order from Menu-Types
 - ab wann wird "noch x avaibale" angezeigt?
+- colorcode für menu types
 
 todo:
 
