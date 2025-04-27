@@ -29,3 +29,4 @@ todo:
 Bug:
 Mehrer Items erstellen + speichern: es wird nur das letzte gespeichert
 Ein Item anlegen und direkt wieder löschen: Fehler, weil noch nicht in DB
+Allways show "has been updated to version xxx"
