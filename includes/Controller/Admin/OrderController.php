@@ -211,7 +211,7 @@ class OrderController
                 'customer_phone' => sanitize_text_field($customerInfo['phone']),
                 'consumption_type' => sanitize_text_field($customerInfo['consumptionType']),
                 'pickup_time' => sanitize_text_field($customerInfo['pickupTime']),
-                'customer_notes' => sanitize_textarea_field($customerInfo['notes'] ?? ''),
+                'notes' => sanitize_textarea_field($customerInfo['notes'] ?? ''),
                 'items' => $items,
                 'total_amount' => $totalAmount,
                 'order_date' => current_time('mysql'),

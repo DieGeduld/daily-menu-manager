@@ -93,71 +93,7 @@ abstract class AbstractEntity
 
         throw new \BadMethodCallException("Method $method does not exist.");
     }
-
-    /**
-     * Magic method for getting properties
-     *
-     * @param string $name Property name
-     * @return mixed|null Property value or null if not found
-     */
-    // public function __get($name)
-    // {
-    //     // First try the standard getter (e.g., getName for $name)
-    //     $method = 'get' . ucfirst($name);
-    //     if (method_exists($this, $method)) {
-    //         return $this->$method();
-    //     }
-
-    //TODO: Getter und Setter setzen
-    // -> Checken, ob duplizieren/kopieren geht
-
-    // For snake_case properties, convert to camelCase getter
-    // e.g., menu_item -> getMenuItem
-    // if (strpos($name, '_') !== false) {
-    //     $parts = explode('_', $name);
-    //     $camelCase = $parts[0];
-    //     for ($i = 1; $i < count($parts); $i++) {
-    //         $camelCase .= ucfirst($parts[$i]);
-    //     }
-
-    //     $method = 'get' . ucfirst($camelCase);
-    //     if (method_exists($this, $method)) {
-    //         return $this->$method();
-    //     }
-    // }
-
-    // Fall back to direct property access
-    //     return isset($this->$name) ? $this->$name : null;
-    // }
-
-    // public function __set($name, $value)
-    // {
-    //     // First try the standard setter (e.g., setName for $name)
-    //     $method = 'set' . ucfirst($name);
-    //     if (method_exists($this, $method)) {
-    //         return $this->$method($value);
-    //     }
-
-    //     // For snake_case properties, convert to camelCase setter
-    //     // e.g., menu_item -> setMenuItem
-    //     if (strpos($name, '_') !== false) {
-    //         $parts = explode('_', $name);
-    //         $camelCase = $parts[0];
-    //         for ($i = 1; $i < count($parts); $i++) {
-    //             $camelCase .= ucfirst($parts[$i]);
-    //         }
-
-    //         $method = 'set' . ucfirst($camelCase);
-    //         if (method_exists($this, $method)) {
-    //             return $this->$method($value);
-    //         }
-    //     }
-
-    //     // Fall back to direct property assignment
-    //     $this->$name = $value;
-
-    //     return $this;
-    // }
+    
     /**
      * Convert entity to array
      *

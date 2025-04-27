@@ -8,6 +8,7 @@ use DailyMenuManager\Controller\Admin\SettingsController;
 use DailyMenuManager\Controller\Common\AjaxController;
 use DailyMenuManager\Controller\Common\AssetController;
 use DailyMenuManager\Controller\Frontend\ShortcodeController;
+
 use DailyMenuManager\Model\Menu;
 use DailyMenuManager\Model\Order;
 use DailyMenuManager\Model\Settings;

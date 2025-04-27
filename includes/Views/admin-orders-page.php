@@ -99,7 +99,7 @@ use DailyMenuManager\Controller\Admin\SettingsController;
                 if ($current_order !== ''): // Vorherige Bestellung abschließen
                     ?>
                             <tr class="order-total">
-                                <td colspan="6"><strong><?php _e('Total:', 'daily-dish-manager'); ?></strong></td>
+                                <td colspan="7"><strong><?php _e('Total:', 'daily-dish-manager'); ?></strong></td>
                                 <td colspan="2"><strong><?php echo SettingsController::formatPrice($order_total); ?></strong></td>
                             </tr>
                         <?php endif;
@@ -108,7 +108,7 @@ use DailyMenuManager\Controller\Admin\SettingsController;
                 $order_total = 0;
                 ?>
 
-                        <tr class="order-header">
+                        <tr class="order-header" style="border-top: 1px solid black;">
                             <td><strong><?php echo esc_html($order->order_number); ?></strong></td>
                             <td><?php echo esc_html(date_i18n('d.m.Y H:i', strtotime($order->order_date))); ?></td>
                             <td><?php echo esc_html($order->customer_name); ?></td>
@@ -141,7 +141,7 @@ use DailyMenuManager\Controller\Admin\SettingsController;
                             <strong><?php echo esc_html($order->quantity); ?>x</strong>
                             <?php echo esc_html($order->menu_item_title); ?>
                             <?php if (!empty($order->notes)): ?>
-                                <br><small><?php _e('Notes:', 'daily-dish-manager'); ?> <?php echo esc_html($order->notes); ?></small>
+                                <br><small class="notes" style="color: red"><?php _e('Notes:', 'daily-dish-manager'); ?> <?php echo esc_html($order->notes); ?></small>
                             <?php endif; ?>
                         </td>
                         <td><?php echo SettingsController::formatPrice($item_total); ?></td>
@@ -158,7 +158,7 @@ use DailyMenuManager\Controller\Admin\SettingsController;
 // Letzte Bestellung abschließen
 if ($current_order !== ''): ?>
                     <tr class="order-total">
-                        <td colspan="6"><strong><?php _e('Total:', 'daily-dish-manager'); ?></strong></td>
+                        <td colspan="7"><strong><?php _e('Total:', 'daily-dish-manager'); ?></strong></td>
                         <td colspan="2"><strong><?php echo SettingsController::formatPrice($order_total); ?></strong></td>
                     </tr>
                 <?php endif; ?>

@@ -230,7 +230,7 @@ class OrderRepository extends BaseRepository
                 'customer_phone' => sanitize_text_field($data['customer_phone']),
                 'consumption_type' => sanitize_text_field($data['consumption_type']),
                 'pickup_time' => sanitize_text_field($data['pickup_time']),
-                'notes' => sanitize_textarea_field($item['notes'] ?? ''),
+                'notes' => sanitize_textarea_field($data['notes'] ?? ''),
                 'general_notes' => sanitize_textarea_field($data['general_notes'] ?? ''),
                 'order_date' => current_time('mysql'),
             ]);
