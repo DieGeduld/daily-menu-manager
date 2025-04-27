@@ -2,7 +2,7 @@
 
 namespace DailyMenuManager\Entity;
 
-class OrderItem //TODO
+class OrderItem extends AbstractEntity
 {
     public $id;
     public $order_id;

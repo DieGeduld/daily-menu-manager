@@ -358,7 +358,7 @@ class OrderController
         $menuItemRepository = new MenuItemRepository();
         $menuItem = $menuItemRepository->findById($menuItemId);
         if ($menuItem) {
-            return $menuItem->menu_id;
+            return $menuItem->getMenuId();
         }
 
         return 0;

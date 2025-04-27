@@ -258,7 +258,7 @@ class OrderRepository extends BaseRepository
 
                     // Title auch speichern?
                     $order_item_data = [
-                        'order_id' => $order->id,
+                        'order_id' => $order->getId(),
                         'quantity' => $quantity,
                         'menu_item_id' => $menuItem->getId(),
                         'title' => $menuItem->getTitle(),

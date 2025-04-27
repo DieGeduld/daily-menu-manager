@@ -214,15 +214,24 @@ class Order extends AbstractEntity
         }
 
         $query = "
-        SELECT 
-            o.*,
-            oi.title as menu_item_title,
-            oi.price,
-            '' as item_type, -- altes Feld, gibt es scheinbar nicht mehr, wird leer zurückgegeben
-            COUNT(*) OVER (PARTITION BY o.order_number) as items_in_order,
-            MIN(oi.id) OVER (PARTITION BY o.order_number) as first_item_in_order
-        FROM {$wpdb->prefix}ddm_orders o
-        JOIN {$wpdb->prefix}ddm_order_items oi ON o.id = oi.order_id
+            SELECT 
+                o.id AS order_id,
+                o.order_number,
+                o.customer_name,
+                o.customer_phone,
+                o.consumption_type,
+                o.pickup_time,
+                o.customer_email,
+                o.notes AS general_notes,
+                o.status,
+                o.order_date,
+                oi.id AS order_item_id,
+                oi.title AS menu_item_title,
+                oi.price,
+                oi.quantity,
+                oi.notes
+            FROM {$wpdb->prefix}ddm_orders o
+            LEFT JOIN {$wpdb->prefix}ddm_order_items oi ON oi.order_id = o.id
         ";
 
         if (!empty($where_clauses)) {
@@ -231,13 +240,29 @@ class Order extends AbstractEntity
 
         $query .= " ORDER BY o.order_date DESC, o.order_number, oi.title";
 
+        // Ausführen
         if (!empty($where_values)) {
-            $orders = $wpdb->get_results($wpdb->prepare($query, $where_values));
+            $results = $wpdb->get_results($wpdb->prepare($query, $where_values));
         } else {
-            $orders = $wpdb->get_results($query);
+            $results = $wpdb->get_results($query);
         }
 
-        return $orders;
+        // Daten für das Template anpassen
+        foreach ($results as $result) {
+            $result->getQuantity = function () use ($result) {
+                return $result->quantity;
+            };
+            $result->getPrice = function () use ($result) {
+                return $result->price;
+            };
+            $result->getMenuItemTitle = function () use ($result) {
+                return $result->menu_item_title;
+            };
+            // Erstes Item einer Bestellung identifizieren
+            $result->first_item_in_order = $result->order_item_id; // wird im Template gebraucht
+        }
+
+        return $results;
     }
 
     /**
