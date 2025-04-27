@@ -20,6 +20,8 @@ Feature Request:
 - Change order from Menu-Types
 - ab wann wird "noch x avaibale" angezeigt?
 - colorcode für menu types
+- import auch, wenn schon etwas auf dem tag existiert. die neuen kommen einfach hinzu
+- remove all models -> entities
 
 todo:
 
