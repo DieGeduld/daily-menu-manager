@@ -44,9 +44,9 @@ class OrderController
     public static function addAdminMenu()
     {
         add_submenu_page(
-            'daily-menu-manager',
-            __('Orders', 'daily-menu-manager'),
-            __('Orders', 'daily-menu-manager'),
+            'daily-dish-manager',
+            __('Orders', DMM_TEXT_DOMAIN),
+            __('Orders', DMM_TEXT_DOMAIN),
             'manage_options',
             'daily-menu-orders',
             [self::class, 'displayOrdersPage']
@@ -109,19 +109,19 @@ class OrderController
         check_ajax_referer('daily_dish_orders_nonce');
 
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('No permission.', DMM_TEXT_DOMAIN)]);
         }
 
         $order_number = sanitize_text_field($_POST['order_number']);
         if (empty($order_number)) {
-            wp_send_json_error(['message' => __('No order number provided.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('No order number provided.', DMM_TEXT_DOMAIN)]);
         }
 
         $order_model = new Order();
         $order = $order_model->getOrderByNumber($order_number);
 
         if (empty($order)) {
-            wp_send_json_error(['message' => __('Order not found.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('Order not found.', DMM_TEXT_DOMAIN)]);
         }
 
         // Generate HTML for printing
@@ -140,21 +140,21 @@ class OrderController
         check_ajax_referer('daily_dish_orders_nonce'); //TODO: Only for admin
 
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('No permission.', DMM_TEXT_DOMAIN)]);
         }
 
         $order_number = sanitize_text_field($_POST['order_number']);
         if (empty($order_number)) {
-            wp_send_json_error(['message' => __('No order number provided.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('No order number provided.', DMM_TEXT_DOMAIN)]);
         }
 
         $order_model = new Order();
         $result = $order_model->deleteOrder($order_number);
 
         if ($result) {
-            wp_send_json_success(['message' => __('Order deleted successfully.', 'daily-menu-manager')]);
+            wp_send_json_success(['message' => __('Order deleted successfully.', DMM_TEXT_DOMAIN)]);
         } else {
-            wp_send_json_error(['message' => __('Error deleting order.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('Error deleting order.', DMM_TEXT_DOMAIN)]);
         }
     }
 

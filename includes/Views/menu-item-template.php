@@ -26,39 +26,39 @@ if (!isset($item)) {
         <!-- Left Controls -->
         <div class="menu-item-controls">
             <span class="move-handle dashicons dashicons-move" 
-                  title="<?php esc_attr_e('Drag to reorder', 'daily-menu-manager'); ?>"
-                  aria-label="<?php esc_attr_e('Drag handle', 'daily-menu-manager'); ?>">
+                  title="<?php esc_attr_e('Drag to reorder', 'daily-dish-manager'); ?>"
+                  aria-label="<?php esc_attr_e('Drag handle', 'daily-dish-manager'); ?>">
             </span>
             <button type="button" 
                     class="toggle-menu-item dashicons <?php echo $is_collapsed ? 'dashicons-arrow-right' : 'dashicons-arrow-down'; ?>"
                     aria-expanded="<?php echo $is_collapsed ? 'false' : 'true'; ?>"
-                    aria-label="<?php esc_attr_e('Toggle menu item', 'daily-menu-manager'); ?>"
-                    title="<?php esc_attr_e('Click to expand/collapse', 'daily-menu-manager'); ?>">
+                    aria-label="<?php esc_attr_e('Toggle menu item', 'daily-dish-manager'); ?>"
+                    title="<?php esc_attr_e('Click to expand/collapse', 'daily-dish-manager'); ?>">
             </button>
         </div>
 
         <!-- Title Area -->
         <div class="menu-item-title-area">
-            <span class="menu-item-type-label"><?php esc_attr_e($item_config['label'], 'daily-menu-manager') . ":"; ?></span>
-            <span class="menu-item-title-preview"><?php esc_attr_e($item->getTitle() ?: '(No title)', 'daily-menu-manager'); ?></span>
+            <span class="menu-item-type-label"><?php esc_attr_e($item_config['label'], 'daily-dish-manager') . ":"; ?></span>
+            <span class="menu-item-title-preview"><?php esc_attr_e($item->getTitle() ?: '(No title)', 'daily-dish-manager'); ?></span>
         </div>
 
         <!-- Right Controls -->
         <div class="menu-item-actions">
             <button type="button" 
                     class="copy-menu-item dashicons dashicons-move"
-                    title="<?php esc_attr_e('Copy this menu item to another day', 'daily-menu-manager'); ?>"
-                    aria-label="<?php esc_attr_e('Copy this menu item to another day', 'daily-menu-manager'); ?>">
+                    title="<?php esc_attr_e('Copy this menu item to another day', 'daily-dish-manager'); ?>"
+                    aria-label="<?php esc_attr_e('Copy this menu item to another day', 'daily-dish-manager'); ?>">
             </button>  
             <button type="button" 
                     class="duplicate-menu-item dashicons dashicons-admin-page"
-                    title="<?php esc_attr_e('Duplicate item', 'daily-menu-manager'); ?>"
-                    aria-label="<?php esc_attr_e('Duplicate this menu item', 'daily-menu-manager'); ?>">
+                    title="<?php esc_attr_e('Duplicate item', 'daily-dish-manager'); ?>"
+                    aria-label="<?php esc_attr_e('Duplicate this menu item', 'daily-dish-manager'); ?>">
             </button>
             <button type="button" 
                     class="remove-menu-item dashicons dashicons-trash"
-                    title="<?php esc_attr_e('Delete item', 'daily-menu-manager'); ?>"
-                    aria-label="<?php esc_attr_e('Delete this menu item', 'daily-menu-manager'); ?>">
+                    title="<?php esc_attr_e('Delete item', 'daily-dish-manager'); ?>"
+                    aria-label="<?php esc_attr_e('Delete this menu item', 'daily-dish-manager'); ?>">
             </button>
         </div>
     </div>
@@ -77,7 +77,7 @@ if (!isset($item)) {
         <!-- Title Field -->
         <div class="menu-item-field">
             <label for="title_<?php echo esc_attr($item->getId()); ?>">
-                <?php _e('Title', 'daily-menu-manager'); ?>
+                <?php _e('Title', 'daily-dish-manager'); ?>
                 <span class="required">*</span>
             </label>
             <input type="text" 
@@ -88,14 +88,14 @@ if (!isset($item)) {
                    class="menu-item-title-input"
                    data-original-value="<?php echo esc_attr($item->getTitle()); ?>">
             <span class="field-description">
-                <?php _e('Enter the name of the dish or menu item', 'daily-menu-manager'); ?>
+                <?php _e('Enter the name of the dish or menu item', 'daily-dish-manager'); ?>
             </span>
         </div>
 
         <!-- Description Field -->
         <div class="menu-item-field">
             <label for="description_<?php echo esc_attr($item->getId()); ?>">
-                <?php _e('Description', 'daily-menu-manager'); ?>
+                <?php _e('Description', 'daily-dish-manager'); ?>
             </label>
             <textarea id="description_<?php echo esc_attr($item->getId()); ?>"
                       name="menu_items[<?php echo esc_attr($item->getId()); ?>][description]"
@@ -105,14 +105,14 @@ if (!isset($item)) {
                 echo esc_textarea($item->getDescription());
 ?></textarea>
             <span class="field-description">
-                <?php _e('Optional: Add ingredients or other details about this item', 'daily-menu-manager'); ?>
+                <?php _e('Optional: Add ingredients or other details about this item', 'daily-dish-manager'); ?>
             </span>
         </div>
 
         <!-- Price Field -->
         <div class="menu-item-field">
             <label for="price_<?php echo esc_attr($item->getId()); ?>">
-                <?php _e('Price', 'daily-menu-manager'); ?>
+                <?php _e('Price', 'daily-dish-manager'); ?>
                 <span class="required">*</span>
             </label>
             <div class="price-input-wrapper">
@@ -128,14 +128,14 @@ if (!isset($item)) {
                     class="menu-item-price">
             </div>
             <span class="field-description">
-                <?php _e('Enter the price for this item (e.g., 12,50)', 'daily-menu-manager'); ?>
+                <?php _e('Enter the price for this item (e.g., 12,50)', 'daily-dish-manager'); ?>
             </span>
         </div>
 
         <!-- Available Quantity Field -->
         <div class="menu-item-field">
             <label for="available_quantity_<?php echo esc_attr($item->getId()); ?>">
-                <?php _e('Available Quantity', 'daily-menu-manager'); ?>
+                <?php _e('Available Quantity', 'daily-dish-manager'); ?>
             </label>
             <input type="number" 
                 id="available_quantity_<?php echo esc_attr($item->getId()); ?>"
@@ -144,15 +144,15 @@ if (!isset($item)) {
                 min="0"
                 class="menu-item-available-quantity">
             <span class="field-description">
-                <?php _e('Enter the available quantity for this item', 'daily-menu-manager'); ?>
+                <?php _e('Enter the available quantity for this item', 'daily-dish-manager'); ?>
             </span>
         </div>
 
         <!-- Additional Options Field -->
         <div class="menu-item-field">
             <label for="options_<?php echo esc_attr($item->getId()); ?>">
-                <?php _e('Additional Options', 'daily-menu-manager'); ?>
-                <a href="<?php echo esc_url(admin_url('admin.php?page=daily-menu-manager-settings')); ?>"><?php _e('Manage additional options', 'daily-menu-manager'); ?></a>
+                <?php _e('Additional Options', 'daily-dish-manager'); ?>
+                <a href="<?php echo esc_url(admin_url('admin.php?page=daily-dish-manager-settings')); ?>"><?php _e('Manage additional options', 'daily-dish-manager'); ?></a>
             </label>
             <div class="options-grid">
             <?php
@@ -173,7 +173,7 @@ foreach ($allProps as $prop): ?>
         <!-- Allergen Information Field -->
         <div class="menu-item-field">
             <label for="allergens_<?php echo esc_attr($item->getId()); ?>">
-                <?php _e('Allergen Information', 'daily-menu-manager'); ?>
+                <?php _e('Allergen Information', 'daily-dish-manager'); ?>
             </label>
             <textarea id="allergens_<?php echo esc_attr($item->getId()); ?>"
                       name="menu_items[<?php echo esc_attr($item->getId()); ?>][allergens]"
@@ -182,20 +182,20 @@ foreach ($allProps as $prop): ?>
 echo esc_textarea($item->getAllergens());
 ?></textarea>
             <span class="field-description">
-                <?php _e('List any allergens present in this dish', 'daily-menu-manager'); ?>
+                <?php _e('List any allergens present in this dish', 'daily-dish-manager'); ?>
             </span>
         </div>
 
         <!-- Advanced Settings (Initially Hidden) -->
         <div class="advanced-settings" style="display: none;">
             <button type="button" class="toggle-advanced-settings">
-                <?php _e('Advanced Settings', 'daily-menu-manager'); ?>
+                <?php _e('Advanced Settings', 'daily-dish-manager'); ?>
             </button>
             <div class="advanced-settings-content">
                 <!-- Availability Times -->
                 <div class="menu-item-field">
                     <label>
-                        <?php _e('Availability Times', 'daily-menu-manager'); ?>
+                        <?php _e('Availability Times', 'daily-dish-manager'); ?>
                     </label>
                     <div class="time-range-inputs">
                         <input type="time" 

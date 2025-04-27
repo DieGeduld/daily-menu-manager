@@ -6,21 +6,21 @@ use DailyMenuManager\Controller\Admin\SettingsController;
 ?>
 
 <div class="wrap">
-    <h1><?php _e('Orders', 'daily-menu-manager'); ?></h1>
+    <h1><?php _e('Orders', 'daily-dish-manager'); ?></h1>
 
     <!-- Statistik-Boxen -->
     <div class="order-summary-table">
         <table class="summary-table">
             <tr>
-                <td><?php _e('Today\'s orders', 'daily-menu-manager'); ?></td>
+                <td><?php _e('Today\'s orders', 'daily-dish-manager'); ?></td>
                 <td class="value"><?php echo esc_html($stats['total_orders']); ?></td>
             </tr>
             <tr>
-                <td><?php _e('Today\'s revenue', 'daily-menu-manager'); ?></td>
+                <td><?php _e('Today\'s revenue', 'daily-dish-manager'); ?></td>
                 <td class="value"><?php echo SettingsController::formatPrice($stats['total_revenue']); ?></td>
             </tr>
             <tr>
-                <td><?php _e('Ordered items', 'daily-menu-manager'); ?></td>
+                <td><?php _e('Ordered items', 'daily-dish-manager'); ?></td>
                 <td class="value"><?php echo esc_html($stats['total_items']); ?></td>
             </tr>
         </table>
@@ -32,36 +32,36 @@ use DailyMenuManager\Controller\Admin\SettingsController;
             <form method="get" class="filter-form">
                 <input type="hidden" name="page" value="<?php echo esc_attr($_REQUEST['page']); ?>">
                 
-                <label for="filter_date"><?php _e('Date:', 'daily-menu-manager'); ?></label>
+                <label for="filter_date"><?php _e('Date:', 'daily-dish-manager'); ?></label>
                 <input type="date" 
                        id="filter_date" 
                        name="filter_date" 
                        value="<?php echo esc_attr($filters['date']); ?>">
                 
-                <label for="filter_order"><?php _e('Order Number:', 'daily-menu-manager'); ?></label>
+                <label for="filter_order"><?php _e('Order Number:', 'daily-dish-manager'); ?></label>
                 <input type="text" 
                        id="filter_order" 
                        name="filter_order" 
                        value="<?php echo esc_attr($filters['order_number']); ?>" 
                        placeholder="e.g. 20241110-001">
                 
-                <label for="filter_name"><?php _e('Name:', 'daily-menu-manager'); ?></label>
+                <label for="filter_name"><?php _e('Name:', 'daily-dish-manager'); ?></label>
                 <input type="text" 
                        id="filter_name" 
                        name="filter_name" 
                        value="<?php echo esc_attr($filters['customer_name']); ?>" 
                        placeholder="Customer Name">
 
-                <label for="filter_phone"><?php _e('Phone:', 'daily-menu-manager'); ?></label>
+                <label for="filter_phone"><?php _e('Phone:', 'daily-dish-manager'); ?></label>
                 <input type="text" 
                        id="filter_phone" 
                        name="filter_phone" 
                        value="<?php echo esc_attr($filters['customer_phone']); ?>" 
                        placeholder="Phone Number">
                 
-                <input type="submit" class="button" value="<?php _e('Filter', 'daily-menu-manager'); ?>">
+                <input type="submit" class="button" value="<?php _e('Filter', 'daily-dish-manager'); ?>">
                 <a href="?page=<?php echo esc_attr($_REQUEST['page']); ?>" class="button">
-                    <?php _e('Reset Filter', 'daily-menu-manager'); ?>
+                    <?php _e('Reset Filter', 'daily-dish-manager'); ?>
                 </a>
             </form>
         </div>
@@ -70,21 +70,21 @@ use DailyMenuManager\Controller\Admin\SettingsController;
     <!-- Bestellungen Tabelle -->
     <?php if (empty($orders)): ?>
         <div class="notice notice-info">
-            <p><?php _e('No orders found.', 'daily-menu-manager'); ?></p>
+            <p><?php _e('No orders found.', 'daily-dish-manager'); ?></p>
         </div>
     <?php else: ?>
         <table class="wp-list-table widefat fixed striped">
             <thead>
                 <tr>
-                    <th><?php _e('Order Number', 'daily-menu-manager'); ?></th>
-                    <th><?php _e('Date/Time', 'daily-menu-manager'); ?></th>
-                    <th><?php _e('Name', 'daily-menu-manager'); ?></th>
-                    <th><?php _e('Phone', 'daily-menu-manager'); ?></th>
-                    <th><?php _e('Type', 'daily-menu-manager'); ?></th>
-                    <th><?php _e('Pickup Time', 'daily-menu-manager'); ?></th>
-                    <th><?php _e('Ordered Items', 'daily-menu-manager'); ?></th>
-                    <th><?php _e('Total', 'daily-menu-manager'); ?></th>
-                    <th><?php _e('Actions', 'daily-menu-manager'); ?></th>
+                    <th><?php _e('Order Number', 'daily-dish-manager'); ?></th>
+                    <th><?php _e('Date/Time', 'daily-dish-manager'); ?></th>
+                    <th><?php _e('Name', 'daily-dish-manager'); ?></th>
+                    <th><?php _e('Phone', 'daily-dish-manager'); ?></th>
+                    <th><?php _e('Type', 'daily-dish-manager'); ?></th>
+                    <th><?php _e('Pickup Time', 'daily-dish-manager'); ?></th>
+                    <th><?php _e('Ordered Items', 'daily-dish-manager'); ?></th>
+                    <th><?php _e('Total', 'daily-dish-manager'); ?></th>
+                    <th><?php _e('Actions', 'daily-dish-manager'); ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -97,7 +97,7 @@ use DailyMenuManager\Controller\Admin\SettingsController;
             if ($current_order !== $order->order_number):
                 if ($current_order !== ''): // Vorherige Bestellung abschließen?>
                             <tr class="order-total">
-                                <td colspan="6"><strong><?php _e('Total:', 'daily-menu-manager'); ?></strong></td>
+                                <td colspan="6"><strong><?php _e('Total:', 'daily-dish-manager'); ?></strong></td>
                                 <td colspan="2"><strong><?php echo SettingsController::formatPrice($order_total); ?></strong></td>
                             </tr>
                         <?php endif;
@@ -116,7 +116,7 @@ use DailyMenuManager\Controller\Admin\SettingsController;
                             <td colspan="3">
                                 <?php if (!empty($order->general_notes)): ?>
                                     <div class="general-notes">
-                                        <strong><?php _e('Notes:', 'daily-menu-manager'); ?></strong> 
+                                        <strong><?php _e('Notes:', 'daily-dish-manager'); ?></strong> 
                                         <?php echo esc_html($order->general_notes); ?>
                                     </div>
                                 <?php endif; ?>
@@ -139,7 +139,7 @@ use DailyMenuManager\Controller\Admin\SettingsController;
                             <strong><?php echo esc_html($order->quantity); ?>x</strong> 
                             <?php echo esc_html($order->menu_item_title); ?>
                             <?php if (!empty($order->notes)): ?>
-                                <br><small><?php _e('Notes:', 'daily-menu-manager'); ?> <?php echo esc_html($order->notes); ?></small>
+                                <br><small><?php _e('Notes:', 'daily-dish-manager'); ?> <?php echo esc_html($order->notes); ?></small>
                             <?php endif; ?>
                         </td>
                         <td><?php echo SettingsController::formatPrice($item_total); ?></td>
@@ -156,7 +156,7 @@ use DailyMenuManager\Controller\Admin\SettingsController;
 // Letzte Bestellung abschließen
 if ($current_order !== ''): ?>
                     <tr class="order-total">
-                        <td colspan="6"><strong><?php _e('Total:', 'daily-menu-manager'); ?></strong></td>
+                        <td colspan="6"><strong><?php _e('Total:', 'daily-dish-manager'); ?></strong></td>
                         <td colspan="2"><strong><?php echo SettingsController::formatPrice($order_total); ?></strong></td>
                     </tr>
                 <?php endif; ?>

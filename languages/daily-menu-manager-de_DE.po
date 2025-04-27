@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Daily Menu Manager 1.6.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/daily-menu-manager\n"
+"Project-Id-Version: Daily Dish Manager 1.6.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/daily-dish-manager\n"
 "Last-Translator: \n"
 "Language-Team: Deutsch\n"
 "MIME-Version: 1.0\n"
@@ -11,32 +11,32 @@ msgstr ""
 "PO-Revision-Date: 2025-03-30\n"
 "Language: de_DE\n"
 "X-Generator: WP-CLI 2.11.0\n"
-"X-Domain: daily-menu-manager\n"
+"X-Domain: daily-dish-manager\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. Plugin Name of the plugin
-#: daily-menu-manager.php
+#: daily-dish-manager.php
 #: includes/Admin/MenuController.php:25
-msgid "Daily Menu Manager"
+msgid "Daily Dish Manager"
 msgstr "Tagesmenü-Manager"
 
 #. Plugin URI of the plugin
-#: daily-menu-manager.php
-msgid "https://yourwebsite.com/daily-menu-manager"
-msgstr "https://yourwebsite.com/daily-menu-manager"
+#: daily-dish-manager.php
+msgid "https://yourwebsite.com/daily-dish-manager"
+msgstr "https://yourwebsite.com/daily-dish-manager"
 
 #. Description of the plugin
-#: daily-menu-manager.php
+#: daily-dish-manager.php
 msgid "Manage daily menus and their orders efficiently."
 msgstr "Verwalte Tagesmenüs und deren Bestellungen effizient."
 
 #. Author of the plugin
-#: daily-menu-manager.php
+#: daily-dish-manager.php
 msgid "Fabian Wolf"
 msgstr "Fabian Wolf"
 
 #. Author URI of the plugin
-#: daily-menu-manager.php
+#: daily-dish-manager.php
 msgid "https://yourwebsite.com"
 msgstr "https://yourwebsite.com"
 
@@ -300,12 +300,12 @@ msgid "Glutenfree"
 msgstr "Glutenfrei"
 
 #: includes/Bootstrap.php:78
-msgid "Daily Menu Manager successfully updated to version %s"
-msgstr "Daily Menu Manager erfolgreich auf Version %s aktualisiert"
+msgid "Daily Dish Manager successfully updated to version %s"
+msgstr "Daily Dish Manager erfolgreich auf Version %s aktualisiert"
 
 #: includes/Bootstrap.php:91
-msgid "Daily Menu Manager update failed: %s"
-msgstr "Daily Menu Manager Update fehlgeschlagen: %s"
+msgid "Daily Dish Manager update failed: %s"
+msgstr "Daily Dish Manager Update fehlgeschlagen: %s"
 
 #: includes/Frontend/ShortcodeController.php:74
 msgid "Your order has been successfully placed!"
@@ -461,16 +461,16 @@ msgid "Cancelled"
 msgstr "Storniert"
 
 #: includes/Installer.php:247
-msgid "Daily Menu Manager requires WordPress 5.0 or higher."
-msgstr "Daily Menu Manager benötigt WordPress 5.0 oder höher."
+msgid "Daily Dish Manager requires WordPress 5.0 or higher."
+msgstr "Daily Dish Manager benötigt WordPress 5.0 oder höher."
 
 #: includes/Installer.php:298
 msgid "Error creating tables: %s"
 msgstr "Fehler beim Erstellen der Tabellen: %s"
 
 #: includes/Plugin.php:106
-msgid "Daily Menu Manager updated to version %s"
-msgstr "Daily Menu Manager auf Version %s aktualisiert"
+msgid "Daily Dish Manager updated to version %s"
+msgstr "Daily Dish Manager auf Version %s aktualisiert"
 
 #: includes/Plugin.php:112
 msgid "Update failed. Please check the error log."

@@ -5,7 +5,7 @@ namespace DailyMenuManager\Contracts\Database;
 /**
  * Interface MigrationInterface
  *
- * Definiert den Vertrag für Datenbankmigrationen im Daily Menu Manager Plugin.
+ * Definiert den Vertrag für Datenbankmigrationen im Daily Dish Manager Plugin.
  * Alle Migrationen müssen dieses Interface implementieren, um Konsistenz
  * und einheitliches Verhalten zu gewährleisten.
  *

@@ -1,277 +1,274 @@
-.daily-menu-manager {
-    margin: 0 auto;
-    padding: 20px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    color: black;
+.daily-dish-manager {
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: black;
 }
 
-.daily-menu-manager > h2 {
-    color: black;
+.daily-dish-manager > h2 {
+  color: black;
 }
 
-.daily-menu-manager .menu-section:not(:last-child) {
-    margin-bottom: 40px;
+.daily-dish-manager .menu-section:not(:last-child) {
+  margin-bottom: 40px;
 }
 
-.daily-menu-manager .menu-section h3 {
-    border-bottom: 2px solid #333;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
+.daily-dish-manager .menu-section h3 {
+  border-bottom: 2px solid #333;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
 }
 
-.daily-menu-manager .menu-item:not(:last-child) {
-    margin-bottom: 25px;
+.daily-dish-manager .menu-item:not(:last-child) {
+  margin-bottom: 25px;
 }
 
-.daily-menu-manager .menu-item {
-    
-    padding: 10px;
-    background: #fff;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+.daily-dish-manager .menu-item {
+  padding: 10px;
+  background: #fff;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.daily-menu-manager .menu-item-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: #333;
-    margin-bottom: 5px;
+.daily-dish-manager .menu-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #333;
+  margin-bottom: 5px;
 }
 
-.daily-menu-manager .menu-item-footer {
-    display: flex;
-    justify-content: space-between;
+.daily-dish-manager .menu-item-footer {
+  display: flex;
+  justify-content: space-between;
 }
 
-.daily-menu-manager .menu-item-title {
-    font-size: 1.2em;
-    font-weight: 600;
+.daily-dish-manager .menu-item-title {
+  font-size: 1.2em;
+  font-weight: 600;
 }
 
-.daily-menu-manager .menu-item-price {
-    font-weight: 600;
-    color: #2c5282;
+.daily-dish-manager .menu-item-price {
+  font-weight: 600;
+  color: #2c5282;
 }
 
-.daily-menu-manager .menu-item-description {
-    color: #666;
-    margin-bottom: 15px;
+.daily-dish-manager .menu-item-description {
+  color: #666;
+  margin-bottom: 15px;
 }
 
-.daily-menu-manager .quantity-control {
-    display: flex;
-    align-items: center;
+.daily-dish-manager .quantity-control {
+  display: flex;
+  align-items: center;
 }
 
-.daily-menu-manager .quantity-btn {
-    border: none;
-    background: #2c5282;
-    color: white;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.daily-dish-manager .quantity-btn {
+  border: none;
+  background: #2c5282;
+  color: white;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.daily-menu-manager .quantity-btn.minus {
-    margin-left: 10px;
+.daily-dish-manager .quantity-btn.minus {
+  margin-left: 10px;
 }
 
-.daily-menu-manager .quantity-input {
-    width: 70px;
-    height: 70px;
-    text-align: center;
-    box-shadow: none;
-    margin: 0;
-    padding: 0px;
-    height: 30px;
+.daily-dish-manager .quantity-input {
+  width: 70px;
+  height: 70px;
+  text-align: center;
+  box-shadow: none;
+  margin: 0;
+  padding: 0px;
+  height: 30px;
 }
 
 /* Chrome, Safari, Edge, Opera */
-.daily-menu-manager input::-webkit-outer-spin-button,
-.daily-menu-manager input::-webkit-inner-spin-button {
+.daily-dish-manager input::-webkit-outer-spin-button,
+.daily-dish-manager input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
 /* Firefox */
-.daily-menu-manager input[type=number] {
+.daily-dish-manager input[type="number"] {
   -moz-appearance: textfield;
 }
 
-.daily-menu-manager .item-notes {
-    grid-column: 1 / -1;
-    display: grid;
-    gap: 5px;
+.daily-dish-manager .item-notes {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 5px;
 }
 
-.daily-menu-manager .item-notes input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #e2e8f0;
-    border-radius: 4px;
+.daily-dish-manager .item-notes input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
 }
 
-.daily-menu-manager .order-summary {
-    margin-bottom: 30px;
-    padding: 20px;
-    background: #f7fafc;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
+.daily-dish-manager .order-summary {
+  margin-bottom: 30px;
+  padding: 20px;
+  background: #f7fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
 }
 
-.daily-menu-manager .order-total {
-    font-size: 1.2em;
-    font-weight: 600;
-    color: #2c5282;
+.daily-dish-manager .order-total {
+  font-size: 1.2em;
+  font-weight: 600;
+  color: #2c5282;
 }
 
-.daily-menu-manager .customer-info {
-    margin-bottom: 30px;
+.daily-dish-manager .customer-info {
+  margin-bottom: 30px;
 }
 
-.daily-menu-manager .form-field {
-    margin-bottom: 15px;
+.daily-dish-manager .form-field {
+  margin-bottom: 15px;
 }
 
-.daily-menu-manager .form-field label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 500;
+.daily-dish-manager .form-field label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
 }
 
 .form-field input,
-.daily-menu-manager .form-field textarea {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #e2e8f0;
-    border-radius: 4px;
+.daily-dish-manager .form-field textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
 }
 
-.daily-menu-manager .form-field textarea {
-    height: 100px;
+.daily-dish-manager .form-field textarea {
+  height: 100px;
 }
 
-.daily-menu-manager .submit-order {
-    background: #2c5282;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 4px;
-    font-size: 1.1em;
-    cursor: pointer;
-    width: 100%;
-    transition: background 0.3s ease;
+.daily-dish-manager .submit-order {
+  background: #2c5282;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 4px;
+  font-size: 1.1em;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.3s ease;
 }
 
-.daily-menu-manager .submit-order:hover {
-    background: #2a4365;
+.daily-dish-manager .submit-order:hover {
+  background: #2a4365;
 }
 
-.daily-menu-manager .order-confirmation {
-    margin-top: 30px;
-    padding: 20px;
-    background: #c6f6d5;
-    border: 1px solid #9ae6b4;
-    border-radius: 8px;
-    text-align: center;
+.daily-dish-manager .order-confirmation {
+  margin-top: 30px;
+  padding: 20px;
+  background: #c6f6d5;
+  border: 1px solid #9ae6b4;
+  border-radius: 8px;
+  text-align: center;
 }
 
-.daily-menu-manager .order-confirmation h3 {
-    color: #22543d;
-    margin-bottom: 15px;
+.daily-dish-manager .order-confirmation h3 {
+  color: #22543d;
+  margin-bottom: 15px;
 }
 
-.daily-menu-manager #order-number {
-    font-size: 1.4em;
-    color: #22543d;
+.daily-dish-manager #order-number {
+  font-size: 1.4em;
+  color: #22543d;
 }
 
-.daily-menu-manager .confirmation-details {
-    margin-top: 20px;
-    text-align: left;
+.daily-dish-manager .confirmation-details {
+  margin-top: 20px;
+  text-align: left;
 }
 
-.daily-menu-manager .error-message {
-    background: #fed7d7;
-    border: 1px solid #feb2b2;
-    color: #822727;
-    padding: 10px;
-    border-radius: 4px;
-    margin: 10px 0;
+.daily-dish-manager .error-message {
+  background: #fed7d7;
+  border: 1px solid #feb2b2;
+  color: #822727;
+  padding: 10px;
+  border-radius: 4px;
+  margin: 10px 0;
 }
 
-
-
-.daily-menu-manager .swal2-popup {
-    font-size: 1rem;
+.daily-dish-manager .swal2-popup {
+  font-size: 1rem;
 }
 
-.daily-menu-manager .swal2-html-container {
-    text-align: left;
+.daily-dish-manager .swal2-html-container {
+  text-align: left;
 }
-
 
 /* Desktop Layout (ab 768px) */
 @media (min-width: 768px) {
-    .daily-menu-manager .menu-layout {
-        display: flex;
-        gap: 2rem;
-        align-items: flex-start;
-    }
+  .daily-dish-manager .menu-layout {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+  }
 
-    .daily-menu-manager  .menu-items-column {
-        flex: 1;
-        max-width: 65%;
-    }
+  .daily-dish-manager .menu-items-column {
+    flex: 1;
+    max-width: 65%;
+  }
 
-    .daily-menu-manager .order-info-column {
-        width: 35%;
-        position: sticky;
-        top: 2rem;
-        background: white;
-        padding: 1.5rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
+  .daily-dish-manager .order-info-column {
+    width: 35%;
+    position: sticky;
+    top: 2rem;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
 
-    /* Optionale Verbesserungen */
-    .daily-menu-manager .menu-section:not(:last-child) {
-        margin-bottom: 2rem;
-    }
+  /* Optionale Verbesserungen */
+  .daily-dish-manager .menu-section:not(:last-child) {
+    margin-bottom: 2rem;
+  }
 
-    .daily-menu-manager .menu-item {
-        padding: 1rem;
-        background: #f9f9f9;
-        border-radius: 6px;
-    }
+  .daily-dish-manager .menu-item {
+    padding: 1rem;
+    background: #f9f9f9;
+    border-radius: 6px;
+  }
 
-    .daily-menu-manager .order-summary, .customer-info {
-        margin-bottom: 1.5rem;
-    }
+  .daily-dish-manager .order-summary,
+  .customer-info {
+    margin-bottom: 1.5rem;
+  }
 
-    .daily-menu-manager .submit-order {
-        width: 100%;
-        margin-top: 1rem;
-    }
+  .daily-dish-manager .submit-order {
+    width: 100%;
+    margin-top: 1rem;
+  }
 }
 
 /* Mobile Layout (unter 768px) */
 @media (max-width: 767px) {
-    .daily-menu-manager .menu-items-column,
-    .daily-menu-manager .order-info-column {
-        width: 100%;
-    }
-    
-    .daily-menu-manager .order-info-column {
-        margin-top: 2rem;
-    }
+  .daily-dish-manager .menu-items-column,
+  .daily-dish-manager .order-info-column {
+    width: 100%;
+  }
+
+  .daily-dish-manager .order-info-column {
+    margin-top: 2rem;
+  }
 }
 
 .menu-item[data-item-available_quantity="0"] {
-    opacity: 0.5;
-    background: #f9f9f9;
-    cursor: not-allowed;  
+  opacity: 0.5;
+  background: #f9f9f9;
+  cursor: not-allowed;
 }

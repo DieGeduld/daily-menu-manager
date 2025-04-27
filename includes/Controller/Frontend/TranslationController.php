@@ -7,8 +7,8 @@ class TranslationController
     public static function getFrontendTranslations()
     {
         return [
-            'notes' => __('Notes for this item', 'daily-menu-manager'),
-            'available' => __('available', 'daily-menu-manager'),
+            'notes' => __('Notes for this item', DMM_TEXT_DOMAIN),
+            'available' => __('available', DMM_TEXT_DOMAIN),
             // Rest der Übersetzungen
         ];
     }

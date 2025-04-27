@@ -224,14 +224,14 @@ class MenuItemRepository implements RepositoryInterface
         if (!$original_item) {
             return new \WP_Error(
                 'item_not_found',
-                __('Menu item not found.', 'daily-menu-manager')
+                __('Menu item not found.', DMM_TEXT_DOMAIN)
             );
         }
 
         // Create a new item based on the original
         $new_item = new MenuItem($original_item->toArray());
         $new_item->setId(null);
-        $new_item->setTitle($original_item->getTitle() . ' ' . __('(Copy)', 'daily-menu-manager'));
+        $new_item->setTitle($original_item->getTitle() . ' ' . __('(Copy)', DMM_TEXT_DOMAIN));
         $new_item->setSortOrder($original_item->getSortOrder() + 1);
 
         // Save the new item

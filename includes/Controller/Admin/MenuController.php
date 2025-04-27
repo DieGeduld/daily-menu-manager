@@ -27,10 +27,10 @@ class MenuController
     public static function addAdminMenu()
     {
         add_menu_page(
-            __('Daily Menu Manager', 'daily-menu-manager'),
-            __('Daily Menu', 'daily-menu-manager'),
+            __('Daily Dish Manager', DMM_TEXT_DOMAIN),
+            __('Daily Menu', DMM_TEXT_DOMAIN),
             'manage_options',
-            'daily-menu-manager',
+            'daily-dish-manager',
             [self::class, 'displayMenuPage'],
             'dashicons-food',
             6
@@ -60,7 +60,7 @@ class MenuController
                 add_settings_error(
                     'daily_dish_manager',
                     'save_success',
-                    __('Menu saved successfully.', 'daily-menu-manager'),
+                    __('Menu saved successfully.', DMM_TEXT_DOMAIN),
                     'success'
                 );
             }
@@ -93,20 +93,20 @@ class MenuController
         check_ajax_referer('daily_dish_manager_admin_nonce');
 
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('No permission.', DMM_TEXT_DOMAIN)]);
         }
 
         $item_order = $_POST['item_order'] ?? [];
         if (empty($item_order)) {
-            wp_send_json_error(['message' => __('No order information received.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('No order information received.', DMM_TEXT_DOMAIN)]);
         }
 
         $result = self::$menu_service->updateItemOrder($item_order);
 
         if ($result) {
-            wp_send_json_success(['message' => __('Order updated.', 'daily-menu-manager')]);
+            wp_send_json_success(['message' => __('Order updated.', DMM_TEXT_DOMAIN)]);
         } else {
-            wp_send_json_error(['message' => __('Error updating order.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('Error updating order.', DMM_TEXT_DOMAIN)]);
         }
     }
 
@@ -118,7 +118,7 @@ class MenuController
         check_ajax_referer('daily_dish_manager_admin_nonce');
 
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('No permission.', DMM_TEXT_DOMAIN)]);
         }
 
         $menu_id = intval($_POST['menu_id']);
@@ -127,14 +127,14 @@ class MenuController
         $currentDate = sanitize_text_field($_POST["currentDate"]);
 
         if (!$currentDate) {
-            wp_send_json_error(['message' => __('Invalid parameters.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('Invalid parameters.', DMM_TEXT_DOMAIN)]);
         }
 
         if ($type == "from") {
             $menu = self::$menu_service->getMenuForDate($selectedDate);
 
             if (!$menu) {
-                wp_send_json_error(['message' => __('No menu exists for this date.', 'daily-menu-manager')]);
+                wp_send_json_error(['message' => __('No menu exists for this date.', DMM_TEXT_DOMAIN)]);
                 exit();
             }
 
@@ -144,13 +144,13 @@ class MenuController
                 wp_send_json_error(['message' => $result->get_error_message()]);
             } else {
                 wp_send_json_success([
-                    'message' => __('Menu copied successfully.', 'daily-menu-manager'),
+                    'message' => __('Menu copied successfully.', DMM_TEXT_DOMAIN),
                     'new_menu_id' => $result,
                 ]);
             }
         } elseif ($type == "to") {
             if (!$currentDate || !$menu_id) {
-                wp_send_json_error(['message' => __('Invalid parameters, menu ID missing', 'daily-menu-manager')]);
+                wp_send_json_error(['message' => __('Invalid parameters, menu ID missing', DMM_TEXT_DOMAIN)]);
             }
 
             $result = self::$menu_service->copyMenu($menu_id, $selectedDate);
@@ -159,12 +159,12 @@ class MenuController
                 wp_send_json_error(['message' => $result->get_error_message()]);
             } else {
                 wp_send_json_success([
-                    'message' => __('Menu copied successfully.', 'daily-menu-manager'),
+                    'message' => __('Menu copied successfully.', DMM_TEXT_DOMAIN),
                     'new_menu_id' => $result,
                 ]);
             }
         } else {
-            wp_send_json_error(['message' => __('Invalid parameters.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('Invalid parameters.', DMM_TEXT_DOMAIN)]);
         }
     }
 
@@ -176,20 +176,20 @@ class MenuController
         check_ajax_referer('daily_dish_manager_admin_nonce');
 
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('No permission.', DMM_TEXT_DOMAIN)]);
         }
 
         $item_id = intval($_POST['item_id']);
         if (!$item_id) {
-            wp_send_json_error(['message' => __('Invalid menu item ID.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('Invalid menu item ID.', DMM_TEXT_DOMAIN)]);
         }
 
         $result = self::$menu_service->deleteMenuItem($item_id);
 
         if (!$result) {
-            wp_send_json_error(['message' => __('Error deleting menu item.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('Error deleting menu item.', DMM_TEXT_DOMAIN)]);
         } else {
-            wp_send_json_success(['message' => __('Menu item deleted successfully.', 'daily-menu-manager')]);
+            wp_send_json_success(['message' => __('Menu item deleted successfully.', DMM_TEXT_DOMAIN)]);
         }
     }
 
@@ -201,12 +201,12 @@ class MenuController
         check_ajax_referer('daily_dish_manager_admin_nonce');
 
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('No permission.', DMM_TEXT_DOMAIN)]);
         }
 
         $item_id = intval($_POST['item_id']);
         if (!$item_id) {
-            wp_send_json_error(['message' => __('Invalid menu item ID.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('Invalid menu item ID.', DMM_TEXT_DOMAIN)]);
         }
 
         $new_item_id = self::$menu_service->duplicateMenuItem($item_id);
@@ -224,7 +224,7 @@ class MenuController
         $html = ob_get_clean();
 
         wp_send_json_success([
-            'message' => __('Menu item duplicated successfully.', 'daily-menu-manager'),
+            'message' => __('Menu item duplicated successfully.', DMM_TEXT_DOMAIN),
             'html' => $html,
         ]);
     }
@@ -234,10 +234,10 @@ class MenuController
      */
     public static function handleGetMenuData()
     {
-        check_ajax_referer('daily-menu-manager');
+        check_ajax_referer('daily-dish-manager');
 
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('No permission.', DMM_TEXT_DOMAIN)]);
         }
 
         $date = isset($_GET['date']) ? sanitize_text_field($_GET['date']) : current_time('Y-m-d');
@@ -277,7 +277,7 @@ class MenuController
 
         if (!$current_menu) {
             // TODO: Be able to enter a custom message
-            wp_send_json_error(['message' => __('No menu available for today.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('No menu available for today.', DMM_TEXT_DOMAIN)]);
         }
 
         $menu_items = $current_menu->getItems();
@@ -294,11 +294,11 @@ class MenuController
      */
     public static function getAvailableQuantities()
     {
-        check_ajax_referer('daily-menu-manager');
+        check_ajax_referer('daily-dish-manager');
 
         $menu_id = isset($_POST['menu_id']) ? intval($_POST['menu_id']) : 0;
         if (!$menu_id) {
-            wp_send_json_error(['message' => __('No menu ID provided', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('No menu ID provided', DMM_TEXT_DOMAIN)]);
         }
 
         $quantities = self::$menu_service->getAvailableQuantities($menu_id);
@@ -311,15 +311,15 @@ class MenuController
      */
     public static function handleSaveMenuData()
     {
-        check_ajax_referer('daily-menu-manager');
+        check_ajax_referer('daily-dish-manager');
 
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(['message' => __('No permission.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('No permission.', DMM_TEXT_DOMAIN)]);
         }
 
         $data = json_decode(file_get_contents('php://input'), true);
         if (!$data) {
-            wp_send_json_error(['message' => __('Invalid data received.', 'daily-menu-manager')]);
+            wp_send_json_error(['message' => __('Invalid data received.', DMM_TEXT_DOMAIN)]);
         }
 
         try {
@@ -328,7 +328,7 @@ class MenuController
                 wp_send_json_error(['message' => $result->get_error_message()]);
             } else {
                 wp_send_json_success([
-                    'message' => __('Menu saved successfully.', 'daily-menu-manager'),
+                    'message' => __('Menu saved successfully.', DMM_TEXT_DOMAIN),
                     'menu_id' => $result,
                 ]);
             }

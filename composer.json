@@ -1,5 +1,5 @@
 {
-    "name": "wibug/daily-menu-manager",
+    "name": "wibug/daily-dish-manager",
     "description": "WordPress plugin for managing daily menus",
     "type": "wordpress-plugin",
     "require": {

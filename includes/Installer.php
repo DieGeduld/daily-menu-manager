@@ -39,9 +39,9 @@ class Installer
                 update_option('daily_dish_manager_version', $plugin_version);
             } catch (\Exception $e) {
                 // Log error and maybe show admin notice
-                error_log('Daily Menu Manager migration failed: ' . $e->getMessage());
+                error_log('Daily Dish Manager migration failed: ' . $e->getMessage());
                 add_action('admin_notices', function () use ($e) {
-                    echo '<div class="error"><p>Daily Menu Manager update failed: ' . esc_html($e->getMessage()) . '</p></div>';
+                    echo '<div class="error"><p>Daily Dish Manager update failed: ' . esc_html($e->getMessage()) . '</p></div>';
                 });
             }
         }
@@ -106,7 +106,7 @@ class Installer
     private static function createUploadDirectory()
     {
         $upload_dir = wp_upload_dir();
-        $plugin_upload_dir = $upload_dir['basedir'] . '/daily-menu-manager';
+        $plugin_upload_dir = $upload_dir['basedir'] . '/daily-dish-manager';
 
         if (!file_exists($plugin_upload_dir)) {
             wp_mkdir_p($plugin_upload_dir);
@@ -190,7 +190,7 @@ class Installer
     private static function removeUploadDirectory()
     {
         $upload_dir = wp_upload_dir();
-        $plugin_upload_dir = $upload_dir['basedir'] . '/daily-menu-manager';
+        $plugin_upload_dir = $upload_dir['basedir'] . '/daily-dish-manager';
 
         if (file_exists($plugin_upload_dir)) {
             self::recursiveRemoveDirectory($plugin_upload_dir);
@@ -223,14 +223,14 @@ class Installer
         // PHP Version
         if (version_compare(PHP_VERSION, '7.2', '<')) {
             $errors[] = sprintf(
-                'Daily Menu Manager requires PHP 7.2 or higher. Currently running PHP %s.',
+                'Daily Dish Manager requires PHP 7.2 or higher. Currently running PHP %s.',
                 PHP_VERSION
             );
         }
 
         // WordPress Version
         if (version_compare($GLOBALS['wp_version'], '5.0', '<')) {
-            $errors[] = __('Daily Menu Manager requires WordPress 5.0 or higher.', 'daily-menu-manager');
+            $errors[] = __('Daily Dish Manager requires WordPress 5.0 or higher.', DMM_TEXT_DOMAIN);
         }
 
         // Erforderliche PHP-Erweiterungen
@@ -280,11 +280,11 @@ class Installer
 
             return true;
         } catch (\Exception $e) {
-            error_log('Daily Menu Manager table creation failed: ' . $e->getMessage());
+            error_log('Daily Dish Manager table creation failed: ' . $e->getMessage());
 
             throw new \RuntimeException(
                 sprintf(
-                    __('Error creating tables: %s', 'daily-menu-manager'),
+                    __('Error creating tables: %s', DMM_TEXT_DOMAIN),
                     $e->getMessage()
                 )
             );

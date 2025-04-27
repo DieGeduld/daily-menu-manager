@@ -2,8 +2,8 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Daily Menu Manager 1.6.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/daily-menu-manager\n"
+"Project-Id-Version: Daily Dish Manager 1.6.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/daily-dish-manager\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -12,31 +12,31 @@ msgstr ""
 "POT-Creation-Date: 2025-04-05T19:34:35+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
-"X-Domain: daily-menu-manager\n"
+"X-Domain: daily-dish-manager\n"
 
 #. Plugin Name of the plugin
-#: daily-menu-manager.php
+#: daily-dish-manager.php
 #: includes/Admin/MenuController.php:25
-msgid "Daily Menu Manager"
+msgid "Daily Dish Manager"
 msgstr ""
 
 #. Plugin URI of the plugin
-#: daily-menu-manager.php
-msgid "https://yourwebsite.com/daily-menu-manager"
+#: daily-dish-manager.php
+msgid "https://yourwebsite.com/daily-dish-manager"
 msgstr ""
 
 #. Description of the plugin
-#: daily-menu-manager.php
+#: daily-dish-manager.php
 msgid "Manage daily menus and their orders efficiently."
 msgstr ""
 
 #. Author of the plugin
-#: daily-menu-manager.php
+#: daily-dish-manager.php
 msgid "Fabian Wolf"
 msgstr ""
 
 #. Author URI of the plugin
-#: daily-menu-manager.php
+#: daily-dish-manager.php
 msgid "https://yourwebsite.com"
 msgstr ""
 
@@ -368,11 +368,11 @@ msgid "Eat in"
 msgstr ""
 
 #: includes/Bootstrap.php:78
-msgid "Daily Menu Manager successfully updated to version %s"
+msgid "Daily Dish Manager successfully updated to version %s"
 msgstr ""
 
 #: includes/Bootstrap.php:91
-msgid "Daily Menu Manager update failed: %s"
+msgid "Daily Dish Manager update failed: %s"
 msgstr ""
 
 #: includes/Frontend/ShortcodeController.php:74
@@ -529,7 +529,7 @@ msgid "Cancelled"
 msgstr ""
 
 #: includes/Installer.php:247
-msgid "Daily Menu Manager requires WordPress 5.0 or higher."
+msgid "Daily Dish Manager requires WordPress 5.0 or higher."
 msgstr ""
 
 #: includes/Installer.php:298
@@ -537,7 +537,7 @@ msgid "Error creating tables: %s"
 msgstr ""
 
 #: includes/Plugin.php:106
-msgid "Daily Menu Manager updated to version %s"
+msgid "Daily Dish Manager updated to version %s"
 msgstr ""
 
 #: includes/Plugin.php:112

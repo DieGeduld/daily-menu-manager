@@ -61,7 +61,7 @@ class AjaxController
 
         if ($is_dev) {
             add_filter('script_loader_tag', function ($tag, $handle, $src) {
-                if ($handle === 'daily-menu-manager') {
+                if ($handle === 'daily-dish-manager') {
                     return '<script type="module" src="' . esc_url($src) . '"></script>';
                 }
 
@@ -70,7 +70,7 @@ class AjaxController
 
             // Entwicklung: Lade direkt vom Vite-Server
             wp_enqueue_script(
-                'daily-menu-manager',
+                'daily-dish-manager',
                 'http://localhost:5173/src/js/frontend/frontend.js', // <<< ganz wichtig: genau der Pfad!
                 [],
                 null,
@@ -79,8 +79,8 @@ class AjaxController
         } else {
             // Produktion: Lade aus dem gebauten Dist-Ordner
             wp_enqueue_script(
-                'daily-menu-manager',
-                get_stylesheet_directory_uri() . '/wp-content/daily-menu-manager/dist/frontend.js', // <<< Dein Build-Output
+                'daily-dish-manager',
+                get_stylesheet_directory_uri() . '/wp-content/daily-dish-manager/dist/frontend.js', // <<< Dein Build-Output
                 [],
                 '1.0.0',
                 true

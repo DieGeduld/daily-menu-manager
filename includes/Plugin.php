@@ -79,7 +79,7 @@ class Plugin
     public static function log(string $message, $data = null): void
     {
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('Daily Menu Manager: ' . $message);
+            error_log('Daily Dish Manager: ' . $message);
             if ($data !== null) {
                 error_log(print_r($data, true));
             }

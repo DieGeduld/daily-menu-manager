@@ -33,24 +33,24 @@ class SettingsController
 
             self::$deafults = [
                 "menu_properties" => [
-                    __("Vegetarian", "daily-menu-manager"),
-                    __("Vegan", "daily-menu-manager"),
-                    __("Glutenfree", "daily-menu-manager"),
+                    __("Vegetarian", DMM_TEXT_DOMAIN),
+                    __("Vegan", DMM_TEXT_DOMAIN),
+                    __("Glutenfree", DMM_TEXT_DOMAIN),
                 ],
                 "menu_types" => [
                     'appetizer' => [
-                        'label' => __('Appetizer', 'daily-menu-manager'),
-                        'plural' => __('Appetizers', 'daily-menu-manager'),
+                        'label' => __('Appetizer', DMM_TEXT_DOMAIN),
+                        'plural' => __('Appetizers', DMM_TEXT_DOMAIN),
                         'enabled' => true,
                     ],
                     'main_course' => [
-                        'label' => __('Main Course', 'daily-menu-manager'),
-                        'plural' => __('Main Courses', 'daily-menu-manager'),
+                        'label' => __('Main Course', DMM_TEXT_DOMAIN),
+                        'plural' => __('Main Courses', DMM_TEXT_DOMAIN),
                         'enabled' => true,
                     ],
                     'dessert' => [
-                        'label' => __('Dessert', 'daily-menu-manager'),
-                        'plural' => __('Desserts', 'daily-menu-manager'),
+                        'label' => __('Dessert', DMM_TEXT_DOMAIN),
+                        'plural' => __('Desserts', DMM_TEXT_DOMAIN),
                         'enabled' => true,
                     ],
                 ],
@@ -71,11 +71,11 @@ class SettingsController
     public static function addAdminMenu()
     {
         add_submenu_page(
-            'daily-menu-manager',
-            __('Settings', 'daily-menu-manager'),
-            __('Settings', 'daily-menu-manager'),
+            'daily-dish-manager',
+            __('Settings', DMM_TEXT_DOMAIN),
+            __('Settings', DMM_TEXT_DOMAIN),
             'manage_options',
-            'daily-menu-manager-settings',
+            'daily-dish-manager-settings',
             [self::class, 'displaySettingsPage']
         );
     }
@@ -202,7 +202,7 @@ class SettingsController
             add_settings_error(
                 'daily_dish_properties',
                 'settings_updated',
-                __('Settings saved.', 'daily-menu-manager'),
+                __('Settings saved.', DMM_TEXT_DOMAIN),
                 'success'
             );
         }
@@ -216,13 +216,13 @@ class SettingsController
                 update_option('daily_dish_manager_version', DMM_VERSION);
 
                 \DailyMenuManager\Plugin::addAdminNotice(
-                    __('Database update completed successfully.', 'daily-menu-manager'),
+                    __('Database update completed successfully.', DMM_TEXT_DOMAIN),
                     'success'
                 );
             } catch (\Exception $e) {
                 \DailyMenuManager\Plugin::addAdminNotice(
                     sprintf(
-                        __('Database update failed: %s', 'daily-menu-manager'),
+                        __('Database update failed: %s', DMM_TEXT_DOMAIN),
                         $e->getMessage()
                     ),
                     'error'
@@ -249,9 +249,9 @@ class SettingsController
         // Set default values if empty
         if (empty($properties)) {
             $properties = [
-                __("Vegetarian", "daily-menu-manager"),
-                __("Vegan", "daily-menu-manager"),
-                __("Glutenfree", "daily-menu-manager"),
+                __("Vegetarian", DMM_TEXT_DOMAIN),
+                __("Vegan", DMM_TEXT_DOMAIN),
+                __("Glutenfree", DMM_TEXT_DOMAIN),
             ];
 
             // Store in the database for future use
@@ -384,15 +384,15 @@ class SettingsController
     public static function getAvailableCurrencies(): array
     {
         return [
-            'EUR' => __('Euro (€)', 'daily-menu-manager'),
-            'USD' => __('US Dollar ($)', 'daily-menu-manager'),
-            'GBP' => __('British Pound (£)', 'daily-menu-manager'),
-            'CHF' => __('Swiss Franc (CHF)', 'daily-menu-manager'),
-            'JPY' => __('Japanese Yen (¥)', 'daily-menu-manager'),
-            'CAD' => __('Canadian Dollar (C$)', 'daily-menu-manager'),
-            'AUD' => __('Australian Dollar (A$)', 'daily-menu-manager'),
-            'PLN' => __('Polish Złoty (zł)', 'daily-menu-manager'),
-            'custom' => __('Custom currency', 'daily-menu-manager'),
+            'EUR' => __('Euro (€)', DMM_TEXT_DOMAIN),
+            'USD' => __('US Dollar ($)', DMM_TEXT_DOMAIN),
+            'GBP' => __('British Pound (£)', DMM_TEXT_DOMAIN),
+            'CHF' => __('Swiss Franc (CHF)', DMM_TEXT_DOMAIN),
+            'JPY' => __('Japanese Yen (¥)', DMM_TEXT_DOMAIN),
+            'CAD' => __('Canadian Dollar (C$)', DMM_TEXT_DOMAIN),
+            'AUD' => __('Australian Dollar (A$)', DMM_TEXT_DOMAIN),
+            'PLN' => __('Polish Złoty (zł)', DMM_TEXT_DOMAIN),
+            'custom' => __('Custom currency', DMM_TEXT_DOMAIN),
         ];
     }
 
@@ -461,12 +461,12 @@ class SettingsController
         $symbol = SettingsController::getCurrencySymbol();
 
         return [
-            'symbol_comma_right' => sprintf(__('European format (9,99 %s)', 'daily-menu-manager'), $symbol),
-            'symbol_dot_right' => sprintf(__('Anglo-American format (9.99 %s)', 'daily-menu-manager'), $symbol),
-            'symbol_comma_left' => sprintf(__('European format, symbol first (%s 9,99)', 'daily-menu-manager'), $symbol),
-            'symbol_dot_left' => sprintf(__('Anglo-American format, symbol first (%s 9.99)', 'daily-menu-manager'), $symbol),
-            'symbol_comma_attached' => sprintf(__('Compact European format (9,99%s)', 'daily-menu-manager'), $symbol),
-            'symbol_dot_attached' => sprintf(__('Compact Anglo-American format (9.99%s)', 'daily-menu-manager'), $symbol),
+            'symbol_comma_right' => sprintf(__('European format (9,99 %s)', DMM_TEXT_DOMAIN), $symbol),
+            'symbol_dot_right' => sprintf(__('Anglo-American format (9.99 %s)', DMM_TEXT_DOMAIN), $symbol),
+            'symbol_comma_left' => sprintf(__('European format, symbol first (%s 9,99)', DMM_TEXT_DOMAIN), $symbol),
+            'symbol_dot_left' => sprintf(__('Anglo-American format, symbol first (%s 9.99)', DMM_TEXT_DOMAIN), $symbol),
+            'symbol_comma_attached' => sprintf(__('Compact European format (9,99%s)', DMM_TEXT_DOMAIN), $symbol),
+            'symbol_dot_attached' => sprintf(__('Compact Anglo-American format (9.99%s)', DMM_TEXT_DOMAIN), $symbol),
         ];
     }
 
@@ -592,8 +592,8 @@ class SettingsController
 
         if (empty($consumption_types)) {
             $consumption_types = [
-                __('Pick up', 'daily-menu-manager'),
-                __('Eat in', 'daily-menu-manager'),
+                __('Pick up', DMM_TEXT_DOMAIN),
+                __('Eat in', DMM_TEXT_DOMAIN),
             ];
 
             // Store in the database for future use

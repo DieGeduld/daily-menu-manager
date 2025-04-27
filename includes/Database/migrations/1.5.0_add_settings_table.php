@@ -60,9 +60,9 @@ class V150AddSettingsTable extends Migration
 
         // Default menu properties
         $default_properties = [
-            __("Vegetarian", "daily-menu-manager"),
-            __("Vegan", "daily-menu-manager"),
-            __("Glutenfree", "daily-menu-manager"),
+            __("Vegetarian", DMM_TEXT_DOMAIN),
+            __("Vegan", DMM_TEXT_DOMAIN),
+            __("Glutenfree", DMM_TEXT_DOMAIN),
         ];
 
         $wpdb->insert(

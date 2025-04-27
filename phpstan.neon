@@ -7,7 +7,7 @@ parameters:
   phpVersion: 70400
 
   paths:
-    - daily-menu-manager.php
+    - daily-dish-manager.php
     - includes
     - tests
 

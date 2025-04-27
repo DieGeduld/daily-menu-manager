@@ -7,15 +7,15 @@ use DailyMenuManager\Controller\Admin\SettingsController;
 ?>
 
 <div class="wrap">
-    <h1><?php _e('Manage Daily Menu', 'daily-menu-manager'); ?></h1>
+    <h1><?php _e('Manage Daily Menu', 'daily-dish-manager'); ?></h1>
     
     <?php settings_errors('daily_dish_manager'); ?>
     
     <!-- Date Selection -->
     <div class="date-selection">
         <form method="get" class="date-selector-form">
-            <input type="hidden" name="page" value="daily-menu-manager">
-            <label for="menu_date"><?php _e('Select Date:', 'daily-menu-manager'); ?></label>
+            <input type="hidden" name="page" value="daily-dish-manager">
+            <label for="menu_date"><?php _e('Select Date:', 'daily-dish-manager'); ?></label>
 
             <div class="flatpickr-wrapper">
                 <input type="date"
@@ -34,7 +34,7 @@ use DailyMenuManager\Controller\Admin\SettingsController;
                 <button type="submit" 
                         class="button" 
                         onclick="document.getElementById('menu_date').value='<?php echo esc_attr(current_time('Y-m-d')); ?>'; return true;">
-                    <?php _e('Today', 'daily-menu-manager'); ?>
+                    <?php _e('Today', 'daily-dish-manager'); ?>
                 </button>
             <?php endif; ?>
 
@@ -43,13 +43,13 @@ use DailyMenuManager\Controller\Admin\SettingsController;
         <?php if ($current_menu): ?>
         <div class="menu-actions">
             <button type="button" class="button copy-menu" data-menu-id="<?php echo esc_attr($current_menu->id); ?>">
-                <?php _e('Copy Menu', 'daily-menu-manager'); ?>
+                <?php _e('Copy Menu', 'daily-dish-manager'); ?>
             </button>
         </div>
         <?php else: ?>
             <div class="menu-actions">
             <button type="button" class="button copy-menu" data-menu-id="0">
-                <?php _e('Import Menu', 'daily-menu-manager'); ?>
+                <?php _e('Import Menu', 'daily-dish-manager'); ?>
             </button>
         </div>
         <?php endif; ?>
@@ -85,13 +85,13 @@ use DailyMenuManager\Controller\Admin\SettingsController;
 ?>
         </div>
 
-        <?php submit_button(__('Save Menu', 'daily-menu-manager'), 'primary', 'save_menu'); ?>
+        <?php submit_button(__('Save Menu', DMM_TEXT_DOMAIN), 'primary', 'save_menu'); ?>
     </form>
 </div>
 
 <!-- Kopier-Dialog to -->
-<div id="copy-menu-dialog-to" style="display: none;" title="<?php _e('Copy Menu', 'daily-menu-manager'); ?>">
-    <p><?php _e('Select the target date for copying:', 'daily-menu-manager'); ?></p>
+<div id="copy-menu-dialog-to" style="display: none;" title="<?php _e('Copy Menu', 'daily-dish-manager'); ?>">
+    <p><?php _e('Select the target date for copying:', 'daily-dish-manager'); ?></p>
 
     <div class="selectedDateTo">
         <input type="hidden" name="type" value="to">
@@ -108,8 +108,8 @@ use DailyMenuManager\Controller\Admin\SettingsController;
 </div>
 
 <!-- Kopier-Dialog from -->
-<div id="copy-menu-dialog-from" style="display: none;" title="<?php _e('Import Menu', 'daily-menu-manager'); ?>">
-    <p><?php _e('Select the source date:', 'daily-menu-manager'); ?></p>
+<div id="copy-menu-dialog-from" style="display: none;" title="<?php _e('Import Menu', 'daily-dish-manager'); ?>">
+    <p><?php _e('Select the source date:', 'daily-dish-manager'); ?></p>
     <div class="selectedDateFrom">
         <input type="hidden" name="type" value="from">
         <input type="date" 
@@ -128,6 +128,6 @@ use DailyMenuManager\Controller\Admin\SettingsController;
 
 <?php if ($current_menu): ?>
     <button type="button" class="button copy-menu" data-menu-id="<?php echo esc_attr($current_menu->id); ?>">
-        <?php _e('Copy Menu', 'daily-menu-manager'); ?>
+        <?php _e('Copy Menu', 'daily-dish-manager'); ?>
     </button>
 <?php endif; ?>

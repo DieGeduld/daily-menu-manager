@@ -58,7 +58,7 @@ class Bootstrap
             $mofile = plugin_dir_path(DMM_PLUGIN_FILE) . 'languages/' . DMM_TEXT_DOMAIN . '-' . $locale . '.mo';
 
             if (file_exists($mofile)) {
-                load_textdomain('daily-menu-manager', $mofile);
+                load_textdomain('daily-dish-manager', $mofile);
             }
         });
         // Initialize plugin after WordPress loads, but after translations
@@ -84,7 +84,7 @@ class Bootstrap
                             '<div class="notice notice-warning"><p>%s</p></div>',
                             esc_html(
                                 sprintf(
-                                    __('Daily Menu Manager needs database update from version %s to %s. Please visit the settings page to run the update.', 'daily-menu-manager'),
+                                    __('Daily Dish Manager needs database update from version %s to %s. Please visit the settings page to run the update.', DMM_TEXT_DOMAIN),
                                     $installed_version,
                                     DMM_VERSION
                                 )
@@ -97,7 +97,7 @@ class Bootstrap
                             '<div class="notice notice-info"><p>%s</p></div>',
                             esc_html(
                                 sprintf(
-                                    __('Daily Menu Manager successfully updated to version %s', 'daily-menu-manager'),
+                                    __('Daily Dish Manager successfully updated to version %s', DMM_TEXT_DOMAIN),
                                     DMM_VERSION
                                 )
                             )
@@ -105,13 +105,13 @@ class Bootstrap
                     });
                 }
             } catch (\Exception $e) {
-                self::$loggerService->logError('Daily Menu Manager update failed: ' . $e->getMessage());
+                self::$loggerService->logError('Daily Dish Manager update failed: ' . $e->getMessage());
                 add_action('admin_notices', function () use ($e) {
                     printf(
                         '<div class="error"><p>%s</p></div>',
                         esc_html(
                             sprintf(
-                                __('Daily Menu Manager update failed: %s', 'daily-menu-manager'),
+                                __('Daily Dish Manager update failed: %s', DMM_TEXT_DOMAIN),
                                 $e->getMessage()
                             )
                         )

@@ -3,13 +3,13 @@
 namespace DailyMenuManager;
 
 /**
- * Plugin Name: Daily Menu Manager
- * Plugin URI: https://unkonventionell/daily-menu-manager
+ * Plugin Name: Daily Dish Manager
+ * Plugin URI: https://unkonventionell/daily-dish-manager
  * Description: Manage daily menus and their orders efficiently.
  * Version: 1.8.0
  * Author: Fabian Wolf
  * Author URI: https://unkonventionell
- * Text Domain: daily-menu-manager
+ * Text Domain: daily-dish-manager
  * Domain Path: /languages
  * Requires at least: 5.0
  * Requires PHP: 7.4
@@ -35,7 +35,7 @@ if (!defined('DMM_PLUGIN_BASENAME')) {
     define('DMM_PLUGIN_BASENAME', plugin_basename(__FILE__));
 }
 if (!defined('DMM_TEXT_DOMAIN')) {
-    define('DMM_TEXT_DOMAIN', 'daily-menu-manager');
+    define('DMM_TEXT_DOMAIN', 'daily-dish-manager');
 }
 
 // Load Bootstrap

@@ -5,7 +5,7 @@ import { loadTranslations as poTranslations } from './utils/po-parser';
 const locales = ['en_US', 'de_DE'];
 
 for (const locale of locales) {
-  test.describe(`Daily Menu Manager Admin [${locale}]`, () => {
+  test.describe(`Daily Dish Manager Admin [${locale}]`, () => {
     let translations: Record<string, string>;
 
     test.beforeEach(async ({ page }) => {
@@ -29,7 +29,7 @@ for (const locale of locales) {
     });
 
     test(`should display the menu management page in ${locale}`, async ({ page }) => {
-      await page.goto('/wp-admin/admin.php?page=daily-menu-manager');
+      await page.goto('/wp-admin/admin.php?page=daily-dish-manager');
 
       const menuTitle = translations['Manage Daily Menu'] || 'Manage Daily Menu';
       await expect(page.getByRole('heading', { name: menuTitle })).toBeVisible();
@@ -42,17 +42,23 @@ for (const locale of locales) {
       await expect(page.getByRole('heading', { name: translation })).toBeVisible();
 
       translation = translations["Today's orders"] || "Today's orders";
-      await expect(page.locator('.summary-table tr').nth(0).locator('td').first()).toHaveText(translation);
-      
+      await expect(page.locator('.summary-table tr').nth(0).locator('td').first()).toHaveText(
+        translation,
+      );
+
       translation = translations["Today's revenue"] || "Today's revenue";
-      await expect(page.locator('.summary-table tr').nth(1).locator('td').first()).toHaveText(translation);
-      
+      await expect(page.locator('.summary-table tr').nth(1).locator('td').first()).toHaveText(
+        translation,
+      );
+
       translation = translations['Ordered items'] || 'Ordered items';
-      await expect(page.locator('.summary-table tr').nth(2).locator('td').first()).toHaveText(translation);
+      await expect(page.locator('.summary-table tr').nth(2).locator('td').first()).toHaveText(
+        translation,
+      );
     });
 
     test('should be able to access settings page', async ({ page }) => {
-      await page.goto('/wp-admin/admin.php?page=daily-menu-manager-settings');
+      await page.goto('/wp-admin/admin.php?page=daily-dish-manager-settings');
       let translation = translations['Settings'] || 'Settings';
       await expect(page.getByRole('heading', { name: translation })).toBeVisible();
     });

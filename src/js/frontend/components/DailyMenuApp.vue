@@ -1,5 +1,5 @@
 <template>
-  <div id="menu-order-form" class="daily-menu-manager">
+  <div id="menu-order-form" class="daily-dish-manager">
     <div class="menu-layout">
       <div class="menu-items-column">
         <h2 class="menu-title">{{ title }} - {{ formattedDate }}</h2>
@@ -109,7 +109,7 @@ export default {
 <style scoped>
 @import '../../../fonts/SourceSans3.css';
 
-.daily-menu-manager {
+.daily-dish-manager {
   max-width: 1200px;
   margin: 0 auto;
   padding: 1rem;

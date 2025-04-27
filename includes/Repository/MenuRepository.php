@@ -148,7 +148,7 @@ class MenuRepository extends BaseRepository
         if ($this->menuExists($target_date)) {
             return new \WP_Error(
                 'menu_exists',
-                __('A menu already exists for this date.', 'daily-menu-manager')
+                __('A menu already exists for this date.', DMM_TEXT_DOMAIN)
             );
         }
 
@@ -157,7 +157,7 @@ class MenuRepository extends BaseRepository
         if (! $source_menu) {
             return new \WP_Error(
                 'menu_not_found',
-                __('Source menu not found.', 'daily-menu-manager')
+                __('Source menu not found.', DMM_TEXT_DOMAIN)
             );
         }
 

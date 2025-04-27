@@ -7,7 +7,7 @@ use DailyMenuManager\Database\Migration;
 /**
  * Class V100InitialTables
  *
- * This migration sets up the initial database tables for the Daily Menu Manager plugin.
+ * This migration sets up the initial database tables for the Daily Dish Manager plugin.
  */
 class V100InitialTables extends Migration
 {
@@ -111,7 +111,7 @@ class V100InitialTables extends Migration
      */
     public function getDescription(): string
     {
-        return 'Creates initial database tables for the Daily Menu Manager plugin';
+        return 'Creates initial database tables for the Daily Dish Manager plugin';
     }
 
     /**

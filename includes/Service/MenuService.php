@@ -54,7 +54,7 @@ class MenuService
         if ($this->menu_repository->menuExists($date)) {
             return new \WP_Error(
                 'menu_exists',
-                __('A menu already exists for this date.', 'daily-menu-manager')
+                __('A menu already exists for this date.', DMM_TEXT_DOMAIN)
             );
         }
 
@@ -79,7 +79,7 @@ class MenuService
         if (!$menu) {
             return new \WP_Error(
                 'menu_not_found',
-                __('Menu not found.', 'daily-menu-manager')
+                __('Menu not found.', DMM_TEXT_DOMAIN)
             );
         }
 
@@ -106,7 +106,7 @@ class MenuService
         if (!$item) {
             return new \WP_Error(
                 'item_not_found',
-                __('Menu item not found.', 'daily-menu-manager')
+                __('Menu item not found.', DMM_TEXT_DOMAIN)
             );
         }
 
@@ -147,7 +147,7 @@ class MenuService
         if ($menu_id) {
             $menu = $this->menu_repository->findById($menu_id);
             if (!$menu) {
-                return new \WP_Error('menu_not_found', __('Menu not found.', 'daily-menu-manager'));
+                return new \WP_Error('menu_not_found', __('Menu not found.', DMM_TEXT_DOMAIN));
             }
             $menu->menu_date = $menu_date;
         } else {

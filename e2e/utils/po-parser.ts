@@ -3,7 +3,7 @@ import * as path from 'path';
 
 export async function loadTranslations(
   locale: string,
-  domain = 'daily-menu-manager',
+  domain = 'daily-dish-manager',
 ): Promise<Record<string, string>> {
   // Dynamischer Import für gettext-parser
   const gettextParser = await import('gettext-parser');
