@@ -108,14 +108,13 @@ use DailyMenuManager\Controller\Admin\SettingsController;
                         
                         <tr class="order-header">
                             <td><strong><?php echo esc_html($order->order_number); ?></strong></td>
-                            <!-- TODO: Datum formatieren -->
                             <td><?php echo esc_html(date_i18n('d.m.Y H:i', strtotime($order->order_date))); ?></td>
                             <td><?php echo esc_html($order->customer_name); ?></td>
                             <td><?php echo esc_html($order->customer_phone); ?></td>
                             <td><?php echo esc_html($order->consumption_type); ?></td>
                             <td><?php echo date('H:i', strtotime($order->pickup_time)); ?></td>
                             <td colspan="3">
-                                <?php if ($order->general_notes): ?>
+                                <?php if (!empty($order->general_notes)): ?>
                                     <div class="general-notes">
                                         <strong><?php _e('Notes:', 'daily-menu-manager'); ?></strong> 
                                         <?php echo esc_html($order->general_notes); ?>
@@ -139,13 +138,13 @@ use DailyMenuManager\Controller\Admin\SettingsController;
                         <td>
                             <strong><?php echo esc_html($order->quantity); ?>x</strong> 
                             <?php echo esc_html($order->menu_item_title); ?>
-                            <?php if ($order->notes): ?>
+                            <?php if (!empty($order->notes)): ?>
                                 <br><small><?php _e('Notes:', 'daily-menu-manager'); ?> <?php echo esc_html($order->notes); ?></small>
                             <?php endif; ?>
                         </td>
                         <td><?php echo SettingsController::formatPrice($item_total); ?></td>
                         <td>
-                            <?php if ($order->id === $order->first_item_in_order): ?>
+                            <?php if ($order->order_item_id == $order->first_item_in_order): ?>
                                 <button class="button delete-order" data-order="<?php echo esc_attr($order->order_number); ?>">
                                     <span class="dashicons dashicons-trash"></span>
                                 </button>

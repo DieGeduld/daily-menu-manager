@@ -81,7 +81,7 @@ class MenuItemRepository implements RepositoryInterface
         unset($data['created_at']);
         unset($data['updated_at']);
 
-        if (empty($item->id)) {
+        if ($item->getId() === null) {
             // For new items, determine the next sort order if not set
             if (empty($data['sort_order'])) {
                 $data['sort_order'] = $this->getNextSortOrder($data['menu_id']);
@@ -120,7 +120,7 @@ class MenuItemRepository implements RepositoryInterface
                 return new \WP_Error('db_insert_error', $this->wpdb->last_error);
             }
 
-            $item->id = $this->wpdb->insert_id;
+            $item->setId($this->wpdb->insert_id);
         } else {
             // Update existing menu item
             $result = $this->wpdb->update(
@@ -168,7 +168,7 @@ class MenuItemRepository implements RepositoryInterface
      */
     public function delete($item)
     {
-        return $this->deleteById($item->id);
+        return $this->deleteById($item->getId());
     }
 
     /**
@@ -230,9 +230,9 @@ class MenuItemRepository implements RepositoryInterface
 
         // Create a new item based on the original
         $new_item = new MenuItem($original_item->toArray());
-        $new_item->id = null;  // Set ID to null for new item
-        $new_item->title .= ' ' . __('(Copy)', 'daily-menu-manager');
-        $new_item->sort_order = $original_item->sort_order + 1;
+        $new_item->setId(null);
+        $new_item->setTitle($original_item->getTitle() . ' ' . __('(Copy)', 'daily-menu-manager'));
+        $new_item->setSortOrder($original_item->getSortOrder() + 1);
 
         // Save the new item
         $result = $this->save($new_item);
@@ -247,12 +247,12 @@ class MenuItemRepository implements RepositoryInterface
             WHERE menu_id = %d 
             AND id != %d 
             AND sort_order >= %d",
-            $new_item->menu_id,
-            $new_item->id,
-            $new_item->sort_order
+            $new_item->getMenuId(),
+            $new_item->getId(),
+            $new_item->getSortOrder()
         ));
 
-        return $new_item->id;
+        return $new_item->getId();
     }
 
     /**

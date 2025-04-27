@@ -3,7 +3,7 @@
 namespace DailyMenuManager\Controller\Admin;
 
 // use DailyMenuManager\Model\Menu;
-use DailyMenuManager\Model\Order;
+use DailyMenuManager\Entity\Order;
 use DailyMenuManager\Repository\MenuItemRepository;
 use DailyMenuManager\Repository\OrderItemRepository;
 use DailyMenuManager\Repository\OrderRepository;
@@ -58,7 +58,7 @@ class OrderController
      */
     public static function displayOrdersPage()
     {
-        $order_model = new Order();
+        $order = new Order();
 
         // Filter-Logik
         $filters = [
@@ -69,7 +69,7 @@ class OrderController
         ];
 
         // Hole Bestellungen mit Filtern
-        $orders = $order_model->getOrders($filters);
+        $orders = $order->getOrders($filters);
 
         // Statistiken initialisieren
         $stats = [

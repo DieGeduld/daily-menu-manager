@@ -31,7 +31,7 @@ class MenuService
     {
         $menu = $this->menu_repository->findByDate($date);
 
-        if (! $menu) {
+        if (!$menu) {
             return null;
         }
 
@@ -76,7 +76,7 @@ class MenuService
     {
         // Check if menu exists
         $menu = $this->menu_repository->findById($menu_id);
-        if (! $menu) {
+        if (!$menu) {
             return new \WP_Error(
                 'menu_not_found',
                 __('Menu not found.', 'daily-menu-manager')
@@ -103,7 +103,7 @@ class MenuService
     {
         // Check if item exists
         $item = $this->menu_item_repository->findById($item_id);
-        if (! $item) {
+        if (!$item) {
             return new \WP_Error(
                 'item_not_found',
                 __('Menu item not found.', 'daily-menu-manager')
@@ -146,7 +146,7 @@ class MenuService
         // Create or update menu
         if ($menu_id) {
             $menu = $this->menu_repository->findById($menu_id);
-            if (! $menu) {
+            if (!$menu) {
                 return new \WP_Error('menu_not_found', __('Menu not found.', 'daily-menu-manager'));
             }
             $menu->menu_date = $menu_date;
@@ -181,7 +181,7 @@ class MenuService
             // Get or create menu item
             if ($item_id) {
                 $item = $this->menu_item_repository->findById($item_id);
-                if (! $item) {
+                if (!$item) {
                     continue; // Skip if item not found
                 }
             } else {
@@ -189,14 +189,14 @@ class MenuService
             }
 
             // Update item data
-            $item->menu_id = $menu->id;
-            $item->item_type = sanitize_text_field($item_data['type'] ?? '');
-            $item->title = sanitize_text_field($item_data['title'] ?? '');
-            $item->description = wp_kses_post($item_data['description'] ?? '');
-            $item->price = floatval($item_data['price'] ?? 0);
-            $item->available_quantity = intval($item_data['available_quantity'] ?? 0);
-            $item->sort_order = intval($item_data['sort_order'] ?? 0);
-            $item->allergens = sanitize_textarea_field($item_data['allergens'] ?? '');
+            $item->setMenuId(intval($menu->id)); // Set menu ID for new items
+            $item->setItemType(sanitize_text_field($item_data['type'] ?? ''));
+            $item->setTitle(sanitize_text_field($item_data['title'] ?? ''));
+            $item->setDescription(wp_kses_post($item_data['description'] ?? ''));
+            $item->setPrice(floatval($item_data['price'] ?? 0));
+            $item->setAvailableQuantity(intval($item_data['available_quantity'] ?? 0));
+            $item->setSortOrder(intval($item_data['sort_order'] ?? 0));
+            $item->setAllergens(sanitize_textarea_field($item_data['allergens'] ?? ''));
 
             // Process properties
             $properties = [];
@@ -207,7 +207,7 @@ class MenuService
                     }
                 }
             }
-            $item->properties = $properties;
+            $item->setProperties($properties);
 
             // Save menu item
             $this->menu_item_repository->save($item);

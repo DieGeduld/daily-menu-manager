@@ -296,65 +296,82 @@ class OrderRepository extends BaseRepository
     }
 
     /**
-     * Get orders with optional filters
-     *
-     * @param array $filters Filter options
-     * @return array Orders matching the filters
+     * Holt Bestellungen mit angewendeten Filtern
      */
-    public function getOrders($filters = [])
+    public function getOrders($filters)
     {
-        $where_clauses = [];
-        $where_values = [];
+        global $wpdb;
 
-        // Datum Filter mit explizitem Format
-        if (!empty($filters['date']) && $filters['date'] !== 'all') {
+        $where_clauses = [];
+        $query_params = [];
+
+        // Filter nach Datum
+        if (!empty($filters['date'])) {
             $where_clauses[] = "DATE(o.order_date) = %s";
-            $where_values[] = $filters['date'];
+            $query_params[] = $filters['date'];
         }
 
-        // Bestellnummer Filter
+        // Filter nach Bestellnummer
         if (!empty($filters['order_number'])) {
             $where_clauses[] = "o.order_number LIKE %s";
-            $where_values[] = '%' . $this->wpdb->esc_like($filters['order_number']) . '%';
+            $query_params[] = '%' . $wpdb->esc_like($filters['order_number']) . '%';
         }
 
-        // Name Filter
+        // Filter nach Kundenname
         if (!empty($filters['customer_name'])) {
             $where_clauses[] = "o.customer_name LIKE %s";
-            $where_values[] = '%' . $this->wpdb->esc_like($filters['customer_name']) . '%';
+            $query_params[] = '%' . $wpdb->esc_like($filters['customer_name']) . '%';
         }
 
-        // Telefon Filter
+        // Filter nach Telefonnummer
         if (!empty($filters['customer_phone'])) {
             $where_clauses[] = "o.customer_phone LIKE %s";
-            $where_values[] = '%' . $this->wpdb->esc_like($filters['customer_phone']) . '%';
+            $query_params[] = '%' . $wpdb->esc_like($filters['customer_phone']) . '%';
         }
 
-        $query = "
-        SELECT 
-            o.*,
-            mi.title as menu_item_title,
-            mi.price,
-            mi.item_type,
-            COUNT(*) OVER (PARTITION BY o.order_number) as items_in_order,
-            MIN(o.id) OVER (PARTITION BY o.order_number) as first_item_in_order
-        FROM {$this->table_name} o
-        JOIN {$this->wpdb->prefix}ddm_menu_items mi ON o.menu_item_id = mi.id
-        ";
+        $where_sql = !empty($where_clauses) ? "WHERE " . implode(" AND ", $where_clauses) : "";
 
-        if (!empty($where_clauses)) {
-            $query .= " WHERE " . implode(' AND ', $where_clauses);
+        $query = $wpdb->prepare(
+            "SELECT 
+                o.id,
+                o.order_number,
+                o.order_date,
+                o.customer_name,
+                o.customer_phone,
+                o.consumption_type,
+                o.pickup_time,
+                o.notes AS general_notes,
+                oi.id AS order_item_id,
+                oi.menu_item_id,
+                oi.title AS menu_item_title,
+                oi.quantity,
+                oi.price,
+                oi.notes,
+                (SELECT MIN(oi2.id) FROM {$this->order_items_table} oi2 WHERE oi2.order_id = o.id) AS first_item_in_order
+            FROM 
+                {$this->orders_table} o
+            INNER JOIN 
+                {$this->order_items_table} oi ON o.id = oi.order_id
+            {$where_sql}
+            ORDER BY 
+                o.order_date DESC, o.order_number, oi.id",
+            $query_params
+        );
+
+        return $wpdb->get_results($query);
+    }
+
+    public function getOrderItemsByOrderIds($order_ids)
+    {
+        global $wpdb;
+        if (empty($order_ids)) {
+            return [];
         }
 
-        $query .= " ORDER BY o.order_date DESC, o.order_number, mi.item_type, mi.title";
+        $placeholders = implode(',', array_fill(0, count($order_ids), '%d'));
+        $sql = "SELECT * FROM {$wpdb->prefix}ddm_order_items WHERE order_id IN ($placeholders)";
 
-        if (!empty($where_values)) {
-            $orders = $this->wpdb->get_results($this->wpdb->prepare($query, $where_values));
-        } else {
-            $orders = $this->wpdb->get_results($query);
-        }
-
-        return $orders;
+        return $wpdb->get_results($wpdb->prepare($sql, ...$order_ids));
     }
 
     /**

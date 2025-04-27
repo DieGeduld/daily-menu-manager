@@ -362,8 +362,8 @@ class MenuController
         }
 
         // Get the item configuration based on the type
-        $item_config = self::getMenuTypeConfig($item->item_type);
-        $is_collapsed = isset($_COOKIE['menu_item_' . $item->id . '_collapsed']) && $_COOKIE['menu_item_' . $item->id . '_collapsed'] === 'true';
+        $item_config = self::getMenuTypeConfig($item->getItemType());
+        $is_collapsed = isset($_COOKIE['menu_item_' . $item->getId() . '_collapsed']) && $_COOKIE['menu_item_' . $item->id . '_collapsed'] === 'true';
         $collapse_class = $is_collapsed ? 'collapsed' : '';
 
         require DMM_PLUGIN_DIR . 'includes/Views/menu-item-template.php';

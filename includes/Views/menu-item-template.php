@@ -12,14 +12,14 @@
 use DailyMenuManager\Controller\Admin\SettingsController;
 
 // Safety check in case $item is not defined
-if (! isset($item)) {
+if (!isset($item)) {
     return;
 }
 ?>
 
 <div class="menu-item <?php echo esc_attr($collapse_class); ?>" 
-     data-type="<?php echo esc_attr($item->item_type); ?>"
-     data-id="<?php echo esc_attr($item->id); ?>">
+     data-type="<?php echo esc_attr($item->getItemType()); ?>"
+     data-id="<?php echo esc_attr($item->getId()); ?>">
     
     <!-- Header Section -->
     <div class="menu-item-header">
@@ -40,7 +40,7 @@ if (! isset($item)) {
         <!-- Title Area -->
         <div class="menu-item-title-area">
             <span class="menu-item-type-label"><?php esc_attr_e($item_config['label'], 'daily-menu-manager') . ":"; ?></span>
-            <span class="menu-item-title-preview"><?php esc_attr_e($item->title ?: '(No title)', 'daily-menu-manager'); ?></span>
+            <span class="menu-item-title-preview"><?php esc_attr_e($item->getTitle() ?: '(No title)', 'daily-menu-manager'); ?></span>
         </div>
 
         <!-- Right Controls -->
@@ -66,27 +66,27 @@ if (! isset($item)) {
     <!-- Content Section -->
     <div class="menu-item-content" <?php echo $is_collapsed ? 'style="display: none;"' : ''; ?>>
         <!-- Hidden Fields -->
-        <input type="hidden" name="menu_items[<?php echo esc_attr($item->id); ?>][id]" 
-               value="<?php echo esc_attr($item->id); ?>">
-        <input type="hidden" name="menu_items[<?php echo esc_attr($item->id); ?>][type]" 
-               value="<?php echo esc_attr($item->item_type); ?>">
-        <input type="hidden" name="menu_items[<?php echo esc_attr($item->id); ?>][sort_order]" 
-               value="<?php echo esc_attr($item->sort_order); ?>" 
+        <input type="hidden" name="menu_items[<?php echo esc_attr($item->getId()); ?>][id]" 
+               value="<?php echo esc_attr($item->getId()); ?>">
+        <input type="hidden" name="menu_items[<?php echo esc_attr($item->getId()); ?>][type]" 
+               value="<?php echo esc_attr($item->getItemType()); ?>">
+        <input type="hidden" name="menu_items[<?php echo esc_attr($item->getId()); ?>][sort_order]" 
+               value="<?php echo esc_attr($item->getSortOrder()); ?>" 
                class="sort-order">
 
         <!-- Title Field -->
         <div class="menu-item-field">
-            <label for="title_<?php echo esc_attr($item->id); ?>">
+            <label for="title_<?php echo esc_attr($item->getId()); ?>">
                 <?php _e('Title', 'daily-menu-manager'); ?>
                 <span class="required">*</span>
             </label>
             <input type="text" 
-                   id="title_<?php echo esc_attr($item->id); ?>"
-                   name="menu_items[<?php echo esc_attr($item->id); ?>][title]"
-                   value="<?php echo esc_attr($item->title); ?>"
+                   id="title_<?php echo esc_attr($item->getId()); ?>"
+                   name="menu_items[<?php echo esc_attr($item->getId()); ?>][title]"
+                   value="<?php echo esc_attr($item->getTitle()); ?>"
                    required
                    class="menu-item-title-input"
-                   data-original-value="<?php echo esc_attr($item->title); ?>">
+                   data-original-value="<?php echo esc_attr($item->getTitle()); ?>">
             <span class="field-description">
                 <?php _e('Enter the name of the dish or menu item', 'daily-menu-manager'); ?>
             </span>
@@ -94,15 +94,15 @@ if (! isset($item)) {
 
         <!-- Description Field -->
         <div class="menu-item-field">
-            <label for="description_<?php echo esc_attr($item->id); ?>">
+            <label for="description_<?php echo esc_attr($item->getId()); ?>">
                 <?php _e('Description', 'daily-menu-manager'); ?>
             </label>
-            <textarea id="description_<?php echo esc_attr($item->id); ?>"
-                      name="menu_items[<?php echo esc_attr($item->id); ?>][description]"
+            <textarea id="description_<?php echo esc_attr($item->getId()); ?>"
+                      name="menu_items[<?php echo esc_attr($item->getId()); ?>][description]"
                       class="menu-item-description"
                       rows="3"
-                      data-original-value="<?php echo esc_attr($item->description); ?>"><?php
-                echo esc_textarea($item->description);
+                      data-original-value="<?php echo esc_attr($item->getDescription()); ?>"><?php
+                echo esc_textarea($item->getDescription());
 ?></textarea>
             <span class="field-description">
                 <?php _e('Optional: Add ingredients or other details about this item', 'daily-menu-manager'); ?>
@@ -111,7 +111,7 @@ if (! isset($item)) {
 
         <!-- Price Field -->
         <div class="menu-item-field">
-            <label for="price_<?php echo esc_attr($item->id); ?>">
+            <label for="price_<?php echo esc_attr($item->getId()); ?>">
                 <?php _e('Price', 'daily-menu-manager'); ?>
                 <span class="required">*</span>
             </label>
@@ -119,9 +119,9 @@ if (! isset($item)) {
                 <span class="currency-symbol"><?php echo esc_html(SettingsController::getCurrencySymbol()); ?></span>
                 <!-- Todo: Format price in selected format -->
                 <input type="number" 
-                    id="price_<?php echo esc_attr($item->id); ?>"
-                    name="menu_items[<?php echo esc_attr($item->id); ?>][price]"
-                    value="<?php echo esc_attr(number_format($item->price, 2, '.', '')); ?>"
+                    id="price_<?php echo esc_attr($item->getId()); ?>"
+                    name="menu_items[<?php echo esc_attr($item->getId()); ?>][price]"
+                    value="<?php echo esc_attr(number_format($item->getPrice(), 2, '.', '')); ?>"
                     step="0.01"
                     min="0"
                     required
@@ -134,13 +134,13 @@ if (! isset($item)) {
 
         <!-- Available Quantity Field -->
         <div class="menu-item-field">
-            <label for="available_quantity_<?php echo esc_attr($item->id); ?>">
+            <label for="available_quantity_<?php echo esc_attr($item->getId()); ?>">
                 <?php _e('Available Quantity', 'daily-menu-manager'); ?>
             </label>
             <input type="number" 
-                id="available_quantity_<?php echo esc_attr($item->id); ?>"
-                name="menu_items[<?php echo esc_attr($item->id); ?>][available_quantity]"
-                value="<?php echo esc_attr($item->available_quantity); ?>"
+                id="available_quantity_<?php echo esc_attr($item->getId()); ?>"
+                name="menu_items[<?php echo esc_attr($item->getId()); ?>][available_quantity]"
+                value="<?php echo esc_attr($item->getAvailableQuantity()); ?>"
                 min="0"
                 class="menu-item-available-quantity">
             <span class="field-description">
@@ -150,7 +150,7 @@ if (! isset($item)) {
 
         <!-- Additional Options Field -->
         <div class="menu-item-field">
-            <label for="options_<?php echo esc_attr($item->id); ?>">
+            <label for="options_<?php echo esc_attr($item->getId()); ?>">
                 <?php _e('Additional Options', 'daily-menu-manager'); ?>
                 <a href="<?php echo esc_url(admin_url('admin.php?page=daily-menu-manager-settings')); ?>"><?php _e('Manage additional options', 'daily-menu-manager'); ?></a>
             </label>
@@ -162,7 +162,7 @@ $props = $item->properties ?? [];
 foreach ($allProps as $prop): ?>
                 <label class="checkbox-label">
                     <input type="checkbox" 
-                           name="menu_items[<?php echo esc_attr($item->id); ?>][properties][<?php echo esc_attr($prop); ?>]"
+                           name="menu_items[<?php echo esc_attr($item->getId()); ?>][properties][<?php echo esc_attr($prop); ?>]"
                            <?php checked(isset($props[$prop]) && $props[$prop]); ?>>
                     <?php echo esc_html($prop); ?>
                 </label>
@@ -172,14 +172,14 @@ foreach ($allProps as $prop): ?>
 
         <!-- Allergen Information Field -->
         <div class="menu-item-field">
-            <label for="allergens_<?php echo esc_attr($item->id); ?>">
+            <label for="allergens_<?php echo esc_attr($item->getId()); ?>">
                 <?php _e('Allergen Information', 'daily-menu-manager'); ?>
             </label>
-            <textarea id="allergens_<?php echo esc_attr($item->id); ?>"
-                      name="menu_items[<?php echo esc_attr($item->id); ?>][allergens]"
+            <textarea id="allergens_<?php echo esc_attr($item->getId()); ?>"
+                      name="menu_items[<?php echo esc_attr($item->getId()); ?>][allergens]"
                       class="menu-item-allergens"
                       rows="2"><?php
-echo esc_textarea($item->allergens);
+echo esc_textarea($item->getAllergens());
 ?></textarea>
             <span class="field-description">
                 <?php _e('List any allergens present in this dish', 'daily-menu-manager'); ?>
@@ -199,12 +199,12 @@ echo esc_textarea($item->allergens);
                     </label>
                     <div class="time-range-inputs">
                         <input type="time" 
-                               name="menu_items[<?php echo esc_attr($item->id); ?>][available_from]"
-                               value="<?php echo esc_attr(isset($item->available_from) ? $item->available_from : ''); ?>">
+                               name="menu_items[<?php echo esc_attr($item->getId()); ?>][available_from]"
+                               value=""> <!-- getAvailableFrom -->
                         <span>-</span>
                         <input type="time" 
-                               name="menu_items[<?php echo esc_attr($item->id); ?>][available_until]"
-                               value="<?php echo esc_attr(isset($item->available_until) ? $item->available_until : ''); ?>">
+                               name="menu_items[<?php echo esc_attr($item->getId()); ?>][available_until]"
+                               value=""> <!-- getAvailableUntil -->
                     </div>
                 </div>
             </div>
