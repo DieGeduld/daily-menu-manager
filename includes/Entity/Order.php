@@ -189,9 +189,8 @@ class Order extends AbstractEntity
         $where_clauses = [];
         $where_values = [];
 
-        // Datum Filter mit explizitem Format
+        // Datum Filter
         if (!empty($filters['date']) && $filters['date'] !== 'all') {
-            // Konvertiere beide Datumsformate in das Format YYYY-MM-DD für den Vergleich
             $where_clauses[] = "DATE(o.order_date) = %s";
             $where_values[] = $filters['date'];
         }
@@ -217,20 +216,20 @@ class Order extends AbstractEntity
         $query = "
         SELECT 
             o.*,
-            mi.title as menu_item_title,
-            mi.price,
-            mi.item_type,
+            oi.title as menu_item_title,
+            oi.price,
+            '' as item_type, -- altes Feld, gibt es scheinbar nicht mehr, wird leer zurückgegeben
             COUNT(*) OVER (PARTITION BY o.order_number) as items_in_order,
-            MIN(o.id) OVER (PARTITION BY o.order_number) as first_item_in_order
+            MIN(oi.id) OVER (PARTITION BY o.order_number) as first_item_in_order
         FROM {$wpdb->prefix}ddm_orders o
-        JOIN {$wpdb->prefix}ddm_menu_items mi ON o.menu_item_id = mi.id
-        "; // Todo: wie können wir nicht mehr über menu_item_id joinen, ordes hat das nicht mehr
+        JOIN {$wpdb->prefix}ddm_order_items oi ON o.id = oi.order_id
+        ";
 
         if (!empty($where_clauses)) {
             $query .= " WHERE " . implode(' AND ', $where_clauses);
         }
 
-        $query .= " ORDER BY o.order_date DESC, o.order_number, mi.item_type, mi.title";
+        $query .= " ORDER BY o.order_date DESC, o.order_number, oi.title";
 
         if (!empty($where_values)) {
             $orders = $wpdb->get_results($wpdb->prepare($query, $where_values));

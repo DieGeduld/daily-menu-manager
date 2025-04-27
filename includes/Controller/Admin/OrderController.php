@@ -2,28 +2,11 @@
 
 namespace DailyMenuManager\Controller\Admin;
 
-// use DailyMenuManager\Model\Menu;
 use DailyMenuManager\Entity\Order;
 use DailyMenuManager\Repository\MenuItemRepository;
 use DailyMenuManager\Repository\OrderItemRepository;
 use DailyMenuManager\Repository\OrderRepository;
 use DailyMenuManager\Service\OrderService;
-
-class OrderStatistics
-{
-    public $total_orders = 0;
-    public $total_revenue = 0;
-    public $total_items = 0;
-
-    public function __construct($data)
-    {
-        foreach ($data as $key => $value) {
-            if (property_exists($this, $key)) {
-                $this->$key = $value;
-            }
-        }
-    }
-}
 
 class OrderController
 {
@@ -48,7 +31,7 @@ class OrderController
             __('Orders', DMM_TEXT_DOMAIN),
             __('Orders', DMM_TEXT_DOMAIN),
             'manage_options',
-            'daily-menu-orders',
+            'daily-dish-manager-orders',
             [self::class, 'displayOrdersPage']
         );
     }
@@ -56,7 +39,7 @@ class OrderController
     /**
      * Zeigt die Bestellübersicht an
      */
-    public static function displayOrdersPage()
+    public static function displayOrdersPage(): void
     {
         $order = new Order();
 

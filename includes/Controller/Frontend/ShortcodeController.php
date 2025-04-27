@@ -57,7 +57,7 @@ class ShortcodeController
         $menu = new Menu();
         $current_menu = $menu->getMenuForDate($atts['date']);
 
-        if (! $current_menu) {
+        if (!$current_menu) {
             return '<p class="no-menu">' . __('No menu available for today.', DMM_TEXT_DOMAIN) . '</p>';
         }
 

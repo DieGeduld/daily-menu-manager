@@ -27,7 +27,7 @@ class AjaxController
         add_action('wp_ajax_get_available_quantities', [MenuController::class, 'getAvailableQuantities']);
         add_action('wp_ajax_get_current_menu', [MenuController::class, 'handleGetCurrentMenu']);
 
-        add_action('wp_enqueue_scripts', [self::class, 'enqueue_daily_dish_manager_scripts']);
+        //add_action('wp_enqueue_scripts', [self::class, 'enqueue_daily_dish_manager_scripts']);
     }
 
     public static function registerAdminAjaxHandlers(): void
@@ -78,13 +78,14 @@ class AjaxController
             );
         } else {
             // Produktion: Lade aus dem gebauten Dist-Ordner
-            wp_enqueue_script(
-                'daily-dish-manager',
-                get_stylesheet_directory_uri() . '/wp-content/daily-dish-manager/dist/frontend.js', // <<< Dein Build-Output
-                [],
-                '1.0.0',
-                true
-            );
+
+            // wp_enqueue_script(
+            //     'daily-dish-manager',
+            //     DMM_PLUGIN_URL . '/dist/frontend.js', // <<< Dein Build-Output
+            //     [],
+            //     DMM_VERSION,
+            //     true
+            // );
         }
     }
 }

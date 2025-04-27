@@ -154,7 +154,7 @@ class MenuRepository extends BaseRepository
 
         // Get the source menu
         $source_menu = $this->findById($menu_id);
-        if (! $source_menu) {
+        if (!$source_menu) {
             return new \WP_Error(
                 'menu_not_found',
                 __('Source menu not found.', DMM_TEXT_DOMAIN)
@@ -181,8 +181,8 @@ class MenuRepository extends BaseRepository
         // Copy each menu item
         foreach ($source_items as $item) {
             $new_item = new MenuItem($item->toArray());
-            $new_item->id = null;  // Set ID to null for new item
-            $new_item->menu_id = $new_menu->id;  // Assign to new menu
+            $new_item->setId(null);  // Set ID to null for new item
+            $new_item->setMenuId($new_menu->getId());  // Assign to new menu
             $menu_item_repo->save($new_item);
         }
 

@@ -1,5 +1,5 @@
 import { createApp } from 'vue';
-import DailyMenuApp from './components/DailyMenuApp.vue';
+import DailyDishApp from './components/DailyDishApp.vue';
 import store from './store';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const menuDate = appElement.dataset.menuDate;
     const title = appElement.dataset.title;
 
-    const app = createApp(DailyMenuApp, {
+    const app = createApp(DailyDishApp, {
       menuId,
       menuDate,
       title,

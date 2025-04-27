@@ -5,7 +5,7 @@ namespace DailyMenuManager;
 /**
  * Plugin Name: Daily Dish Manager
  * Plugin URI: https://unkonventionell/daily-dish-manager
- * Description: Manage daily menus and their orders efficiently.
+ * Description: Manage daily dishes and their orders efficiently.
  * Version: 1.8.0
  * Author: Fabian Wolf
  * Author URI: https://unkonventionell

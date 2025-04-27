@@ -27,7 +27,7 @@ class MenuController
     public static function addAdminMenu()
     {
         add_menu_page(
-            __('Daily Dish Manager', DMM_TEXT_DOMAIN),
+            __('Daily Menu Manager', DMM_TEXT_DOMAIN),
             __('Daily Menu', DMM_TEXT_DOMAIN),
             'manage_options',
             'daily-dish-manager',
@@ -247,7 +247,9 @@ class MenuController
 
         wp_send_json_success([
             'menu' => $current_menu ? $current_menu->toArray() : null,
-            'items' => array_map(function ($item) { return $item->toArray(); }, $menu_items),
+            'items' => array_map(function ($item) {
+                return $item->toArray();
+            }, $menu_items),
         ]);
     }
 
@@ -265,9 +267,9 @@ class MenuController
 
         $grouped_items = [];
         foreach ($current_menu->getItems() as $item) {
-            $menuTypePlural = $item_types[$item->item_type]["plural"];
+            $menuTypePlural = $item_types[$item->getItemType()]["plural"];
             if (!$menuTypePlural) {
-                $menuTypePlural = $item->item_type . 's';
+                $menuTypePlural = $item->getItemType() . 's';
             }
             if (!isset($grouped_items[$menuTypePlural])) {
                 $grouped_items[$menuTypePlural] = [];
@@ -284,7 +286,9 @@ class MenuController
 
         wp_send_json_success([
             'menu' => $current_menu->toArray(),
-            'items' => array_map(function ($item) { return $item->toArray(); }, $menu_items),
+            'items' => array_map(function ($item) {
+                return $item->toArray();
+            }, $menu_items),
             'grouped_items' => $grouped_items,
         ]);
     }

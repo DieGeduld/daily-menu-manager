@@ -1,5 +1,5 @@
 import { createApp } from 'vue';
-//import DailyMenuApp from './components/DailyMenuApp.vue';
+//import DailyDishApp from './components/DailyDishApp.vue';
 
 //import CommonComponents from './common/components';
 
@@ -14,7 +14,7 @@ import '@/src/sass/admin.scss';
 
 //     menuContainers.forEach((container) => {
 
-//         const app = createApp(DailyMenuApp, {
+//         const app = createApp(DailyDishApp, {
 //             menuId: menuOrderForm.querySelector('input[name="menu_id"]').value
 //         })
 

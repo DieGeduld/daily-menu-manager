@@ -1,6 +1,6 @@
 {
     "name": "wibug/daily-dish-manager",
-    "description": "WordPress plugin for managing daily menus",
+    "description": "WordPress plugin for managing daily dishes",
     "type": "wordpress-plugin",
     "require": {
         "php": ">=7.4"

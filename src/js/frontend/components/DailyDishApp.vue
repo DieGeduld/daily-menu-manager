@@ -1,3 +1,4 @@
+
 <template>
   <div id="menu-order-form" class="daily-dish-manager">
     <div class="menu-layout">
@@ -41,7 +42,7 @@ import MenuItem from './MenuItem.vue'
 import OrderInfo from './OrderInfo.vue'
 
 export default {
-  name: 'DailyMenuApp',
+  name: 'DailyDishApp',
   components: {
     MenuItem,
     OrderInfo
@@ -91,7 +92,7 @@ export default {
     
     // Komponente initialisieren
     onMounted(() => {
-      console.log('DailyMenuApp wurde geladen mit Menü ID:', props.menuId)
+      console.log('DailyDishApp wurde geladen mit Menü ID:', props.menuId)
       fetchMenuItems()
     })
     
