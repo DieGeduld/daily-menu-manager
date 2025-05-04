@@ -2,54 +2,14 @@
 
 namespace DailyMenuManager\Entity;
 
+use ReflectionClass;
+use ReflectionProperty;
+
 abstract class AbstractEntity
 {
     protected $id;
     protected $created_at;
     protected $updated_at;
-
-    /**
-     * Get entity ID
-     *
-     * @return int|null
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Set entity ID
-     *
-     * @param int $id
-     * @return $this
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
-    /**
-     * Get creation timestamp
-     *
-     * @return string|null
-     */
-    public function getCreatedAt()
-    {
-        return $this->created_at;
-    }
-
-    /**
-     * Get update timestamp
-     *
-     * @return string|null
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updated_at;
-    }
 
     public function __call($method, $arguments)
     {
@@ -93,7 +53,7 @@ abstract class AbstractEntity
 
         throw new \BadMethodCallException("Method $method does not exist.");
     }
-    
+
     /**
      * Convert entity to array
      *
@@ -102,8 +62,8 @@ abstract class AbstractEntity
     public function toArray()
     {
         $data = [];
-        $reflect = new \ReflectionClass($this);
-        $properties = $reflect->getProperties(\ReflectionProperty::IS_PROTECTED | \ReflectionProperty::IS_PRIVATE);
+        $reflect = new ReflectionClass($this);
+        $properties = $reflect->getProperties(ReflectionProperty::IS_PROTECTED | ReflectionProperty::IS_PRIVATE);
 
         foreach ($properties as $property) {
             $property->setAccessible(true);

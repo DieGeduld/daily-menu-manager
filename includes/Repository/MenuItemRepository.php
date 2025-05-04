@@ -90,17 +90,19 @@ class MenuItemRepository implements RepositoryInterface
             // Insert new menu item
             $result = $this->wpdb->insert(
                 $this->table_name,
-                ['menu_id' => $data['menu_id'],
-                'item_type' => $data['item_type'],
-                'title' => $data['title'],
-                'description' => $data['description'],
-                'price' => $data['price'],
-                'available_quantity' => $data['available_quantity'],
-                'properties' => $data['properties'],
-                'sort_order' => $data['sort_order'],
-                'allergens' => $data['allergens'],
-                'image_url' => $data['image_url'],
-                'image_id' => $data['image_id']],
+                [
+                    'menu_id' => $data['menu_id'],
+                    'item_type' => $data['item_type'],
+                    'title' => $data['title'],
+                    'description' => $data['description'],
+                    'price' => $data['price'],
+                    'available_quantity' => $data['available_quantity'],
+                    'properties' => is_array($data['properties']) ? json_encode($data['properties']) : $data['properties'],
+                    'sort_order' => $data['sort_order'],
+                    'allergens' => $data['allergens'],
+                    'image_url' => $data['image_url'],
+                    'image_id' => $data['image_id']
+                ],
                 [
                     '%d', // menu_id
                     '%s', // item_type
@@ -125,17 +127,19 @@ class MenuItemRepository implements RepositoryInterface
             // Update existing menu item
             $result = $this->wpdb->update(
                 $this->table_name,
-                ['menu_id' => $data['menu_id'],
+                [
+                    'menu_id' => $data['menu_id'],
                     'item_type' => $data['item_type'],
                     'title' => $data['title'],
                     'description' => $data['description'],
                     'price' => $data['price'],
                     'available_quantity' => $data['available_quantity'],
-                    'properties' => $data['properties'],
+                    'properties' => is_array($data['properties']) ? json_encode($data['properties']) : $data['properties'],
                     'sort_order' => $data['sort_order'],
                     'allergens' => $data['allergens'],
                     'image_url' => $data['image_url'],
-                    'image_id' => $data['image_id']],
+                    'image_id' => $data['image_id']
+                ],
                 ['id' => $data['id']],
                 [
                     '%d', // menu_id

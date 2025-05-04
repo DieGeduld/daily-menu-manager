@@ -68,7 +68,7 @@ class MenuController
 
         // Get the current menu with items
         $current_menu = self::$menu_service->getMenuForDate($selected_date);
-        $menu_items = $current_menu ? $current_menu->getItems() : [];
+        $menu_items = $current_menu ? $current_menu->getMenuItems() : [];
 
         // Load the template
         require_once DMM_PLUGIN_DIR . 'includes/Views/admin-menu-page.php';
@@ -183,6 +183,8 @@ class MenuController
         if (!$item_id) {
             wp_send_json_error(['message' => __('Invalid menu item ID.', DMM_TEXT_DOMAIN)]);
         }
+        // TODO! -> then give menu entity to delete method
+        //$menu = self::$menu_service->getMenuByMenuId($item_id);
 
         $result = self::$menu_service->deleteMenuItem($item_id);
 
@@ -266,7 +268,7 @@ class MenuController
         $item_types = SettingsController::getMenuTypes(true);
 
         $grouped_items = [];
-        foreach ($current_menu->getItems() as $item) {
+        foreach ($current_menu->getMenuItems() as $item) {
             $menuTypePlural = $item_types[$item->getItemType()]["plural"];
             if (!$menuTypePlural) {
                 $menuTypePlural = $item->getItemType() . 's';
@@ -282,7 +284,7 @@ class MenuController
             wp_send_json_error(['message' => __('No menu available for today.', DMM_TEXT_DOMAIN)]);
         }
 
-        $menu_items = $current_menu->getItems();
+        $menu_items = $current_menu->getMenuItems();
 
         wp_send_json_success([
             'menu' => $current_menu->toArray(),

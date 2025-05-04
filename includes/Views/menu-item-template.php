@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Template for rendering a single menu item in the admin area
  *
@@ -17,23 +18,23 @@ if (!isset($item)) {
 }
 ?>
 
-<div class="menu-item <?php echo esc_attr($collapse_class); ?>" 
-     data-type="<?php echo esc_attr($item->getItemType()); ?>"
-     data-id="<?php echo esc_attr($item->getId()); ?>">
-    
+<div class="menu-item <?php echo esc_attr($collapse_class); ?>"
+    data-type="<?php echo esc_attr($item->getItemType()); ?>"
+    data-id="<?php echo esc_attr($item->getId()); ?>">
+
     <!-- Header Section -->
     <div class="menu-item-header">
         <!-- Left Controls -->
         <div class="menu-item-controls">
-            <span class="move-handle dashicons dashicons-move" 
-                  title="<?php esc_attr_e('Drag to reorder', 'daily-dish-manager'); ?>"
-                  aria-label="<?php esc_attr_e('Drag handle', 'daily-dish-manager'); ?>">
+            <span class="move-handle dashicons dashicons-move"
+                title="<?php esc_attr_e('Drag to reorder', 'daily-dish-manager'); ?>"
+                aria-label="<?php esc_attr_e('Drag handle', 'daily-dish-manager'); ?>">
             </span>
-            <button type="button" 
-                    class="toggle-menu-item dashicons <?php echo $is_collapsed ? 'dashicons-arrow-right' : 'dashicons-arrow-down'; ?>"
-                    aria-expanded="<?php echo $is_collapsed ? 'false' : 'true'; ?>"
-                    aria-label="<?php esc_attr_e('Toggle menu item', 'daily-dish-manager'); ?>"
-                    title="<?php esc_attr_e('Click to expand/collapse', 'daily-dish-manager'); ?>">
+            <button type="button"
+                class="toggle-menu-item dashicons <?php echo $is_collapsed ? 'dashicons-arrow-right' : 'dashicons-arrow-down'; ?>"
+                aria-expanded="<?php echo $is_collapsed ? 'false' : 'true'; ?>"
+                aria-label="<?php esc_attr_e('Toggle menu item', 'daily-dish-manager'); ?>"
+                title="<?php esc_attr_e('Click to expand/collapse', 'daily-dish-manager'); ?>">
             </button>
         </div>
 
@@ -45,20 +46,20 @@ if (!isset($item)) {
 
         <!-- Right Controls -->
         <div class="menu-item-actions">
-            <button type="button" 
-                    class="copy-menu-item dashicons dashicons-move"
-                    title="<?php esc_attr_e('Copy this menu item to another day', 'daily-dish-manager'); ?>"
-                    aria-label="<?php esc_attr_e('Copy this menu item to another day', 'daily-dish-manager'); ?>">
-            </button>  
-            <button type="button" 
-                    class="duplicate-menu-item dashicons dashicons-admin-page"
-                    title="<?php esc_attr_e('Duplicate item', 'daily-dish-manager'); ?>"
-                    aria-label="<?php esc_attr_e('Duplicate this menu item', 'daily-dish-manager'); ?>">
+            <button type="button"
+                class="copy-menu-item dashicons dashicons-move"
+                title="<?php esc_attr_e('Copy this menu item to another day', 'daily-dish-manager'); ?>"
+                aria-label="<?php esc_attr_e('Copy this menu item to another day', 'daily-dish-manager'); ?>">
             </button>
-            <button type="button" 
-                    class="remove-menu-item dashicons dashicons-trash"
-                    title="<?php esc_attr_e('Delete item', 'daily-dish-manager'); ?>"
-                    aria-label="<?php esc_attr_e('Delete this menu item', 'daily-dish-manager'); ?>">
+            <button type="button"
+                class="duplicate-menu-item dashicons dashicons-admin-page"
+                title="<?php esc_attr_e('Duplicate item', 'daily-dish-manager'); ?>"
+                aria-label="<?php esc_attr_e('Duplicate this menu item', 'daily-dish-manager'); ?>">
+            </button>
+            <button type="button"
+                class="remove-menu-item dashicons dashicons-trash"
+                title="<?php esc_attr_e('Delete item', 'daily-dish-manager'); ?>"
+                aria-label="<?php esc_attr_e('Delete this menu item', 'daily-dish-manager'); ?>">
             </button>
         </div>
     </div>
@@ -66,13 +67,13 @@ if (!isset($item)) {
     <!-- Content Section -->
     <div class="menu-item-content" <?php echo $is_collapsed ? 'style="display: none;"' : ''; ?>>
         <!-- Hidden Fields -->
-        <input type="hidden" name="menu_items[<?php echo esc_attr($item->getId()); ?>][id]" 
-               value="<?php echo esc_attr($item->getId()); ?>">
-        <input type="hidden" name="menu_items[<?php echo esc_attr($item->getId()); ?>][type]" 
-               value="<?php echo esc_attr($item->getItemType()); ?>">
-        <input type="hidden" name="menu_items[<?php echo esc_attr($item->getId()); ?>][sort_order]" 
-               value="<?php echo esc_attr($item->getSortOrder()); ?>" 
-               class="sort-order">
+        <input type="hidden" name="menu_items[<?php echo esc_attr($item->getId()); ?>][id]"
+            value="<?php echo esc_attr($item->getId()); ?>">
+        <input type="hidden" name="menu_items[<?php echo esc_attr($item->getId()); ?>][type]"
+            value="<?php echo esc_attr($item->getItemType()); ?>">
+        <input type="hidden" name="menu_items[<?php echo esc_attr($item->getId()); ?>][sort_order]"
+            value="<?php echo esc_attr($item->getSortOrder()); ?>"
+            class="sort-order">
 
         <!-- Title Field -->
         <div class="menu-item-field">
@@ -80,13 +81,13 @@ if (!isset($item)) {
                 <?php _e('Title', 'daily-dish-manager'); ?>
                 <span class="required">*</span>
             </label>
-            <input type="text" 
-                   id="title_<?php echo esc_attr($item->getId()); ?>"
-                   name="menu_items[<?php echo esc_attr($item->getId()); ?>][title]"
-                   value="<?php echo esc_attr($item->getTitle()); ?>"
-                   required
-                   class="menu-item-title-input"
-                   data-original-value="<?php echo esc_attr($item->getTitle()); ?>">
+            <input type="text"
+                id="title_<?php echo esc_attr($item->getId()); ?>"
+                name="menu_items[<?php echo esc_attr($item->getId()); ?>][title]"
+                value="<?php echo esc_attr($item->getTitle()); ?>"
+                required
+                class="menu-item-title-input"
+                data-original-value="<?php echo esc_attr($item->getTitle()); ?>">
             <span class="field-description">
                 <?php _e('Enter the name of the dish or menu item', 'daily-dish-manager'); ?>
             </span>
@@ -98,12 +99,12 @@ if (!isset($item)) {
                 <?php _e('Description', 'daily-dish-manager'); ?>
             </label>
             <textarea id="description_<?php echo esc_attr($item->getId()); ?>"
-                      name="menu_items[<?php echo esc_attr($item->getId()); ?>][description]"
-                      class="menu-item-description"
-                      rows="3"
-                      data-original-value="<?php echo esc_attr($item->getDescription()); ?>"><?php
-                echo esc_textarea($item->getDescription());
-?></textarea>
+                name="menu_items[<?php echo esc_attr($item->getId()); ?>][description]"
+                class="menu-item-description"
+                rows="3"
+                data-original-value="<?php echo esc_attr($item->getDescription()); ?>"><?php
+                                                                                        echo esc_textarea($item->getDescription());
+                                                                                        ?></textarea>
             <span class="field-description">
                 <?php _e('Optional: Add ingredients or other details about this item', 'daily-dish-manager'); ?>
             </span>
@@ -118,7 +119,7 @@ if (!isset($item)) {
             <div class="price-input-wrapper">
                 <span class="currency-symbol"><?php echo esc_html(SettingsController::getCurrencySymbol()); ?></span>
                 <!-- Todo: Format price in selected format -->
-                <input type="number" 
+                <input type="number"
                     id="price_<?php echo esc_attr($item->getId()); ?>"
                     name="menu_items[<?php echo esc_attr($item->getId()); ?>][price]"
                     value="<?php echo esc_attr(number_format($item->getPrice(), 2, '.', '')); ?>"
@@ -137,7 +138,7 @@ if (!isset($item)) {
             <label for="available_quantity_<?php echo esc_attr($item->getId()); ?>">
                 <?php _e('Available Quantity', 'daily-dish-manager'); ?>
             </label>
-            <input type="number" 
+            <input type="number"
                 id="available_quantity_<?php echo esc_attr($item->getId()); ?>"
                 name="menu_items[<?php echo esc_attr($item->getId()); ?>][available_quantity]"
                 value="<?php echo esc_attr($item->getAvailableQuantity()); ?>"
@@ -155,17 +156,17 @@ if (!isset($item)) {
                 <a href="<?php echo esc_url(admin_url('admin.php?page=daily-dish-manager-settings')); ?>"><?php _e('Manage additional options', 'daily-dish-manager'); ?></a>
             </label>
             <div class="options-grid">
-            <?php
+                <?php
                 $allProps = SettingsController::getMenuProperties() ?? [];
-$props = $item->properties ?? [];
+                $props = $item->getProperties() ?? [];
 
-foreach ($allProps as $prop): ?>
-                <label class="checkbox-label">
-                    <input type="checkbox" 
-                           name="menu_items[<?php echo esc_attr($item->getId()); ?>][properties][<?php echo esc_attr($prop); ?>]"
-                           <?php checked(isset($props[$prop]) && $props[$prop]); ?>>
-                    <?php echo esc_html($prop); ?>
-                </label>
+                foreach ($allProps as $prop): ?>
+                    <label class="checkbox-label">
+                        <input type="checkbox"
+                            name="menu_items[<?php echo esc_attr($item->getId()); ?>][properties][<?php echo esc_attr($prop); ?>]"
+                            <?php checked(isset($props[$prop]) && $props[$prop]); ?>>
+                        <?php echo esc_html($prop); ?>
+                    </label>
                 <?php endforeach; ?>
             </div>
         </div>
@@ -176,11 +177,11 @@ foreach ($allProps as $prop): ?>
                 <?php _e('Allergen Information', 'daily-dish-manager'); ?>
             </label>
             <textarea id="allergens_<?php echo esc_attr($item->getId()); ?>"
-                      name="menu_items[<?php echo esc_attr($item->getId()); ?>][allergens]"
-                      class="menu-item-allergens"
-                      rows="2"><?php
-echo esc_textarea($item->getAllergens());
-?></textarea>
+                name="menu_items[<?php echo esc_attr($item->getId()); ?>][allergens]"
+                class="menu-item-allergens"
+                rows="2"><?php
+                            echo esc_textarea($item->getAllergens());
+                            ?></textarea>
             <span class="field-description">
                 <?php _e('List any allergens present in this dish', 'daily-dish-manager'); ?>
             </span>
@@ -198,13 +199,13 @@ echo esc_textarea($item->getAllergens());
                         <?php _e('Availability Times', 'daily-dish-manager'); ?>
                     </label>
                     <div class="time-range-inputs">
-                        <input type="time" 
-                               name="menu_items[<?php echo esc_attr($item->getId()); ?>][available_from]"
-                               value=""> <!-- getAvailableFrom -->
+                        <input type="time"
+                            name="menu_items[<?php echo esc_attr($item->getId()); ?>][available_from]"
+                            value=""> <!-- getAvailableFrom -->
                         <span>-</span>
-                        <input type="time" 
-                               name="menu_items[<?php echo esc_attr($item->getId()); ?>][available_until]"
-                               value=""> <!-- getAvailableUntil -->
+                        <input type="time"
+                            name="menu_items[<?php echo esc_attr($item->getId()); ?>][available_until]"
+                            value=""> <!-- getAvailableUntil -->
                     </div>
                 </div>
             </div>

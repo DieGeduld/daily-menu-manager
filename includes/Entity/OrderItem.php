@@ -33,27 +33,6 @@ class OrderItem extends AbstractEntity
     }
 
     /**
-     * Convert entity to array
-     *
-     * @return array OrderItem data as array
-     */
-    public function toArray()
-    {
-        // TODO: check if everything is in
-        return [
-            'id' => $this->id,
-            'order_id' => $this->order_id,
-            'menu_item_id' => $this->menu_item_id,
-            'quantity' => $this->quantity,
-            'price' => $this->price,
-            'title' => $this->title,
-            'notes' => $this->notes,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-        ];
-    }
-
-    /**
      * Get the total price for this order item
      *
      * @return float Total price (quantity * price)

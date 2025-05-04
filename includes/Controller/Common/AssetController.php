@@ -104,47 +104,47 @@ class AssetController
         wp_enqueue_script_module('daily-menu-frontend-module');
 
         add_action('wp_head', function () {
-            ?>
+?>
             <script>
                 window.dailyMenuAjax = <?php echo json_encode([
-                                                        'ajaxurl' => admin_url('admin-ajax.php'),
-                                                        'nonce' => wp_create_nonce('daily_dish_manager_nonce'),
-                                                        'messages' => [
-                                                            'orderSuccess' => __('Your order has been successfully placed!', DMM_TEXT_DOMAIN),
-                                                            'orderError' => __('There was an error placing your order. Please try again.', DMM_TEXT_DOMAIN),
-                                                            'emptyOrder' => __('Please select at least one dish.', DMM_TEXT_DOMAIN),
-                                                            'requiredFields' => __('Please fill out all required fields.', DMM_TEXT_DOMAIN),
-                                                        ],
-                                                        'timeFormat' => SettingsController::getTimeFormat(),
-                                                        'dateFormat' => SettingsController::getDateFormat(),
-                                                        'priceFormat' => SettingsController::getPriceFormat(),
-                                                        'currencySymbol' => SettingsController::getCurrencySymbol(),
-                                                        'pickupTimes' => SettingsController::getAvailablePickupTimes(),
-                                                        'translations' => [
-                                                            'notes' => __('Notes for this item', DMM_TEXT_DOMAIN),
-                                                            'available' => __('available', DMM_TEXT_DOMAIN),
-                                                            'total' => __('Total', DMM_TEXT_DOMAIN),
-                                                            'yourData' => __('Your Information', DMM_TEXT_DOMAIN),
-                                                            'submit' => __('Place Order', DMM_TEXT_DOMAIN),
-                                                            'submitting' => __('Submitting...', DMM_TEXT_DOMAIN),
-                                                            'name' => __('Name', DMM_TEXT_DOMAIN),
-                                                            'phone' => __('Phone', DMM_TEXT_DOMAIN),
-                                                            'pickupTime' => __('Pickup Time', DMM_TEXT_DOMAIN),
-                                                            'selectTime' => __('Select time', DMM_TEXT_DOMAIN),
-                                                            'additionalNotes' => __('Additional Notes', DMM_TEXT_DOMAIN),
-                                                            'orderSummary' => __('Order Summary', DMM_TEXT_DOMAIN),
-                                                            'noItems' => __('No items selected', DMM_TEXT_DOMAIN),
-                                                            'loading' => __('Loading menu...', DMM_TEXT_DOMAIN),
-                                                            'close' => __('Close', DMM_TEXT_DOMAIN),
-                                                            'orderNumber' => __('Order Number', DMM_TEXT_DOMAIN),
-                                                            'pickupInstructions' => __('Please mention this number when picking up.', DMM_TEXT_DOMAIN),
-                                                            'phoneNumber' => __('Phone Number', DMM_TEXT_DOMAIN),
-                                                            'orderDetails' => __('Order Details', DMM_TEXT_DOMAIN),
-                                                            'forPossibleInquiries' => __('(for possible inquiries)', DMM_TEXT_DOMAIN),
-                                                            'pickup_or_eat_in' => __('Pick up or eat in', DMM_TEXT_DOMAIN),
-                                                            'soldout' => __('Sold out', DMM_TEXT_DOMAIN),
-                                                        ],
-                                                    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
+                                            'ajaxurl' => admin_url('admin-ajax.php'),
+                                            'nonce' => wp_create_nonce('daily_dish_manager_nonce'),
+                                            'messages' => [
+                                                'orderSuccess' => __('Your order has been successfully placed!', DMM_TEXT_DOMAIN),
+                                                'orderError' => __('There was an error placing your order. Please try again.', DMM_TEXT_DOMAIN),
+                                                'emptyOrder' => __('Please select at least one dish.', DMM_TEXT_DOMAIN),
+                                                'requiredFields' => __('Please fill out all required fields.', DMM_TEXT_DOMAIN),
+                                            ],
+                                            'timeFormat' => SettingsController::getTimeFormat(),
+                                            'dateFormat' => SettingsController::getDateFormat(),
+                                            'priceFormat' => SettingsController::getPriceFormat(),
+                                            'currencySymbol' => SettingsController::getCurrencySymbol(),
+                                            'pickupTimes' => SettingsController::getAvailablePickupTimes(),
+                                            'translations' => [
+                                                'notes' => __('Notes for this item', DMM_TEXT_DOMAIN),
+                                                'available' => __('available', DMM_TEXT_DOMAIN),
+                                                'total' => __('Total', DMM_TEXT_DOMAIN),
+                                                'yourData' => __('Your Information', DMM_TEXT_DOMAIN),
+                                                'submit' => __('Place Order', DMM_TEXT_DOMAIN),
+                                                'submitting' => __('Submitting...', DMM_TEXT_DOMAIN),
+                                                'name' => __('Name', DMM_TEXT_DOMAIN),
+                                                'phone' => __('Phone', DMM_TEXT_DOMAIN),
+                                                'pickupTime' => __('Pickup Time', DMM_TEXT_DOMAIN),
+                                                'selectTime' => __('Select time', DMM_TEXT_DOMAIN),
+                                                'additionalNotes' => __('Additional Notes', DMM_TEXT_DOMAIN),
+                                                'orderSummary' => __('Order Summary', DMM_TEXT_DOMAIN),
+                                                'noItems' => __('No items selected', DMM_TEXT_DOMAIN),
+                                                'loading' => __('Loading menu...', DMM_TEXT_DOMAIN),
+                                                'close' => __('Close', DMM_TEXT_DOMAIN),
+                                                'orderNumber' => __('Order Number', DMM_TEXT_DOMAIN),
+                                                'pickupInstructions' => __('Please mention this number when picking up.', DMM_TEXT_DOMAIN),
+                                                'phoneNumber' => __('Phone Number', DMM_TEXT_DOMAIN),
+                                                'orderDetails' => __('Order Details', DMM_TEXT_DOMAIN),
+                                                'forPossibleInquiries' => __('(for possible inquiries)', DMM_TEXT_DOMAIN),
+                                                'pickup_or_eat_in' => __('Pick up or eat in', DMM_TEXT_DOMAIN),
+                                                'soldout' => __('Sold out', DMM_TEXT_DOMAIN),
+                                            ],
+                                        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); ?>;
             </script>
 <?php
         });

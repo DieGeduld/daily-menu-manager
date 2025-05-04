@@ -8,6 +8,7 @@ use DailyMenuManager\Entity\MenuItem;
 class MenuRepository extends BaseRepository
 {
     private $items_table_name;
+    private $menuItemRepository;
 
     /**
      * Constructor
@@ -16,6 +17,7 @@ class MenuRepository extends BaseRepository
     {
         parent::__construct('ddm_menus', Menu::class);
         global $wpdb;
+        $this->menuItemRepository = new MenuItemRepository();
         $this->items_table_name = $wpdb->prefix . 'ddm_menu_items';
     }
 
@@ -26,17 +28,7 @@ class MenuRepository extends BaseRepository
      */
     public function findAll()
     {
-        $results = $this->wpdb->get_results(
-            "SELECT * FROM {$this->table_name} ORDER BY menu_date DESC",
-            ARRAY_A
-        );
-
-        $menus = [];
-        foreach ($results as $row) {
-            $menus[] = new Menu($row);
-        }
-
-        return $menus;
+        return parent::findAll();
     }
 
     /**
@@ -47,22 +39,31 @@ class MenuRepository extends BaseRepository
      */
     public function save($menu)
     {
+        if (!($menu instanceof Menu)) {
+            throw new \InvalidArgumentException('Entity must be of type Menu');
+        }
+
+        if (!$menu->getMenuDate()) {
+            throw new \InvalidArgumentException('Menu date is required');
+        }
+
         $data = $menu->toArray();
 
-        // Remove ID for insertion, WordPress will handle it
-        if (empty($data['id'])) {
+        if (!$data['id']) {
             unset($data['id']);
         }
 
         // Handle dates for created_at and updated_at
         unset($data['created_at']);
         unset($data['updated_at']);
+        unset($data['menuItems']);
 
-        if (empty($data['id'])) {
+        if (!$data['id']) {
             // Insert new menu
+
             $result = $this->wpdb->insert(
                 $this->table_name,
-                $data,
+                ["menu_date" => $data['menu_date']],
                 ['%s'] // menu_date
             );
 
@@ -70,7 +71,7 @@ class MenuRepository extends BaseRepository
                 return new \WP_Error('db_insert_error', $this->wpdb->last_error);
             }
 
-            $menu->id = $this->wpdb->insert_id;
+            $menu->setId($this->wpdb->insert_id);
         } else {
             // Update existing menu
             $result = $this->wpdb->update(
@@ -121,7 +122,14 @@ class MenuRepository extends BaseRepository
      */
     public function findByDate($date)
     {
-        return $this->findOneBy('menu_date', $date);
+        $menu = $this->findOneBy('menu_date', $date);
+
+        if ($menu !== null) {
+            $menuItems = $this->menuItemRepository->findByMenuId($menu->getId());
+            $menu->setMenuItems($menuItems);
+        }
+
+        return $menu;
     }
 
     /**
@@ -186,6 +194,6 @@ class MenuRepository extends BaseRepository
             $menu_item_repo->save($new_item);
         }
 
-        return $new_menu->id;
+        return $new_menu->getID();
     }
 }

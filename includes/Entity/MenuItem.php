@@ -53,36 +53,4 @@ class MenuItem extends AbstractEntity
         $this->updated_at = $data['updated_at'] ?? null;
     }
 
-    /**
-     * Convert entity to array
-     *
-     * @return array MenuItem data as array
-     */
-    public function toArray()
-    {
-        return [
-            'id' => $this->id,
-            'menu_id' => $this->menu_id,
-            'item_type' => $this->item_type,
-            'title' => $this->title,
-            'description' => $this->description,
-            'price' => $this->price,
-            'available_quantity' => $this->available_quantity,
-            'properties' => is_array($this->properties) ? json_encode($this->properties) : $this->properties,
-            'sort_order' => $this->sort_order,
-            'allergens' => $this->allergens,
-            'image_url' => $this->image_url,
-            'image_id' => $this->image_id,
-        ];
-    }
-
-    public function getPrice()
-    {
-        return $this->price;
-    }
-
-    public function getTitle()
-    {
-        return $this->title;
-    }
 }

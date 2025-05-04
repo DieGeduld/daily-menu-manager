@@ -36,8 +36,8 @@ class MenuService
         }
 
         // Populate menu with items
-        $items = $this->menu_item_repository->findByMenuId($menu->id);
-        $menu->setItems($items);
+        $items = $this->menu_item_repository->findByMenuId($menu->getId());
+        $menu->setMenuItems($items);
 
         return $menu;
     }
@@ -128,7 +128,10 @@ class MenuService
      */
     public function deleteMenuItem($item_id)
     {
-        return $this->menu_item_repository->deleteById($item_id);
+
+        $result = $this->menu_item_repository->deleteById($item_id);
+        // Todo: also remove the menu, if there are no more items
+        //$this->menu_repository->getMenuByMenuItemId($item_id);
     }
 
     /**
@@ -189,7 +192,7 @@ class MenuService
             }
 
             // Update item data
-            $item->setMenuId(intval($menu->id)); // Set menu ID for new items
+            $item->setMenuId(intval($menu->getId())); // Set menu ID for new items
             $item->setItemType(sanitize_text_field($item_data['type'] ?? ''));
             $item->setTitle(sanitize_text_field($item_data['title'] ?? ''));
             $item->setDescription(wp_kses_post($item_data['description'] ?? ''));
@@ -213,7 +216,7 @@ class MenuService
             $this->menu_item_repository->save($item);
         }
 
-        return $menu->id;
+        return $menu->getId();
     }
 
     /**

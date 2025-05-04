@@ -8,9 +8,9 @@ use DailyMenuManager\Controller\Admin\SettingsController;
 
 <div class="wrap">
     <h1><?php _e('Manage Daily Menu', 'daily-dish-manager'); ?></h1>
-    
+
     <?php settings_errors('daily_dish_manager'); ?>
-    
+
     <!-- Date Selection -->
     <div class="date-selection">
         <form method="get" class="date-selector-form">
@@ -19,21 +19,21 @@ use DailyMenuManager\Controller\Admin\SettingsController;
 
             <div class="flatpickr-wrapper">
                 <input type="date"
-                    id="menu_date" 
-                    name="menu_date" 
+                    id="menu_date"
+                    name="menu_date"
                     value="<?php echo esc_attr($selected_date); ?>"
                     onchange="this.form.submit()"
                     data-input>
 
-                    <a class="input-button" title="toggle" data-toggle>
-                        <span class="dashicons dashicons-calendar-alt"></span>
-                    </a>
+                <a class="input-button" title="toggle" data-toggle>
+                    <span class="dashicons dashicons-calendar-alt"></span>
+                </a>
 
-                </div>
+            </div>
             <?php if ($selected_date !== current_time('Y-m-d')): ?>
-                <button type="submit" 
-                        class="button" 
-                        onclick="document.getElementById('menu_date').value='<?php echo esc_attr(current_time('Y-m-d')); ?>'; return true;">
+                <button type="submit"
+                    class="button"
+                    onclick="document.getElementById('menu_date').value='<?php echo esc_attr(current_time('Y-m-d')); ?>'; return true;">
                     <?php _e('Today', 'daily-dish-manager'); ?>
                 </button>
             <?php endif; ?>
@@ -41,17 +41,17 @@ use DailyMenuManager\Controller\Admin\SettingsController;
         </form>
 
         <?php if ($current_menu): ?>
-        <div class="menu-actions">
-            <button type="button" class="button copy-menu" data-menu-id="<?php echo esc_attr($current_menu->id); ?>">
-                <?php _e('Copy Menu', 'daily-dish-manager'); ?>
-            </button>
-        </div>
+            <div class="menu-actions">
+                <button type="button" class="button copy-menu" data-menu-id="<?php echo esc_attr($current_menu->getId()); ?>">
+                    <?php _e('Copy Menu', 'daily-dish-manager'); ?>
+                </button>
+            </div>
         <?php else: ?>
             <div class="menu-actions">
-            <button type="button" class="button copy-menu" data-menu-id="0">
-                <?php _e('Import Menu', 'daily-dish-manager'); ?>
-            </button>
-        </div>
+                <button type="button" class="button copy-menu" data-menu-id="0">
+                    <?php _e('Import Menu', 'daily-dish-manager'); ?>
+                </button>
+            </div>
         <?php endif; ?>
     </div>
 
@@ -66,7 +66,7 @@ use DailyMenuManager\Controller\Admin\SettingsController;
     <form method="post" action="" class="menu-form">
         <?php wp_nonce_field('save_menu_nonce'); ?>
         <input type="hidden" name="menu_date" value="<?php echo esc_attr($selected_date); ?>">
-        
+
         <div class="menu-controls">
             <?php foreach (SettingsController::getMenuTypes() as $type => $labels): ?>
                 <button type="button" class="button add-menu-item <?php echo sanitize_title($labels['label']); ?>" data-type="<?php echo esc_attr($type); ?>">
@@ -77,7 +77,7 @@ use DailyMenuManager\Controller\Admin\SettingsController;
 
         <div class="menu-items">
             <?php
-            if (! empty($menu_items)) {
+            if (!empty($menu_items)) {
                 foreach ($menu_items as $item) {
                     self::renderMenuItem($item);
                 }
@@ -95,15 +95,15 @@ use DailyMenuManager\Controller\Admin\SettingsController;
 
     <div class="selectedDateTo">
         <input type="hidden" name="type" value="to">
-        <input type="date" 
-            name="selectedDateTo" 
-            id="selectedDateTo" 
+        <input type="date"
+            name="selectedDateTo"
+            id="selectedDateTo"
             value="<?php echo esc_attr(date('Y-m-d', strtotime('+1 day'))); ?>"
             data-input>
 
-            <a class="input-button" title="toggle" data-toggle>
-                <span class="dashicons dashicons-calendar-alt"></span>
-            </a>
+        <a class="input-button" title="toggle" data-toggle>
+            <span class="dashicons dashicons-calendar-alt"></span>
+        </a>
     </div>
 </div>
 
@@ -112,22 +112,22 @@ use DailyMenuManager\Controller\Admin\SettingsController;
     <p><?php _e('Select the source date:', 'daily-dish-manager'); ?></p>
     <div class="selectedDateFrom">
         <input type="hidden" name="type" value="from">
-        <input type="date" 
-            name="selectedDateFrom" 
-            id="selectedDateFrom" 
+        <input type="date"
+            name="selectedDateFrom"
+            id="selectedDateFrom"
             value="<?php echo esc_attr(date('Y-m-d', strtotime('+1 day'))); ?>"
             data-input>
 
-            <a class="input-button" title="toggle" data-toggle>
-                <span class="dashicons dashicons-calendar-alt"></span>
-            </a>
+        <a class="input-button" title="toggle" data-toggle>
+            <span class="dashicons dashicons-calendar-alt"></span>
+        </a>
     </div>
 </div>
 
 
 
 <?php if ($current_menu): ?>
-    <button type="button" class="button copy-menu" data-menu-id="<?php echo esc_attr($current_menu->id); ?>">
+    <button type="button" class="button copy-menu" data-menu-id="<?php echo esc_attr($current_menu->getId()); ?>">
         <?php _e('Copy Menu', 'daily-dish-manager'); ?>
     </button>
 <?php endif; ?>
