@@ -188,8 +188,6 @@ class MenuController
         if (!$item_id) {
             wp_send_json_error(['message' => __('Invalid menu item ID.', DMM_TEXT_DOMAIN)]);
         }
-        // TODO! -> then give menu entity to delete method
-        //$menu = self::$menu_service->getMenuByMenuId($item_id);
 
         $result = self::$menu_service->deleteMenuItem($item_id);
 
