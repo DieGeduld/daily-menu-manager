@@ -345,7 +345,7 @@ class OrderController
         $menu = $menu->getMenuForDate($currentDate);
 
         if ($menu) {
-            return (is_numeric($menu->id)) ? intval($menu->id) : -1;
+            return (is_numeric($menu->getId())) ? intval($menu->getId()) : -1;
         }
 
         return -1;

@@ -216,7 +216,7 @@ class Menu
         ));
 
         if ($menu) {
-            $items = $this->getMenuItems($menu->id);
+            $items = $this->getMenuItems($menu->getId());
             if ($items) {
                 $menu->items = $items;
             } else {

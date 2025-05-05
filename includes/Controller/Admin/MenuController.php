@@ -138,7 +138,7 @@ class MenuController
                 exit();
             }
 
-            $result = self::$menu_service->copyMenu($menu->id, $currentDate);
+            $result = self::$menu_service->copyMenu($menu->getId(), $currentDate);
 
             if (is_wp_error($result)) {
                 wp_send_json_error(['message' => $result->get_error_message()]);

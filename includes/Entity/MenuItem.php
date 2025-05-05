@@ -52,5 +52,4 @@ class MenuItem extends AbstractEntity
         $this->created_at = $data['created_at'] ?? null;
         $this->updated_at = $data['updated_at'] ?? null;
     }
-
 }

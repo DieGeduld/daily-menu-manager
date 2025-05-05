@@ -128,10 +128,26 @@ class MenuService
      */
     public function deleteMenuItem($item_id)
     {
+        $menu = $this->getMenuByMenuItemId($item_id);
+        $deleteResult = $this->menu_item_repository->deleteById($item_id);
 
-        $result = $this->menu_item_repository->deleteById($item_id);
-        // Todo: also remove the menu, if there are no more items
-        //$this->menu_repository->getMenuByMenuItemId($item_id);
+        if ($menu && $deleteResult) {
+            $items = $this->menu_item_repository->findBy('menu_id', $menu->getId());
+            if (count($items) == 0) {
+                $deleteResult = $this->menu_repository->delete($menu);
+            }
+        }
+        return true;
+    }
+
+    public function getMenuByMenuItemId($item_id): Menu|null
+    {
+        $menuItem = $this->menu_item_repository->findById($item_id);
+        if ($menuItem) {
+            $menu = $this->menu_repository->findById($menuItem->getMenuId());
+            return $menu;
+        }
+        return null;
     }
 
     /**

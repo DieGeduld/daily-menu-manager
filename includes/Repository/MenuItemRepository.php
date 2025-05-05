@@ -5,19 +5,14 @@ namespace DailyMenuManager\Repository;
 use DailyMenuManager\Entity\MenuItem;
 use DailyMenuManager\Interface\RepositoryInterface;
 
-class MenuItemRepository implements RepositoryInterface
+class MenuItemRepository extends BaseRepository
 {
-    private $wpdb;
-    private $table_name;
-
     /**
      * Constructor
      */
     public function __construct()
     {
-        global $wpdb;
-        $this->wpdb = $wpdb;
-        $this->table_name = $wpdb->prefix . 'ddm_menu_items';
+        parent::__construct('ddm_menu_items', MenuItem::class);
     }
 
     /**
@@ -183,13 +178,11 @@ class MenuItemRepository implements RepositoryInterface
      */
     public function deleteById($id)
     {
-        $result = $this->wpdb->delete(
+        return $this->wpdb->delete(
             $this->table_name,
             ['id' => $id],
             ['%d']
         );
-
-        return $result !== false;
     }
 
     /**

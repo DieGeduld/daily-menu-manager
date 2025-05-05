@@ -64,7 +64,7 @@ class ShortcodeController
         // Einfacher Container für Vue
         return sprintf(
             '<div id="daily-menu-app" data-menu-id="%s" data-menu-date="%s" data-title="%s"></div>',
-            esc_attr($current_menu->id),
+            esc_attr($current_menu->getId()),
             esc_attr($atts['date']),
             esc_attr($atts['title'])
         );
@@ -78,7 +78,7 @@ class ShortcodeController
                     <div class="menu-layout">
                         <!-- Linke Spalte: Menü-Items -->
                         <div class="menu-items-column">
-                            <input type="hidden" name="menu_id" value="<?php echo esc_attr($current_menu->id); ?>">
+                            <input type="hidden" name="menu_id" value="<?php echo esc_attr($current_menu->getId()); ?>">
                             <?php wp_nonce_field('menu_order_nonce'); ?>
 
                             <?php
@@ -100,7 +100,7 @@ class ShortcodeController
 
                                     <?php foreach ($items as $item): ?>
                                         <?php $props = array_keys($item->properties ?? []); ?>
-                                        <div class="menu-item" data-item-available_quantity="<?php echo esc_attr($item->available_quantity); ?>" data-item-id="<?php echo esc_attr($item->id); ?>">
+                                        <div class="menu-item" data-item-available_quantity="<?php echo esc_attr($item->available_quantity); ?>" data-item-id="<?php echo esc_attr($item->getId()); ?>">
                                             <div class="menu-item-header">
                                                 <?php if ($item->available_quantity == 0): ?>
                                                     <span class="menu-item-title unavailable"><?php echo esc_html($item->title); ?> (<?php esc_html_e('out of stock', 'daily-dish-manager'); ?>)</span>
@@ -125,14 +125,14 @@ class ShortcodeController
                                                 <?php if ($atts['show_order_form']): ?>
                                                     <div class="menu-item-order">
                                                         <div class="quantity-control">
-                                                            <label for="quantity_<?php echo esc_attr($item->id); ?>">
+                                                            <label for="quantity_<?php echo esc_attr($item->getId()); ?>">
                                                                 <?php _e('Quantity:', 'daily-dish-manager'); ?>
                                                             </label>
                                                             <button type="button" style="background: <?php echo SettingsController::getMainColor(); ?>" class="quantity-btn minus">-</button>
                                                             <input type="number"
                                                                 class="quantity-input"
-                                                                name="items[<?php echo esc_attr($item->id); ?>][quantity]"
-                                                                id="quantity_<?php echo esc_attr($item->id); ?>"
+                                                                name="items[<?php echo esc_attr($item->getId()); ?>][quantity]"
+                                                                id="quantity_<?php echo esc_attr($item->getId()); ?>"
                                                                 min="0"
                                                                 max="<?php echo esc_attr($item->available_quantity); ?>"
                                                                 value="0"
@@ -145,12 +145,12 @@ class ShortcodeController
                                                 <?php endif; ?>
                                             </div>
                                             <div class="item-notes">
-                                                <label for="notes_<?php echo esc_attr($item->id); ?>">
+                                                <label for="notes_<?php echo esc_attr($item->getId()); ?>">
                                                     <?php _e('Notes:', 'daily-dish-manager'); ?>
                                                 </label>
                                                 <input type="text"
-                                                    name="items[<?php echo esc_attr($item->id); ?>][notes]"
-                                                    id="notes_<?php echo esc_attr($item->id); ?>"
+                                                    name="items[<?php echo esc_attr($item->getId()); ?>][notes]"
+                                                    id="notes_<?php echo esc_attr($item->getId()); ?>"
                                                     placeholder="<?php _e('e.g. without onions', 'daily-dish-manager'); ?>">
                                             </div>
                                         </div>
