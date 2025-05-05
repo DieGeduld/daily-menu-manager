@@ -113,12 +113,12 @@ class Order
         }
     }
 
-/**
- * Holt Bestellungen mit optionalen Filtern
- *
- * @param array $filters Filteroptionen
- * @return array
- */
+    /**
+     * Holt Bestellungen mit optionalen Filtern
+     *
+     * @param array $filters Filteroptionen
+     * @return array
+     */
     public static function getOrders($filters = [])
     {
         global $wpdb;

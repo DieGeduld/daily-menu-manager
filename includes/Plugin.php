@@ -43,8 +43,8 @@ class Plugin
     private function initializeComponents(): void
     {
         // Initialize Models
-        Menu::init();
-        Order::init();
+        //Menu::init();
+        //Order::init();
         Settings::init();
         // Initialize Admin and Frontend components
         AjaxController::init();
@@ -61,9 +61,7 @@ class Plugin
         $this->initFrontendComponents();
     }
 
-    private function initAdminComponents(): void
-    {
-    }
+    private function initAdminComponents(): void {}
 
     private function initFrontendComponents(): void
     {
@@ -88,7 +86,5 @@ class Plugin
     }
 
     // Prevent cloning of singleton
-    private function __clone()
-    {
-    }
+    private function __clone() {}
 }

@@ -4,15 +4,15 @@ namespace DailyMenuManager\Entity;
 
 class OrderItem extends AbstractEntity
 {
-    public $id;
-    public $order_id;
-    public $menu_item_id;
-    public $quantity;
-    public $price;
-    public $title;
-    public $notes;
-    public $created_at;
-    public $updated_at;
+    protected $id;
+    protected $order_id;
+    protected $menu_item_id;
+    protected $quantity;
+    protected $price;
+    protected $title;
+    protected $notes;
+    protected $created_at;
+    protected $updated_at;
 
     /**
      * Constructor to create an OrderItem entity from array data

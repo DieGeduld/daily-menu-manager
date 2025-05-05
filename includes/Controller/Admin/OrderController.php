@@ -7,15 +7,22 @@ use DailyMenuManager\Repository\MenuItemRepository;
 use DailyMenuManager\Repository\OrderItemRepository;
 use DailyMenuManager\Repository\OrderRepository;
 use DailyMenuManager\Service\OrderService;
+use DailyMenuManager\Model\Menu;
+use DailyMenuManager\Service\MenuService;
 
 class OrderController
 {
     private static $instance = null;
+    private static $menuService = null;
 
     public static function init()
     {
         if (self::$instance === null) {
             self::$instance = new self();
+        }
+
+        if (self::$menuService === null) {
+            self::$menuService = new MenuService();
         }
 
         add_action('admin_menu', [self::class, 'addAdminMenu']);
@@ -153,111 +160,111 @@ class OrderController
             'message' => 'Error processing order',
         ];
 
-        try {
-            // Get POST data
-            // todo: sanitize_text_field?
-            $data = $_POST;
+        // try {
+        // Get POST data
+        // todo: sanitize_text_field?
+        $data = $_POST;
 
-            // Validate required data
-            if (empty($data['items']) || empty($data['customerInfo'])) {
-                throw new \Exception('Incomplete order data');
+        // Validate required data
+        if (empty($data['items']) || empty($data['customerInfo'])) {
+            throw new \Exception('Incomplete order data');
+        }
+
+        if (intval($data["menuId"]) !== self::getCurrentMenuId()) {
+            throw new \Exception('Wrong Date');
+        }
+
+        // Parse JSON data
+        $items = is_string($data['items']) ? json_decode(stripslashes($data['items']), true) : $data['items'];
+        $customerInfo = is_string($data['customerInfo']) ? json_decode(stripslashes($data['customerInfo']), true) : $data['customerInfo'];
+
+        // Validate customer info
+        if (!$customerInfo['name'] || !$customerInfo['phone'] || !$customerInfo['pickupTime']) {
+            throw new \Exception('Missing required customer information');
+        }
+
+        // Validate items
+        if (!is_array($items) || count($items) === 0) {
+            throw new \Exception('No items in order');
+        }
+
+        // Calculate and check total amount
+        $totalAmount = 0;
+        $sendTotalAmount = $data["totalPrice"];
+        foreach ($items as $item) {
+            if (!isset($item['price']) || !isset($item['quantity'])) {
+                throw new \Exception('Invalid item data');
             }
+            $totalAmount += floatval($item['price']) * intval($item['quantity']);
+        }
 
-            if (intval($data["menuId"]) !== self::getCurrentMenuId()) {
+        if (floatval($totalAmount) !== floatval($sendTotalAmount)) {
+            throw new \Exception('Total amount mismatch');
+        }
+
+        $menuId = self::getCurrentMenuId();
+
+        /* check if order items have only items from today */
+        foreach ($items as $item) {
+            if (self::getMenuIdFromMenuItemId(intval($item["menuItemId"])) !== $menuId) {
                 throw new \Exception('Wrong Date');
             }
+        }
 
-            // Parse JSON data
-            $items = is_string($data['items']) ? json_decode(stripslashes($data['items']), true) : $data['items'];
-            $customerInfo = is_string($data['customerInfo']) ? json_decode(stripslashes($data['customerInfo']), true) : $data['customerInfo'];
+        // Create order in database
+        $orderData = [
+            'menu_id' => $menuId,
+            'customer_name' => sanitize_text_field($customerInfo['name']),
+            'customer_phone' => sanitize_text_field($customerInfo['phone']),
+            'consumption_type' => sanitize_text_field($customerInfo['consumptionType']),
+            'pickup_time' => sanitize_text_field($customerInfo['pickupTime']),
+            'notes' => sanitize_textarea_field($customerInfo['notes'] ?? ''),
+            'items' => $items,
+            'total_amount' => $totalAmount,
+            'order_date' => current_time('mysql'),
+            'status' => 'pending',
+        ];
 
-            // Validate customer info
-            if (!$customerInfo['name'] || !$customerInfo['phone'] || !$customerInfo['pickupTime']) {
-                throw new \Exception('Missing required customer information');
-            }
+        // Save order to database using OrderModel
+        $orderRepository = new OrderRepository();
+        $orderService = new OrderService($orderRepository);
+        $order = $orderService->createOrder($orderData);
+        $orderId = $order["orders"][0]->getId();
 
-            // Validate items
-            if (!is_array($items) || count($items) === 0) {
-                throw new \Exception('No items in order');
-            }
+        if (!$orderId) {
+            throw new \Exception('Failed to save order');
+        }
 
-            // Calculate and check total amount
-            $totalAmount = 0;
-            $sendTotalAmount = $data["totalPrice"];
-            foreach ($items as $item) {
-                if (!isset($item['price']) || !isset($item['quantity'])) {
-                    throw new \Exception('Invalid item data');
-                }
-                $totalAmount += floatval($item['price']) * intval($item['quantity']);
-            }
+        // Save order items with correct menu IDs
+        foreach ($items as $item) {
+            self::saveOrderItem($orderId, $item, $menuId);
+            self::updateItemStock($item['id'], $item['quantity']); // id ?
+        }
 
-            if (floatval($totalAmount) !== floatval($sendTotalAmount)) {
-                throw new \Exception('Total amount mismatch');
-            }
-
-            $menuId = self::getCurrentMenuId();
-
-            /* check if order items have only items from today */
-            foreach ($items as $item) {
-                if (self::getMenuIdFromMenuItemId(intval($item["menuItemId"])) !== $menuId) {
-                    throw new \Exception('Wrong Date');
-                }
-            }
-
-            // Create order in database
-            $orderData = [
-                'menu_id' => $menuId,
-                'customer_name' => sanitize_text_field($customerInfo['name']),
-                'customer_phone' => sanitize_text_field($customerInfo['phone']),
-                'consumption_type' => sanitize_text_field($customerInfo['consumptionType']),
-                'pickup_time' => sanitize_text_field($customerInfo['pickupTime']),
-                'notes' => sanitize_textarea_field($customerInfo['notes'] ?? ''),
+        // Prepare success response
+        $response = [
+            'success' => true,
+            'message' => 'Order placed successfully',
+            'data' => [
+                'order_id' => $orderId,
+                'order_number' => $order["orders"][0]->getOrderNumber(),
                 'items' => $items,
                 'total_amount' => $totalAmount,
-                'order_date' => current_time('mysql'),
-                'status' => 'pending',
-            ];
+                'pickup_time' => $customerInfo['pickupTime'],
+            ],
+        ];
 
-            // Save order to database using OrderModel
-            $orderRepository = new OrderRepository();
-            $orderService = new OrderService($orderRepository);
-            $order = $orderService->createOrder($orderData);
-            $orderId = $order["orders"][0]->getId();
+        // Optional: Send confirmation email
+        self::sendOrderConfirmationEmail($orderData);
+        // } catch (\Exception $e) {
+        //     $response = [
+        //         'success' => false,
+        //         'message' => $e->getMessage(),
+        //     ];
 
-            if (!$orderId) {
-                throw new \Exception('Failed to save order');
-            }
-
-            // Save order items with correct menu IDs
-            foreach ($items as $item) {
-                self::saveOrderItem($orderId, $item, $menuId);
-                self::updateItemStock($item['id'], $item['quantity']); // id ?
-            }
-
-            // Prepare success response
-            $response = [
-                'success' => true,
-                'message' => 'Order placed successfully',
-                'data' => [
-                    'order_id' => $orderId,
-                    'order_number' => $order["orders"][0]->getOrdernumber(),
-                    'items' => $items,
-                    'total_amount' => $totalAmount,
-                    'pickup_time' => $customerInfo['pickupTime'],
-                ],
-            ];
-
-            // Optional: Send confirmation email
-            self::sendOrderConfirmationEmail($orderData);
-        } catch (\Exception $e) {
-            $response = [
-                'success' => false,
-                'message' => $e->getMessage(),
-            ];
-
-            // Log error for debugging
-            error_log('Order submission error: ' . $e->getMessage());
-        }
+        //     // Log error for debugging
+        //     error_log('Order submission error: ' . $e->getMessage());
+        // }
 
         // Return JSON response
         wp_send_json($response);
@@ -340,9 +347,7 @@ class OrderController
     {
         $currentDate = current_time('Y-m-d');
 
-        // Get menu for current date
-        $menu = new \DailyMenuManager\Model\Menu();
-        $menu = $menu->getMenuForDate($currentDate);
+        $menu = self::$menuService->getMenuForDate($currentDate);
 
         if ($menu) {
             return (is_numeric($menu->getId())) ? intval($menu->getId()) : -1;

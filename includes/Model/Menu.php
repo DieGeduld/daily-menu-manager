@@ -216,7 +216,7 @@ class Menu
         ));
 
         if ($menu) {
-            $items = $this->getMenuItems($menu->getId());
+            $items = $this->getMenuItems($menu->id);
             if ($items) {
                 $menu->items = $items;
             } else {
@@ -227,15 +227,7 @@ class Menu
         return $menu;
     }
 
-    /**
-     * Holt das aktuelle Menü
-     *
-     * @return object|null
-     */
-    public function getCurrentMenu()
-    {
-        return $this->getMenuForDate(current_time('Y-m-d'));
-    }
+
 
     /**
      * Holt alle Menüeinträge für ein Menü

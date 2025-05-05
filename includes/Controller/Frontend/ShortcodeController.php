@@ -4,6 +4,8 @@ namespace DailyMenuManager\Controller\Frontend;
 
 use DailyMenuManager\Controller\Admin\SettingsController;
 use DailyMenuManager\Model\Menu;
+use DailyMenuManager\Repository\MenuRepository;
+use DailyMenuManager\Service\MenuService;
 
 class ShortcodeController
 {
@@ -54,8 +56,8 @@ class ShortcodeController
         ], $atts, 'daily_dish');
 
         // Hole das Menü
-        $menu = new Menu();
-        $current_menu = $menu->getMenuForDate($atts['date']);
+        $menuService = new MenuService();
+        $current_menu = $menuService->getMenuForDate($atts['date']);
 
         if (!$current_menu) {
             return '<p class="no-menu">' . __('No menu available for today.', DMM_TEXT_DOMAIN) . '</p>';

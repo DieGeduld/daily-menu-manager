@@ -79,7 +79,7 @@ class OrderItemRepository extends BaseRepository
                 return new \WP_Error('db_insert_error', $this->wpdb->last_error);
             }
 
-            $orderItem->id = $this->wpdb->insert_id;
+            $orderItem->setId($this->wpdb->insert_id);
         } else {
             // Update existing order item
             $result = $this->wpdb->update(
