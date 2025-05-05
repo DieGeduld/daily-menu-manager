@@ -180,6 +180,11 @@ class MenuController
         }
 
         $item_id = intval($_POST['item_id']);
+
+        if ($item_id === 0) {
+            wp_send_json_success(['message' => __('Menu item deleted successfully.', DMM_TEXT_DOMAIN)]);
+        }
+
         if (!$item_id) {
             wp_send_json_error(['message' => __('Invalid menu item ID.', DMM_TEXT_DOMAIN)]);
         }
