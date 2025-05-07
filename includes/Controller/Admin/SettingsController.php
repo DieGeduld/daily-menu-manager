@@ -680,11 +680,7 @@ class SettingsController
             if (isset(self::$deafults[$type])) {
                 return $settings_model->get($type);
             }
-
         }
-
-
-
     }
 
     /**
@@ -715,10 +711,10 @@ class SettingsController
      */
     public static function getAvailablePickupTimes(): array
     {
-        $settings = Settings::getInstance();
+        $settings_model = Settings::getInstance();
 
         //TODO: set default values in the database if not exists
-        $order_times = $settings->get('order_times', [
+        $order_times = $settings_model->get('order_times', [
             'start_time' => '11:00',
             'end_time' => '16:00',
             'interval' => 30,
