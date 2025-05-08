@@ -53,6 +53,26 @@ class MenuService
     }
 
     /**
+     * Gibt ein Array von Daten zurück, an denen ein Menü existiert
+     *
+     * @return array
+     */
+    public static function getMenuDates()
+    {
+        global $wpdb;
+
+        $dates = $wpdb->get_col("
+            SELECT DISTINCT dm.menu_date
+            FROM {$wpdb->prefix}ddm_menus dm
+            INNER JOIN {$wpdb->prefix}ddm_menu_items mi
+                ON dm.id = mi.menu_id
+            ORDER BY dm.menu_date ASC
+        ");
+
+        return $dates;
+    }
+
+    /**
      * Create a new menu for a specific date
      *
      * @param string $date The date in Y-m-d format

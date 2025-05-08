@@ -4,6 +4,7 @@ namespace DailyMenuManager\Controller\Common;
 
 use DailyMenuManager\Controller\Admin\SettingsController;
 use DailyMenuManager\Model\Menu;
+use DailyMenuManager\Service\MenuService;
 
 class AssetController
 {
@@ -265,7 +266,7 @@ class AssetController
                     'copy' => __('Copy', DMM_TEXT_DOMAIN),
                     'cancel' => __('Cancel', DMM_TEXT_DOMAIN),
                 ],
-                'menus' => Menu::getMenuDates(),
+                'menus' => MenuService::getMenuDates(),
                 'timeFormat' => SettingsController::getTimeFormat(),
                 'dateFormat' => SettingsController::getDateFormat(),
                 'priceFormat' => SettingsController::getPriceFormat(),
